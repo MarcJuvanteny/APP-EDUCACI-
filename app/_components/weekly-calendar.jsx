@@ -187,6 +187,24 @@ const EVENTS_INICIALS = [
 
 const CURSOS = ["3r A", "3r B", "4t A", "4t B", "5e A", "General"];
 
+const PROG_EVENTS_KEY = "arrel_prog_events_v1";
+
+function loadStoredEvents() {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(PROG_EVENTS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+function saveStoredEvents(evs) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(PROG_EVENTS_KEY, JSON.stringify(evs));
+  } catch (e) {}
+}
+
 function startOfWeek(date) {
   const d = new Date(date);
   const dow = d.getDay() === 0 ? 7 : d.getDay();
@@ -202,7 +220,10 @@ function getWeekNum(d) {
 
 export default function WeeklyCalendar() {
   const [offset, setOffset] = useState(0);
-  const [events, setEvents] = useState(EVENTS_INICIALS);
+  const [events, setEvents] = useState(() => {
+    const stored = loadStoredEvents();
+    return stored && stored.length ? stored : EVENTS_INICIALS;
+  });
   const [nextId, setNextId] = useState(100);
   const [evSel, setEvSel] = useState(null);
   const [showNou, setShowNou] = useState(false);
@@ -328,6 +349,23 @@ export default function WeeklyCalendar() {
   useEffect(() => {
     const i = setInterval(() => setNowTick(Date.now()), 60000);
     return () => clearInterval(i);
+  }, []);
+
+  // Desa els events perque sobrevisquin a un refresc de pagina
+  useEffect(() => {
+    saveStoredEvents(events);
+  }, [events]);
+
+  // Escolta canvis fets des de fora d'aquest frame (quan es crea una activitat
+  // a Competencies, l'app principal escriu al mateix localStorage)
+  useEffect(() => {
+    function onStorage(e) {
+      if (e.key !== PROG_EVENTS_KEY) return;
+      const stored = loadStoredEvents();
+      if (stored) setEvents(stored);
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const navS = useCallback((d) => setOffset((x) => x + d), []);
@@ -463,7 +501,17 @@ export default function WeeklyCalendar() {
                     d2.getDate() === avui.getDate() &&
                     d2.getMonth() === avui.getMonth() &&
                     d2.getFullYear() === avui.getFullYear();
-                  const evs = events.filter((ev) => ev.dia === di2 && ev.hora === h.idx);
+                  const d2Iso =
+                    d2.getFullYear() +
+                    "-" +
+                    String(d2.getMonth() + 1).padStart(2, "0") +
+                    "-" +
+                    String(d2.getDate()).padStart(2, "0");
+                  // Els events sense "data" son horari fix (es repeteixen cada setmana);
+                  // els que en tenen (activitats creades a Competencies) nomes surten el dia exacte.
+                  const evs = events.filter(
+                    (ev) => ev.dia === di2 && ev.hora === h.idx && (!ev.data || ev.data === d2Iso)
+                  );
                   return (
                     <div
                       key={"cc-" + h.idx + "-" + di2}

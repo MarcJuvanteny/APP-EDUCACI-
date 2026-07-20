@@ -270,6 +270,32 @@ function carregarPerfil(){
   if(mesCursos[estat.cursIdx]&&estat.subjIdx>=mesCursos[estat.cursIdx].assigns.length) estat.subjIdx=0;
   return true;
 }
+var DADES_KEY = 'arrel_dades_v1';
+function guardarDades(){
+  lsSet(DADES_KEY, {
+    alumnes: alumnes,
+    activitats: activitats,
+    calEvents: calEvents,
+    missatgesAlumnes: missatgesAlumnes,
+    rubrica: rubrica,
+    competenciesByArea: competenciesByArea
+  });
+}
+function carregarDades(){
+  var saved=lsGet(DADES_KEY);
+  if(!saved) return false;
+  if(saved.alumnes && saved.alumnes.length) alumnes=saved.alumnes;
+  if(saved.activitats) activitats=saved.activitats;
+  if(saved.calEvents) calEvents=saved.calEvents;
+  if(saved.missatgesAlumnes) missatgesAlumnes=saved.missatgesAlumnes;
+  if(saved.rubrica) rubrica=saved.rubrica;
+  if(saved.competenciesByArea){
+    Object.keys(saved.competenciesByArea).forEach(function(area){
+      if(competenciesByArea[area]) competenciesByArea[area]=saved.competenciesByArea[area];
+    });
+  }
+  return true;
+}
 function tePerfilConfigurat(){
   if(!mesCursos||!mesCursos.length) return false;
   return mesCursos.every(function(mc){ return mc.assigns&&mc.assigns.length; });
@@ -440,7 +466,7 @@ function renderGateCursos(){
     var icoCol=isSel?'#fff':'var(--ink)';
     h+='<div data-ci="'+ci+'" onclick="selCurs('+ci+')" style="border:1.5px solid '+bord+';border-radius:var(--rl);padding:16px 18px;margin-bottom:10px;background:'+bg+';cursor:pointer;transition:border-color .15s;touch-action:manipulation;">';
     h+='<div style="display:flex;align-items:center;gap:14px;">';
-    h+='<div style="width:44px;height:44px;border-radius:10px;background:'+icoBg+';color:'+icoCol+';display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;">'+escHtml(mc.curs.split(' ')[0])+'</div>';
+    h+='<div style="width:44px;height:44px;border-radius:10px;background:'+icoBg+';color:'+icoCol+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;overflow:hidden;">'+escHtml(mc.curs.trim().substring(0,3).trim())+'</div>';
     h+='<div style="flex:1;min-width:0;">';
     h+='<div style="font-size:15px;font-weight:700;">'+escHtml(mc.curs)+'</div>';
     h+='<div style="font-size:11px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+mc.assigns.join(' · ')+'</div>';
@@ -452,6 +478,7 @@ function renderGateCursos(){
       h+='<option value="'+ti+'"'+(isSel&&ti===estat.trimIdx?' selected':'')+'>'+trim+'</option>';
     });
     h+='</select>';
+    h+='<button class="btn btn-danger" style="margin-top:6px;width:150px;border-radius:var(--r);padding:7px 10px;font-size:13px;font-weight:600;background:var(--surface);" onclick="confirmarEliminarCurs('+ci+')">Eliminar curs</button>';
     h+='</div>';
     h+='</div>';
     h+='</div>';
@@ -464,6 +491,49 @@ function selTrimSelect(sel){
   estat.trimIdx=parseInt(sel.value);
 }
 
+// ─── Eliminar curs (accio perillosa: cal escriure el nom exacte per confirmar) ───
+function confirmarEliminarCurs(ci){
+  var mc=mesCursos[ci]; if(!mc) return;
+  if(mesCursos.length<=1){ toast('Cal tenir almenys un curs'); return; }
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-curs';
+  overlay.dataset.nomEsperat=mc.curs;
+  overlay.innerHTML='<div class="popup" style="width:400px;">'
+    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
+    +'<div class="popup-head" style="text-align:center;">Eliminar curs</div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(mc.curs)+'</b></div>'
+    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Es perdran totes les notes, activitats i events d\'aquest curs. Aquesta acció no es pot desfer.</div>'
+    +'<div class="fg"><label class="flbl">Per confirmar, escriu el nom del curs: <b>'+escHtml(mc.curs)+'</b></label><input class="input" id="del-curs-confirm" oninput="checkDelCursInput(this)" autocomplete="off"></div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-danger" id="del-curs-btn" disabled style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarCursConfirmat('+ci+')">Sí, eliminar</button>'
+      +'<button class="btn" style="flex:1;" onclick="tancarDelCurs()">Cancel·lar</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+  setTimeout(function(){var inp=document.getElementById('del-curs-confirm'); if(inp) inp.focus();},60);
+}
+function checkDelCursInput(inp){
+  var overlay=document.getElementById('pop-del-curs'); var btn=document.getElementById('del-curs-btn');
+  if(btn&&overlay) btn.disabled = inp.value.trim()!==overlay.dataset.nomEsperat;
+}
+function tancarDelCurs(){ var e=document.getElementById('pop-del-curs'); if(e) e.remove(); }
+function eliminarCursConfirmat(ci){
+  var mc=mesCursos[ci]; if(!mc) return;
+  if(mesCursos.length<=1){ toast('Cal tenir almenys un curs'); return; }
+  Object.keys(activitats).forEach(function(k){
+    if(k.indexOf(mc.curs+'_')===0) delete activitats[k];
+  });
+  calEvents=calEvents.filter(function(e){ return e.curs!==mc.curs; });
+  mesCursos.splice(ci,1);
+  if(estat.cursIdx>=mesCursos.length) estat.cursIdx=0;
+  estat.subjIdx=0;
+  tancarDelCurs();
+  guardarPerfil(); guardarDades();
+  renderGateCursos();
+  updateNav(); renderAll();
+  toast('Curs eliminat');
+}
+
 function selCurs(ci){
   estat.cursIdx=ci;
   var mc=mesCursos[ci];
@@ -472,6 +542,7 @@ function selCurs(ci){
   mc.assigns.forEach(function(s,si){
     h+='<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1.5px solid var(--line);border-radius:var(--rl);margin-bottom:8px;cursor:pointer;background:var(--surface);touch-action:manipulation;" onclick="selSubj('+si+')">';
     h+='<span style="font-size:14px;font-weight:700;flex:1;">'+escHtml(s)+'</span>';
+    h+='<button class="btn btn-sm btn-danger" onclick="event.stopPropagation();confirmarEliminarAssignatura('+ci+','+si+')">Eliminar</button>';
     h+='<span style="color:var(--ink3);font-size:20px;font-weight:300;">›</span>';
     h+='</div>';
   });
@@ -480,6 +551,49 @@ function selCurs(ci){
   +'</div>';
   document.getElementById('g-sel-assigns-list').innerHTML=h;
   showGatePas('g-sel-assigns');
+}
+
+// ─── Eliminar assignatura (accio perillosa: cal escriure el nom exacte per confirmar) ───
+function confirmarEliminarAssignatura(ci,si){
+  var mc=mesCursos[ci]; if(!mc) return;
+  if(mc.assigns.length<=1){ toast('Cal tenir almenys una assignatura'); return; }
+  var subj=mc.assigns[si];
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-assig';
+  overlay.dataset.nomEsperat=subj;
+  overlay.innerHTML='<div class="popup" style="width:400px;">'
+    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
+    +'<div class="popup-head" style="text-align:center;">Eliminar assignatura</div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras <b>'+escHtml(subj)+'</b> de <b>'+escHtml(mc.curs)+'</b></div>'
+    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Es perdran totes les notes i activitats d\'aquesta assignatura per a aquest curs. Aquesta acció no es pot desfer.</div>'
+    +'<div class="fg"><label class="flbl">Per confirmar, escriu el nom de l\'assignatura: <b>'+escHtml(subj)+'</b></label><input class="input" id="del-assig-confirm" oninput="checkDelAssigInput(this)" autocomplete="off"></div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-danger" id="del-assig-btn" disabled style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarAssignaturaConfirmat('+ci+','+si+')">Sí, eliminar</button>'
+      +'<button class="btn" style="flex:1;" onclick="tancarDelAssig()">Cancel·lar</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+  setTimeout(function(){var inp=document.getElementById('del-assig-confirm'); if(inp) inp.focus();},60);
+}
+function checkDelAssigInput(inp){
+  var overlay=document.getElementById('pop-del-assig'); var btn=document.getElementById('del-assig-btn');
+  if(btn&&overlay) btn.disabled = inp.value.trim()!==overlay.dataset.nomEsperat;
+}
+function tancarDelAssig(){ var e=document.getElementById('pop-del-assig'); if(e) e.remove(); }
+function eliminarAssignaturaConfirmat(ci,si){
+  var mc=mesCursos[ci]; if(!mc) return;
+  if(mc.assigns.length<=1){ toast('Cal tenir almenys una assignatura'); return; }
+  var subj=mc.assigns[si];
+  Object.keys(activitats).forEach(function(k){
+    if(k.indexOf(mc.curs+'_')===0 && k.indexOf('_'+subj+'_')!==-1) delete activitats[k];
+  });
+  mc.assigns.splice(si,1);
+  if(estat.cursIdx===ci && estat.subjIdx>=mc.assigns.length) estat.subjIdx=0;
+  tancarDelAssig();
+  guardarPerfil(); guardarDades();
+  selCurs(ci);
+  updateNav(); renderAll();
+  toast('Assignatura eliminada');
 }
 
 function obrirAfegirAssignatura(ci){
@@ -491,20 +605,28 @@ function obrirAfegirAssignatura(ci){
   var overlay=document.createElement('div');
   overlay.className='overlay';
   overlay.id='pop-afegir-assign';
-  overlay.innerHTML='<div class="popup" style="width:420px;">'
-    +'<div class="popup-head">Afegir assignatura a '+escHtml(mc.curs)+'</div>'
-    +'<div class="fg"><label class="flbl">Assignatura</label>'
-      +'<input class="input" id="aa-nom" list="aa-llista" placeholder="Ex: Historia, Tecnologia...">'
-      +'<datalist id="aa-llista">'+opcions.map(function(s){return '<option value="'+escHtml(s)+'">';}).join('')+'</datalist>'
-    +'</div>'
-    +'<div style="display:flex;gap:8px;">'
-      +'<button class="btn btn-clay" style="flex:1;" onclick="guardarNovaAssignatura('+ci+')">Afegir</button>'
-      +'<button class="btn btn-ghost" onclick="tancarAfegirAssignatura()">Cancel·lar</button>'
-    +'</div>'
-  +'</div>';
+  if(!opcions.length){
+    overlay.innerHTML='<div class="popup" style="width:420px;">'
+      +'<div class="popup-head">Afegir assignatura a '+escHtml(mc.curs)+'</div>'
+      +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:16px;">Ja tens totes les assignatures disponibles afegides a aquest curs.</div>'
+      +'<button class="btn" style="width:100%;" onclick="tancarAfegirAssignatura()">Tancar</button>'
+    +'</div>';
+  }else{
+    overlay.innerHTML='<div class="popup" style="width:420px;">'
+      +'<div class="popup-head">Afegir assignatura a '+escHtml(mc.curs)+'</div>'
+      +'<div class="fg"><label class="flbl">Assignatura</label>'
+        +'<select class="input" id="aa-nom">'
+          +opcions.map(function(s){return '<option value="'+escHtml(s)+'">'+escHtml(s)+'</option>';}).join('')
+        +'</select>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;">'
+        +'<button class="btn btn-clay" style="flex:1;" onclick="guardarNovaAssignatura('+ci+')">Afegir</button>'
+        +'<button class="btn btn-ghost" onclick="tancarAfegirAssignatura()">Cancel·lar</button>'
+      +'</div>'
+    +'</div>';
+  }
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
-  setTimeout(function(){var inp=document.getElementById('aa-nom');if(inp)inp.focus();},60);
 }
 function tancarAfegirAssignatura(){
   var e=document.getElementById('pop-afegir-assign');
@@ -842,6 +964,7 @@ function guardarMissatge(){
   var nom=document.getElementById('pop-miss').dataset.nom;
   missatgesAlumnes[nom]=document.getElementById('pop-miss-text').value.trim();
   document.getElementById('pop-miss').style.display='none';
+  guardarDades();
   renderAlumnes(); toast('Comentari guardat ✓');
 }
 
@@ -908,12 +1031,13 @@ function saveNota(inp){
   var compId=inp.dataset.compid; var actId=inp.dataset.actid;
   var comp=competencies.find(function(c){return c.id===compId;});
   var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
-  if(isNaN(val)||inp.value===''){if(act.notes[ini]) delete act.notes[ini][comp.criteris[ci]]; inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); return;}
+  if(isNaN(val)||inp.value===''){if(act.notes[ini]) delete act.notes[ini][comp.criteris[ci]]; inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); guardarDades(); return;}
   val=Math.max(0,Math.min(10,Math.round(val*10)/10)); inp.value=val;
   if(!act.notes[ini]) act.notes[ini]={};
   act.notes[ini][comp.criteris[ci]]=val;
   inp.className='nota-input '+notaClass(val);
   recalcGlobal(act,comp,ini);
+  guardarDades();
 }
 function recalcGlobal(act,comp,ini){
   var t=0,c=0;
@@ -927,15 +1051,17 @@ function saveNotaAltres(inp){
   var comp=competencies.find(function(c){return c.id===compId;});
   var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act||!comp) return;
   if(!act.notaAltres) act.notaAltres={};
-  if(isNaN(val)||inp.value===''){delete act.notaAltres[ini]; inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); return;}
+  if(isNaN(val)||inp.value===''){delete act.notaAltres[ini]; inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); guardarDades(); return;}
   val=Math.max(0,Math.min(10,Math.round(val*10)/10)); inp.value=val;
   inp.className='nota-input '+notaClass(val); act.notaAltres[ini]=val;
   recalcGlobal(act,comp,ini);
+  guardarDades();
 }
 function saveAltres(inp){
   var ini=inp.dataset.ini; var compId=inp.dataset.compid; var actId=inp.dataset.actid;
   var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
   if(!act.altres) act.altres={}; act.altres[ini]=inp.value;
+  guardarDades();
 }
 function navNota(event,inp){
   if(event.key!=='Enter'&&event.key!=='Tab') return;
@@ -962,6 +1088,8 @@ function showRubricaPop(compId,ci){
 
 function tancarNovaAct(){var e=document.getElementById('pop-nova-act');if(e)e.remove();}
 var _novaActCompId='';
+var _currentGraellaCompId='';
+var _currentGraellaActId='';
 function novaActivitat(compId){
   _novaActCompId=compId;
   var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-nova-act';
@@ -1017,9 +1145,33 @@ function crearActivitat(){
     curs:mc2?mc2.curs:'',
     assignatura:mc2?mc2.assigns[estat.subjIdx]:''
   });
+  sincronitzarActivitatAProgramacio(id,nom,dia,hora,mc2);
+  guardarDades();
   toast('"'+nom+'" creada ✓');
   openComp(_novaActCompId);
   setTimeout(function(){openGraella(_novaActCompId,id);},60);
+}
+// Publica l'activitat al calendari setmanal de Programacio (component React, iframe).
+// Es comparteixen via localStorage perque son dos "mons" separats (JS classic + React).
+var PROG_EVENTS_KEY='arrel_prog_events_v1';
+function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
+  var dataObj=new Date(diaISO+'T00:00:00');
+  if(isNaN(dataObj.getTime())) return;
+  var dow=(dataObj.getDay()+6)%7; // 0=Dilluns...6=Diumenge
+  if(dow>4) return; // Programacio nomes mostra Dl-Dv
+  var horaIdx=0;
+  if(hora){
+    var hp=hora.split(':'); var minTotal=parseInt(hp[0],10)*60+parseInt(hp[1],10);
+    if(minTotal>=480 && minTotal<1020) horaIdx=Math.floor((minTotal-480)/60);
+  }
+  var llista=lsGet(PROG_EVENTS_KEY)||[];
+  var evId='act_'+actId;
+  llista=llista.filter(function(e){ return e.id!==evId; });
+  llista.push({
+    id:evId, dia:dow, hora:horaIdx, data:diaISO,
+    titol:nom, curs:mc2?mc2.curs:'', tipus:'moss', nota:'', origen:'activitat'
+  });
+  lsSet(PROG_EVENTS_KEY, llista);
 }
 
 function tancarComentariAct(){var e=document.getElementById('pop-comentari-act');if(e)e.remove();}
@@ -1188,7 +1340,7 @@ function addAlumneManual(){
   var parts=nom.trim().split(' ').filter(function(x){return x.length>0;});
   var ini=parts.length>=2?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():nom.substring(0,2).toUpperCase();
   alumnes.push({ini:ini,nom:nom,color:colorIdx(alumnes.length)});
-  inp.value=''; inp.focus(); renderCfgAlumnes(); toast(nom+' afegit ✓');
+  inp.value=''; inp.focus(); guardarDades(); renderCfgAlumnes(); toast(nom+' afegit ✓');
 }
 function tancarDelAlu(){var e=document.getElementById('pop-del-alu');if(e)e.remove();}
 function confirmarEliminarAlumne(idx){
@@ -1209,7 +1361,7 @@ function confirmarEliminarAlumne(idx){
 }
 function delAlumne(idx){
   var ov=document.getElementById('pop-del-alu'); if(ov) ov.remove();
-  alumnes.splice(idx,1); renderCfgAlumnes(); toast('Alumne eliminat');
+  alumnes.splice(idx,1); guardarDades(); renderCfgAlumnes(); toast('Alumne eliminat');
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
 function handleExcelFile(inp){ var f=inp.files[0]; if(f) processFile(f); inp.value=''; }
@@ -1240,6 +1392,7 @@ function processRows(rows){
     var ini2=parts.length>=2?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():nomComplet.substring(0,2).toUpperCase();
     alumnes.push({id:id,ini:ini2,nom:nomComplet,color:colorIdx(alumnes.length)}); nous++;
   });
+  guardarDades();
   renderCfgAlumnes();
   document.getElementById('excel-feedback').innerHTML='<div style="padding:8px 10px;background:var(--moss-l);color:var(--moss);border-radius:var(--r);font-size:12px;font-weight:500;">✓ '+nous+' importats'+(dups?' · '+dups+' duplicats':'')+' </div>';
   toast(nous+' alumnes importats ✓');
@@ -1376,6 +1529,7 @@ function saveRubrica(ta){
   if(!rubrica[compId]) rubrica[compId]=[];
   if(!rubrica[compId][ci]) rubrica[compId][ci]={};
   rubrica[compId][ci][rang]=ta.value.trim();
+  guardarDades();
   toast('Guardat ✓');
 }
 function afegirCriteriBtn(b){afegirCriteri(b.dataset.cid);}
@@ -1383,12 +1537,14 @@ function eliminarCriteriBtn(b){eliminarCriteri(b.dataset.cid,parseInt(b.dataset.
 function editarNomCriteri(inp){
   var comp=competencies.find(function(c){return c.id===inp.dataset.compid;}); if(!comp) return;
   comp.criteris[parseInt(inp.dataset.ci)]=inp.value;
+  guardarDades();
 }
 function afegirCriteri(compId){
   var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
   comp.criteris.push('Nou criteri');
   if(!rubrica[compId]) rubrica[compId]=[];
   rubrica[compId].push({'1-4':'','5-6':'','7-8':'','9-10':''});
+  guardarDades();
   renderRubrica(); toast('Criteri afegit ✓');
 }
 function eliminarCriteri(compId,ci){
@@ -1396,6 +1552,7 @@ function eliminarCriteri(compId,ci){
   if(comp.criteris.length<=1){toast('Cal tenir almenys un criteri');return;}
   comp.criteris.splice(ci,1);
   if(rubrica[compId]) rubrica[compId].splice(ci,1);
+  guardarDades();
   renderRubrica(); toast('Criteri eliminat');
 }
 
@@ -1609,6 +1766,7 @@ function openGraellaBtn(el){openGraella(el.dataset.cid,el.dataset.aid);}
 function openGraella(compId, actId){
   var comp=competencies.find(function(c){return c.id===compId;});
   var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
+  _currentGraellaCompId=compId; _currentGraellaActId=actId;
   if(!act.notaAltres) act.notaAltres={};
   if(!act.altres) act.altres={};
   alumnes.forEach(function(al){
@@ -1665,10 +1823,42 @@ function openGraella(compId, actId){
   document.getElementById('cv-table').innerHTML=thead+tbody;
 }
 
+// ─── Eliminar activitat ───
+function confirmarEliminarActivitat(){
+  var act=getActs(_currentGraellaCompId).find(function(a){return a.id===_currentGraellaActId;}); if(!act) return;
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-act';
+  overlay.innerHTML='<div class="popup" style="width:380px;">'
+    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
+    +'<div class="popup-head" style="text-align:center;">Eliminar activitat</div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(act.nom)+'</b></div>'
+    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Es perdran totes les notes d\'aquesta activitat per a tots els alumnes. Aquesta acció no es pot desfer.</div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarActivitatConfirmat()">Sí, eliminar</button>'
+      +'<button class="btn" style="flex:1;" onclick="tancarDelActivitat()">Cancel·lar</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
+function tancarDelActivitat(){ var e=document.getElementById('pop-del-act'); if(e) e.remove(); }
+function eliminarActivitatConfirmat(){
+  var compId=_currentGraellaCompId;
+  var acts=getActs(compId);
+  var idx=acts.findIndex(function(a){return a.id===_currentGraellaActId;});
+  if(idx===-1) return;
+  acts.splice(idx,1);
+  tancarDelActivitat();
+  guardarDades();
+  toast('Activitat eliminada');
+  showCV('cv-activitats','cv-graella');
+  openComp(compId);
+}
+
 // ═══════════════ INIT ═══════════════
 initGate();
 carregarAuth();
 carregarPerfil();
+carregarDades();
 syncCompetenciesForCurrentSubject();
 updateNav(); renderAll();
 if(authState.isLogged){
