@@ -1868,3 +1868,13 @@ if(authState.isLogged){
   showGatePas('g-login');
 }
 setTimeout(function(){ renderEntradaRapida(); }, 10);
+
+// ─── Comprovacio de connexio amb Supabase (nomes diagnostic, no canvia res encara) ───
+(function comprovarSupabase(){
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb){ console.warn('[Arrel] Supabase no configurat (falten les variables d\'entorn).'); return; }
+  sb.auth.getSession().then(function(res){
+    if(res.error){ console.warn('[Arrel] Supabase connectat pero amb error:', res.error.message); }
+    else{ console.info('[Arrel] Connexio amb Supabase OK ✓'); }
+  }).catch(function(err){ console.warn('[Arrel] No s\'ha pogut connectar amb Supabase:', err.message); });
+})();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createSupabaseClient } from "../lib/supabaseClient";
 
 const ROUTE_MAP = {
   home: "/inici",
@@ -35,6 +36,7 @@ export default function QuadernPrototype({ initialScreen }) {
       window.__QUADERN_INITIAL_SCREEN__ = initialScreen;
       window.__QUADERN_ROUTE_MODE__ = true;
       window.__QUADERN_ROUTE_MAP__ = ROUTE_MAP;
+      window.__QUADERN_SUPABASE__ = createSupabaseClient();
 
       const hasFonts = document.querySelector(
         'link[data-quadern-fonts="1"]'
@@ -68,6 +70,7 @@ export default function QuadernPrototype({ initialScreen }) {
       delete window.__QUADERN_INITIAL_SCREEN__;
       delete window.__QUADERN_ROUTE_MODE__;
       delete window.__QUADERN_ROUTE_MAP__;
+      delete window.__QUADERN_SUPABASE__;
       if (injectedScript && injectedScript.parentNode) {
         injectedScript.parentNode.removeChild(injectedScript);
       }
