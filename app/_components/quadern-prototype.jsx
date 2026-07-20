@@ -1,0 +1,94 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+const ROUTE_MAP = {
+  home: "/inici",
+  competencies: "/competencies",
+  nova: "/nova-activitat",
+  config: "/configuracio",
+};
+
+export default function QuadernPrototype({ initialScreen }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    let mounted = true;
+    let injectedStyle = null;
+    let injectedScript = null;
+
+    async function loadPrototype() {
+      const [htmlRes, cssRes, jsRes] = await Promise.all([
+        fetch("/quadern.html"),
+        fetch("/quadern.css"),
+        fetch("/quadern.js"),
+      ]);
+
+      const [html, css, js] = await Promise.all([
+        htmlRes.text(),
+        cssRes.text(),
+        jsRes.text(),
+      ]);
+
+      if (!mounted || !containerRef.current) return;
+
+      window.__QUADERN_INITIAL_SCREEN__ = initialScreen;
+      window.__QUADERN_ROUTE_MODE__ = true;
+      window.__QUADERN_ROUTE_MAP__ = ROUTE_MAP;
+
+      const hasFonts = document.querySelector(
+        'link[data-quadern-fonts="1"]'
+      );
+      if (!hasFonts) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href =
+          "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Karla:wght@400;500;600;700&display=swap";
+        link.setAttribute("data-quadern-fonts", "1");
+        document.head.appendChild(link);
+      }
+
+      injectedStyle = document.createElement("style");
+      injectedStyle.setAttribute("data-quadern-style", "1");
+      injectedStyle.textContent = css;
+      document.head.appendChild(injectedStyle);
+
+      containerRef.current.innerHTML = html;
+
+      injectedScript = document.createElement("script");
+      injectedScript.setAttribute("data-quadern-script", "1");
+      injectedScript.textContent = js;
+      containerRef.current.appendChild(injectedScript);
+    }
+
+    loadPrototype();
+
+    return () => {
+      mounted = false;
+      delete window.__QUADERN_INITIAL_SCREEN__;
+      delete window.__QUADERN_ROUTE_MODE__;
+      delete window.__QUADERN_ROUTE_MAP__;
+      if (injectedScript && injectedScript.parentNode) {
+        injectedScript.parentNode.removeChild(injectedScript);
+      }
+      if (injectedStyle && injectedStyle.parentNode) {
+        injectedStyle.parentNode.removeChild(injectedStyle);
+      }
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+      }
+    };
+  }, [initialScreen]);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    />
+  );
+}

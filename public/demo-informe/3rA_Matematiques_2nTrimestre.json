@@ -1,0 +1,2329 @@
+{
+  "versio": "1.0",
+  "exportat": "2026-07-19T16:52:17.192Z",
+  "nomInforme": "3r A",
+  "professor": "Jordi Soler",
+  "centre": "Escola Montserrat",
+  "any": "2025-2026",
+  "curs": "3r A",
+  "trimestre": "2n Trimestre",
+  "assignatura": "Matematiques",
+  "alumnes": [
+    {
+      "id": "",
+      "ini": "MR",
+      "nom": "Marc Roca Bosch",
+      "global": 5.3,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5
+              },
+              "mitjana": 5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.9
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.4
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 4.5
+              },
+              "mitjana": 4.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.1
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 6.5
+              },
+              "mitjana": 6.5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 4.5
+              },
+              "mitjana": 4.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.8
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "SV",
+      "nom": "Sofia Vila Torrent",
+      "global": 6.3,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.8
+              },
+              "mitjana": 5.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.5
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.6
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 7
+              },
+              "mitjana": 7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.1
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.5
+              },
+              "mitjana": 7.5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "LE",
+      "nom": "Laia Esteve Mas",
+      "global": 9.1,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.6
+              },
+              "mitjana": 8.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9
+              },
+              "mitjana": 9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.6
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.1
+              },
+              "mitjana": 9.1,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.8
+              },
+              "mitjana": 8.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.5
+              },
+              "mitjana": 9.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.1
+              },
+              "mitjana": 8.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.9
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 10
+              },
+              "mitjana": 10,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 9.1
+              },
+              "mitjana": 9.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.5
+              },
+              "mitjana": 8.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 9
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 10
+              },
+              "mitjana": 10,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 9.4
+              },
+              "mitjana": 9.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 10
+              },
+              "mitjana": 10,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 9.7
+              },
+              "mitjana": 9.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 9.8
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "JP",
+      "nom": "Joan Puig Serra",
+      "global": 6.3,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.6
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.7
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.8
+              },
+              "mitjana": 5.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 7.3
+              },
+              "mitjana": 7.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.9
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.1
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "AO",
+      "nom": "Arnau Oms Ferrer",
+      "global": 8,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.9
+              },
+              "mitjana": 8.9,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 7.9
+              },
+              "mitjana": 7.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.4
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.7
+              },
+              "mitjana": 8.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.8
+              },
+              "mitjana": 7.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9
+              },
+              "mitjana": 9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.1
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 7.6
+              },
+              "mitjana": 7.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 9.1
+              },
+              "mitjana": 9.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.6
+              },
+              "mitjana": 6.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.9
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.7
+              },
+              "mitjana": 7.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.8
+              },
+              "mitjana": 8.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.8
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "MF",
+      "nom": "Marta Font Giro",
+      "global": 4.9,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6
+              },
+              "mitjana": 6,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.5
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 4.5
+              },
+              "mitjana": 4.5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.8
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 3.5
+              },
+              "mitjana": 3.5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.3
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5
+              },
+              "mitjana": 5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "PL",
+      "nom": "Pol Llopis Camps",
+      "global": 8.7,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9
+              },
+              "mitjana": 9,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.9
+              },
+              "mitjana": 8.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9.4
+              },
+              "mitjana": 9.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.8
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.9
+              },
+              "mitjana": 7.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.7
+              },
+              "mitjana": 8.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.7
+              },
+              "mitjana": 8.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.4
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.7
+              },
+              "mitjana": 8.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 9.3
+              },
+              "mitjana": 9.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.9
+              },
+              "mitjana": 8.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.8
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 9.9
+              },
+              "mitjana": 9.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.8
+              },
+              "mitjana": 8.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.8
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "NC",
+      "nom": "Neus Carbonell Costa",
+      "global": 5,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6
+              },
+              "mitjana": 6,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.4
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 5.8
+              },
+              "mitjana": 5.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 4.6
+              },
+              "mitjana": 4.6,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6
+              },
+              "mitjana": 6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.2
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 4.1
+              },
+              "mitjana": 4.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 4
+              },
+              "mitjana": 4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.3
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "JB",
+      "nom": "Jordi Badia Valls",
+      "global": 8.9,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.7
+              },
+              "mitjana": 8.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9.4
+              },
+              "mitjana": 9.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.7
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.6
+              },
+              "mitjana": 8.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.4
+              },
+              "mitjana": 9.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.4
+              },
+              "mitjana": 9.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 9
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.1
+              },
+              "mitjana": 8.1,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.5
+              },
+              "mitjana": 8.5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 9.8
+              },
+              "mitjana": 9.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.7
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.9
+              },
+              "mitjana": 8.9,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 10
+              },
+              "mitjana": 10,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 9
+              },
+              "mitjana": 9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 9.1
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "AT",
+      "nom": "Alba Trias Nadal",
+      "global": 6.1,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.4
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.7
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.5
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 6
+              },
+              "mitjana": 6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.8
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "RT",
+      "nom": "Roger Torres Vila",
+      "global": 7.5,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 7.1
+              },
+              "mitjana": 7.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 7.1
+              },
+              "mitjana": 7.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.2
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.3
+              },
+              "mitjana": 7.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 7.9
+              },
+              "mitjana": 7.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.2
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.8
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.5
+              },
+              "mitjana": 7.5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7
+              },
+              "mitjana": 7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.8
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "IC",
+      "nom": "Irene Comas Prat",
+      "global": 8.9,
+      "competencies": {
+        "mates-comp-1": {
+          "nom": "Resolucio de problemes",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-1",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9.8
+              },
+              "mitjana": 9.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-1",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9.8
+              },
+              "mitjana": 9.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-1",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-1",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Identificar dades i aplicar operacions": 9.6
+              },
+              "mitjana": 9.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 9.4
+        },
+        "mates-comp-2": {
+          "nom": "Raonament i connexions",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-2",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.6
+              },
+              "mitjana": 9.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-2",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.1
+              },
+              "mitjana": 9.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-2",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-2",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Buscar patrons i connectar conceptes": 9.7
+              },
+              "mitjana": 9.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 9.2
+        },
+        "mates-comp-3": {
+          "nom": "Comunicacio",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-3",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-3",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 8.2
+              },
+              "mitjana": 8.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-3",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 10
+              },
+              "mitjana": 10,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-3",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Expressar processos matematics": 7.8
+              },
+              "mitjana": 7.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.6
+        },
+        "mates-comp-4": {
+          "nom": "Sentit matematic",
+          "activitats": [
+            {
+              "id": "a0_mates-comp-4",
+              "nom": "Fraccions",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 9
+              },
+              "mitjana": 9,
+              "comentari": ""
+            },
+            {
+              "id": "a1_mates-comp-4",
+              "nom": "Geometria",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_mates-comp-4",
+              "nom": "Calcul mental",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 7.9
+              },
+              "mitjana": 7.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_mates-comp-4",
+              "nom": "Estadistica",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Domini del calcul, mesura i geometria": 9
+              },
+              "mitjana": 9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 8.5
+        }
+      },
+      "comentari": ""
+    }
+  ]
+}

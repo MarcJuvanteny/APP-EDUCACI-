@@ -1,0 +1,367 @@
+
+<!-- GATE -->
+<div class="gate" id="gate">
+<div class="gate-box">
+
+  <!-- PAS 0: INICI SESSIO -->
+  <div class="gate-step on" id="g-login">
+    <div class="gate-eyebrow">Arrel</div>
+    <div class="gate-title">Inicia sessió</div>
+    <div class="gate-sub">Accedeix al teu compte per continuar.</div>
+    <div class="fg"><label class="flbl">Correu electrònic</label><input class="input" id="login-email" type="email" placeholder="nom@centre.cat"></div>
+    <div class="fg"><label class="flbl">Contrasenya</label><input class="input" id="login-pass" type="password" placeholder="••••••••"></div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;margin-bottom:8px;" onclick="iniciarSessio()">Entrar →</button>
+    <button class="btn" style="width:100%;padding:10px;margin-bottom:8px;" onclick="showGatePas('g-register')">Crear compte</button>
+    <button class="btn btn-sm" style="width:100%;" onclick="entrarModeDev()">Entrar com a desenvolupador</button>
+  </div>
+
+  <!-- PAS 0b: REGISTRE -->
+  <div class="gate-step" id="g-register">
+    <button class="gate-back" onclick="showGatePas('g-login')">← Tornar</button>
+    <div class="gate-eyebrow">Nou compte</div>
+    <div class="gate-title">Registra't</div>
+    <div class="gate-sub">Crea el teu compte per començar a configurar l'app.</div>
+    <div class="fg"><label class="flbl">Nom i cognoms</label><input class="input" id="reg-user-nom" placeholder="Ex: Anna Garcia Puig"></div>
+    <div class="fg"><label class="flbl">Correu electrònic</label><input class="input" id="reg-user-email" type="email" placeholder="nom@centre.cat"></div>
+    <div class="fg"><label class="flbl">Contrasenya</label><input class="input" id="reg-user-pass" type="password" placeholder="Mínim 6 caràcters"></div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;margin-bottom:8px;" onclick="registrarCompte()">Crear compte i continuar →</button>
+    <button class="btn" style="width:100%;" onclick="showGatePas('g-login')">Ja tinc compte</button>
+  </div>
+
+  <!-- PAS 1: DADES -->
+  <div class="gate-step" id="g-dades">
+    <div class="gate-eyebrow">Benvingut/da</div>
+    <div class="gate-title">Configura el teu perfil</div>
+    <div class="gate-sub">Dades bàsiques per personalitzar l'app.</div>
+    <div class="fg"><label class="flbl">Nom complet</label><input class="input" id="reg-nom" placeholder="Ex: Anna Garcia"></div>
+    <div class="g2" style="gap:10px;">
+      <div class="fg"><label class="flbl">Centre educatiu</label><input class="input" id="reg-centre" placeholder="Ex: Escola Montserrat"></div>
+      <div class="fg"><label class="flbl">Any escolar</label><input class="input" id="reg-any" value="2025-2026"></div>
+    </div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;" onclick="gatePas2()">Continuar →</button>
+  </div>
+
+  <!-- PAS 2: CURSOS -->
+  <div class="gate-step" id="g-cursos">
+    <button class="gate-back" onclick="showGatePas('g-dades')">← Tornar</button>
+    <div class="gate-eyebrow">Pas 2 de 3</div>
+    <div class="gate-title">Quins cursos tens?</div>
+    <div class="gate-sub">Selecciona tots els cursos on imparteixes alguna assignatura.</div>
+    <div class="reg-grid" id="cursos-grid"></div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;margin-top:8px;" onclick="gatePas3()">Continuar →</button>
+  </div>
+
+  <!-- PAS 3: ASSIGNATURES -->
+  <div class="gate-step" id="g-assigns">
+    <button class="gate-back" onclick="showGatePas('g-cursos')">← Tornar</button>
+    <div class="gate-eyebrow">Pas 3 de 3</div>
+    <div class="gate-title">Assignatures per curs</div>
+    <div class="gate-sub">Tria quines assignatures imparteixes a cada curs.</div>
+    <div id="assigns-container"></div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;margin-top:4px;" onclick="gateEntrar()">Entrar a l'app →</button>
+  </div>
+
+  <!-- PAS 4a: ENTRADA RÀPIDA o SELECCIONAR CURS -->
+  <div class="gate-step" id="g-sel-cursos">
+    <div class="gate-eyebrow" id="g-sel-eyebrow">Bon dia!</div>
+    <div class="gate-title">Quin curs vols obrir?</div>
+    <!-- Entrada ràpida: última sessió -->
+    <div id="g-sel-cursos-list"></div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:8px;">
+      <button class="btn btn-clay btn-sm" onclick="obrirNouCurs()">+ Nou curs</button>
+      <button class="btn btn-sm" onclick="obrirGenerarInforme()">📊 Generar informe</button>
+      <button class="btn btn-sm" onclick="obrirEditarPerfil()">✏️ Editar perfil</button>
+      <button class="btn btn-sm btn-danger" onclick="tancarSessio()">Tancar sessió</button>
+    </div>
+  </div>
+
+
+  <!-- PAS 4c: SELECCIONAR ASSIGNATURA -->
+  <div class="gate-step" id="g-sel-assigns">
+    <button class="gate-back" onclick="showGatePas('g-sel-cursos')">← Tornar</button>
+    <div class="gate-eyebrow" id="g-sel-assigns-eyebrow">3r A · 1r Trimestre</div>
+    <div class="gate-title">Quina assignatura?</div>
+    <div class="gate-sub">Selecciona l'assignatura que vols obrir.</div>
+    <div id="g-sel-assigns-list"></div>
+  </div>
+
+  <!-- PAS 5: INFORME JSON -->
+  <div class="gate-step" id="g-informe">
+    <button class="gate-back" onclick="showGatePas('g-sel-cursos')">← Tornar</button>
+    <div class="gate-eyebrow">Informes</div>
+    <div class="gate-title">Generar informe</div>
+    <div class="gate-sub">Selecciona primer el curs. Les teves assignatures d'aquell curs s'afegiran soles.</div>
+    <div class="fg">
+      <label class="flbl">Curs</label>
+      <select class="input" id="inf-curs-sel" onchange="infSeleccionarCurs()">
+        <option value="">— Selecciona un curs —</option>
+      </select>
+    </div>
+    <div id="inf-curs-body" style="display:none;">
+      <div class="fg">
+        <label class="flbl">Títol de l'informe</label>
+        <input class="input" id="inf-titol" placeholder="Ex: Informe 3r A - 2n Trimestre">
+      </div>
+      <div id="inf-propi-info" style="font-size:11.5px;color:var(--moss);background:var(--moss-l);border-radius:var(--r);padding:8px 10px;margin-bottom:12px;"></div>
+      <label style="display:block;border:2px dashed var(--line2);border-radius:var(--rl);padding:24px;text-align:center;cursor:pointer;margin-bottom:12px;transition:all .2s;" for="inf-json-inp"
+        ondragover="event.preventDefault();this.style.borderColor='var(--clay)'" ondragleave="this.style.borderColor='var(--line2)'"
+        ondrop="event.preventDefault();this.style.borderColor='var(--line2)';infHandleDrop(event)">
+        <input type="file" id="inf-json-inp" accept=".json" multiple style="display:none;" onchange="infHandleFiles(this)">
+        <div style="font-size:24px;margin-bottom:6px;">📂</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px;" id="inf-dropzone-titol">Puja els JSON de la resta de professors</div>
+        <div style="font-size:11px;color:var(--ink3);">Pots seleccionar múltiples fitxers · han de ser d'aquest mateix curs</div>
+      </label>
+      <div id="inf-fitxers-list" style="margin-bottom:12px;"></div>
+      <div class="fg">
+        <label class="flbl">Filtrar per trimestre</label>
+        <select class="input" id="inf-trim-sel">
+          <option value="">Tots els trimestres (mitjana anual)</option>
+          <option value="1r Trimestre">1r Trimestre</option>
+          <option value="2n Trimestre">2n Trimestre</option>
+          <option value="3r Trimestre">3r Trimestre</option>
+        </select>
+      </div>
+      <button class="btn btn-clay" style="width:100%;" onclick="generarInforme()" id="inf-gen-btn" disabled>Generar informe →</button>
+      <div id="inf-resultat" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand" onclick="abrirGateSeleccio()"><div class="nav-dot"></div>Arrel</div>
+  <button class="ntab on" data-s="home" onclick="navGo(this)">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5L8 2l6 4.5V14H10v-3H6v3H2V6.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>Inici
+  </button>
+  <button class="ntab" data-s="alumnes" onclick="navGo(this)">
+    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.8" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 14c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Alumnes
+  </button>
+  <button class="ntab" data-s="competencies" onclick="navGo(this)">
+    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3" stroke-dasharray="1.5 2"/></svg>Avaluació
+  </button>
+
+  <button class="ntab" data-s="config" onclick="navGo(this)">
+    <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1 1M11.8 11.8l1 1M11.8 3.2l-1 1M3.2 11.8l1-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Configuració
+  </button>
+  <div class="nav-sp"></div>
+  <button class="ntab" data-s="programacio" onclick="navGo(this)" style="background:var(--brun-l);color:var(--brun);border:1px solid #D4B99A;border-radius:var(--r);padding:5px 11px;font-size:12px;font-weight:600;margin-right:6px;">
+    <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 1v2M11 1v2M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Programació
+  </button>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <div class="nav-ctx" onclick="abrirGateSeleccio()" style="gap:5px;">
+      <span id="nav-curs">—</span>
+      <span style="color:var(--ink3);">·</span>
+      <b id="nav-subj">—</b>
+    </div>
+    <div style="display:flex;gap:2px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:2px;">
+      <button class="trim-nav-btn" id="tnb-0" onclick="selTrimNav(0)">1T</button>
+      <button class="trim-nav-btn" id="tnb-1" onclick="selTrimNav(1)">2T</button>
+      <button class="trim-nav-btn" id="tnb-2" onclick="selTrimNav(2)">3T</button>
+    </div>
+  </div>
+</nav>
+
+<div class="body"><div class="main" id="main">
+
+<!-- HOME -->
+<div class="scr on" id="s-home">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;">
+    <div class="h2" id="home-title">Resum de classe</div>
+    <div style="font-size:12px;color:var(--ink3);" id="home-sub"></div>
+  </div>
+  <div class="g4" id="home-metrics"></div>
+  <div class="g2">
+    <div class="card" style="margin-bottom:0;">
+      <div class="sec">Gràfic d'aranya — Classe</div>
+      <div class="spider-wrap"><canvas id="spider-home" width="260" height="220"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="sec">Avaluació — Nivell mitjà</div>
+      <div id="home-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ALUMNES -->
+<div class="scr" id="s-alumnes">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div class="h2">Alumnes</div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-sm" onclick="exportarPDF()">Exportar PDF</button>
+      <button class="btn btn-clay btn-sm" onclick="exportarJSON()">↓ Exportar JSON</button>
+    </div>
+  </div>
+  <div style="margin-bottom:12px;">
+    <input class="input" id="cerca-alumnes" placeholder="🔍 Cercar alumne..." oninput="renderAlumnes()" style="max-width:320px;">
+  </div>
+  <div id="alumnes-view"></div>
+  <!-- Popup detall alumne -->
+  <div id="alumne-detail" style="display:none;">
+    <button class="btn btn-sm" onclick="document.getElementById('alumne-detail').style.display='none';document.getElementById('alumnes-table-wrap').style.display='block';" style="margin-bottom:14px;padding:8px 16px;font-size:13.5px;">← Tornar als alumnes</button>
+    <div id="alumne-detail-body"></div>
+  </div>
+  <div id="alumnes-table-wrap"></div>
+</div>
+
+<!-- COMPETÈNCIES -->
+<div class="scr" id="s-competencies">
+  <div id="cv-llista">
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+      <div class="h2">Avaluació</div>
+      <div style="font-size:12px;color:var(--ink3);">Selecciona'n una</div>
+    </div>
+    <div class="g4" id="comp-tiles"></div>
+  </div>
+  <div id="cv-activitats" style="display:none;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <button class="btn btn-sm" onclick="showCV('cv-llista','cv-activitats')" style="padding:7px 14px;font-size:13.5px;">← Tornar</button>
+      <div class="h2" id="cv-act-title" style="margin-bottom:0;"></div>
+    </div>
+    <div id="cv-act-body"></div>
+  </div>
+  <div id="cv-graella" style="display:none;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <button class="btn btn-sm" onclick="showCV('cv-activitats','cv-graella');openComp(currentCompId)" style="padding:7px 14px;font-size:13.5px;">← Tornar</button>
+      <div class="h2" id="cv-gr-title" style="margin-bottom:0;flex:1;"></div>
+      <span style="font-size:11px;color:var(--ink3);" id="cv-gr-data"></span>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;">Clica el nom del criteri per veure la rúbrica. Tab/Enter per navegar entre cel·les.</div>
+    <div class="tbl-wrap" style="border:1px solid var(--line);border-radius:var(--rl);"><table class="tbl" id="cv-table"></table></div>
+  </div>
+</div>
+
+<!-- PROGRAMACIÓ -->
+<div class="scr" id="s-programacio">
+  <div style="display:flex;align-items:baseline;margin-bottom:14px;">
+    <div class="h2">Programació</div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <iframe
+      id="programacio-react-frame"
+      src="/programacio"
+      title="Programació setmanal"
+      style="width:100%;height:78vh;min-height:640px;border:0;background:#f6efe4;"
+    ></iframe>
+  </div>
+</div>
+
+<!-- CONFIGURACIÓ -->
+<div class="scr" id="s-config">
+  <div style="display:flex;align-items:baseline;margin-bottom:14px;"><div class="h2">Configuració</div></div>
+  <div class="cfg-tabs">
+    <button class="cfg-tab on" onclick="cfgTab(this,'cfg-alumnes')">Alumnes</button>
+    <button class="cfg-tab" onclick="cfgTab(this,'cfg-rubrica')">Rúbrica</button>
+  </div>
+
+  <div class="cfg-section on" id="cfg-alumnes">
+    <div class="g2">
+      <div class="card" style="margin-bottom:0;">
+        <div class="sec">Importar Excel / CSV</div>
+        <div style="font-size:12px;color:var(--ink2);margin-bottom:10px;">Primera columna = nom, segona = cognom (opcional)</div>
+        <label id="excel-dz" style="display:block;border:2px dashed var(--line2);border-radius:var(--rl);padding:24px;text-align:center;cursor:pointer;margin-bottom:10px;" for="excel-inp"
+          ondragover="event.preventDefault();this.style.borderColor='var(--clay)'" ondragleave="this.style.borderColor='var(--line2)'" ondrop="event.preventDefault();this.style.borderColor='var(--line2)';handleDrop(event)">
+          <input type="file" id="excel-inp" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleExcelFile(this)">
+          <div style="font-size:24px;margin-bottom:6px;">📊</div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:2px;">Arrossega o clica</div>
+          <div style="font-size:11px;color:var(--ink3);">Excel o CSV</div>
+        </label>
+        <div class="sec">Afegir manualment</div>
+        <div style="display:flex;gap:6px;">
+          <input class="input" id="inp-alu" placeholder="Nom i cognoms..." onkeydown="if(event.key==='Enter')addAlumneManual()">
+          <button class="btn btn-clay" onclick="addAlumneManual()">+</button>
+        </div>
+        <div id="excel-feedback" style="margin-top:8px;"></div>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div class="sec" style="margin-bottom:0;">Alumnes (<span id="alu-count">0</span>)</div>
+        </div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;">El número és l'ordre de la llista — s'utilitza per identificar l'alumne als informes conjunts. Els alumnes nous s'afegeixen sempre al final.</div>
+        <div id="alu-list-cfg" style="max-height:300px;overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cfg-section" id="cfg-rubrica">
+    <div id="rubrica-body"></div>
+  </div>
+
+  <div class="cfg-section" id="cfg-visual">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-size:13px;font-weight:600;">Mostrar notes amb icones</div>
+        <div class="toggle" id="vis-toggle" onclick="toggleVis()"></div>
+      </div>
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:12px;">En lloc del número, es mostra una icona personalitzable.</div>
+      <div id="vis-editor"></div>
+    </div>
+  </div>
+</div>
+
+</div></div>
+
+<!-- POPUP RÚBRICA -->
+<div class="overlay" id="pop-rubrica" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="popup" style="width:440px;">
+    <div class="popup-title">Rúbrica del criteri</div>
+    <div class="popup-head" id="pop-rub-criteri"></div>
+    <div id="pop-rub-rangs"></div>
+    <button class="btn" style="width:100%;margin-top:12px;" onclick="document.getElementById('pop-rubrica').style.display='none'">Tancar</button>
+  </div>
+</div>
+
+<!-- POPUP MISSATGE ALUMNE -->
+<div class="overlay" id="pop-miss" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="popup">
+    <div class="popup-title" id="pop-miss-nom"></div>
+    <div class="popup-head">Comentari de l'alumne</div>
+    <textarea class="input" id="pop-miss-text" rows="3" placeholder="Afegeix un comentari general..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn btn-clay" style="flex:1;" onclick="guardarMissatge()">Guardar</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('pop-miss').style.display='none'">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP NOU EVENT CALENDARI -->
+<div class="overlay" id="pop-event" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="popup">
+    <div class="popup-head">Nou event</div>
+    <div class="fg"><label class="flbl">Títol</label><input class="input" id="ev-titol" placeholder="Ex: Examen tema 3, Setmana del llibre..."></div>
+    <div class="g2" style="gap:8px;">
+      <div class="fg"><label class="flbl">Data inici</label><input class="input" type="date" id="ev-data"></div>
+      <div class="fg"><label class="flbl">Data fi (opcional)</label><input class="input" type="date" id="ev-data-fi"></div>
+    </div>
+    <div class="fg"><label class="flbl">Tipus</label>
+      <select class="input" id="ev-tipus">
+        <option value="examen">Examen</option>
+        <option value="activitat">Activitat</option>
+        <option value="excursio">Excursió / Colònies</option>
+        <option value="reunio">Reunió</option>
+        <option value="altre">Altre</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-clay" style="flex:1;" onclick="guardarEvent()">Guardar</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('pop-event').style.display='none'">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP NOU CURS -->
+<div class="overlay" id="pop-nou-curs" style="display:none;z-index:600;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="popup" style="width:420px;">
+    <div class="popup-head">Nou curs</div>
+    <div class="fg"><label class="flbl">Nom del curs</label><input class="input" id="nc-nom" placeholder="Ex: 3r A, 4t B..."></div>
+    <div class="fg"><label class="flbl">Assignatures (selecciona les que imparteixes)</label>
+      <div class="subj-chips" id="nc-subj-chips"></div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-clay" style="flex:1;" onclick="crearNouCurs()">Crear curs</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('pop-nou-curs').style.display='none'">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+

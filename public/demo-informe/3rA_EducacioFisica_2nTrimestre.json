@@ -1,0 +1,2329 @@
+{
+  "versio": "1.0",
+  "exportat": "2026-07-19T16:52:17.192Z",
+  "nomInforme": "3r A",
+  "professor": "Marta Puig",
+  "centre": "Escola Montserrat",
+  "any": "2025-2026",
+  "curs": "3r A",
+  "trimestre": "2n Trimestre",
+  "assignatura": "Educacio Fisica",
+  "alumnes": [
+    {
+      "id": "",
+      "ini": "MR",
+      "nom": "Marc Roca Bosch",
+      "global": 5.7,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.9
+              },
+              "mitjana": 4.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.7
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.6
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.8
+              },
+              "mitjana": 5.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.6
+              },
+              "mitjana": 4.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.9
+              },
+              "mitjana": 5.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.7
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "SV",
+      "nom": "Sofia Vila Torrent",
+      "global": 7.1,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 8.1
+              },
+              "mitjana": 8.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.9
+              },
+              "mitjana": 6.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.9
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8.5
+              },
+              "mitjana": 8.5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8.2
+              },
+              "mitjana": 8.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.4
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.6
+              },
+              "mitjana": 7.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.6
+              },
+              "mitjana": 6.6,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.5
+              },
+              "mitjana": 6.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6.5
+              },
+              "mitjana": 6.5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.6
+              },
+              "mitjana": 7.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.2
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "LE",
+      "nom": "Laia Esteve Mas",
+      "global": 4.7,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.9
+              },
+              "mitjana": 5.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.5
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.6
+              },
+              "mitjana": 4.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.6
+              },
+              "mitjana": 3.6,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.9
+              },
+              "mitjana": 5.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.9
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.3
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "JP",
+      "nom": "Joan Puig Serra",
+      "global": 4.6,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.1
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.6
+              },
+              "mitjana": 3.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 3.9
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.8
+              },
+              "mitjana": 5.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.8
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 3.6
+              },
+              "mitjana": 3.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.5
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "AO",
+      "nom": "Arnau Oms Ferrer",
+      "global": 4.2,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 2.9
+              },
+              "mitjana": 2.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4
+              },
+              "mitjana": 4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 3.2
+              },
+              "mitjana": 3.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 3.8
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.9
+              },
+              "mitjana": 4.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4
+              },
+              "mitjana": 4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.4
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 3.8
+              },
+              "mitjana": 3.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.5
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.6
+              },
+              "mitjana": 4.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 3.2
+              },
+              "mitjana": 3.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 3.3
+              },
+              "mitjana": 3.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "MF",
+      "nom": "Marta Font Giro",
+      "global": 7.6,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.7
+              },
+              "mitjana": 6.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 7
+              },
+              "mitjana": 7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.3
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8.2
+              },
+              "mitjana": 8.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8
+              },
+              "mitjana": 8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8.1
+              },
+              "mitjana": 8.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.5
+              },
+              "mitjana": 6.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.7
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.7
+              },
+              "mitjana": 7.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7
+              },
+              "mitjana": 7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.8
+              },
+              "mitjana": 7.8,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7
+              },
+              "mitjana": 7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.4
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 8.6
+              },
+              "mitjana": 8.6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.6
+              },
+              "mitjana": 7.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.9
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "PL",
+      "nom": "Pol Llopis Camps",
+      "global": 6,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.1
+              },
+              "mitjana": 6.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.8
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.9
+              },
+              "mitjana": 5.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.9
+              },
+              "mitjana": 5.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.6
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.6
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.3
+              },
+              "mitjana": 7.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.9
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "NC",
+      "nom": "Neus Carbonell Costa",
+      "global": 7.7,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 7.1
+              },
+              "mitjana": 7.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 8.7
+              },
+              "mitjana": 8.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 8.9
+              },
+              "mitjana": 8.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.9
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8.2
+              },
+              "mitjana": 8.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 8.4
+              },
+              "mitjana": 8.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.6
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.2
+              },
+              "mitjana": 7.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 9.1
+              },
+              "mitjana": 9.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.6
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.7
+              },
+              "mitjana": 7.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6.8
+              },
+              "mitjana": 6.8,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 8.3
+              },
+              "mitjana": 8.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.6
+              },
+              "mitjana": 7.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 7.6
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "JB",
+      "nom": "Jordi Badia Valls",
+      "global": 5.3,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.7
+              },
+              "mitjana": 5.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.8
+              },
+              "mitjana": 4.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.1
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.6
+              },
+              "mitjana": 4.6,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.2
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5
+              },
+              "mitjana": 5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.3
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6.5
+              },
+              "mitjana": 6.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5.4
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "AT",
+      "nom": "Alba Trias Nadal",
+      "global": 4.7,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.7
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.5
+              },
+              "mitjana": 4.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.3
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.7
+              },
+              "mitjana": 4.7,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.2
+              },
+              "mitjana": 5.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 4.5
+              },
+              "mitjana": 4.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.7
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.1
+              },
+              "mitjana": 5.1,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.6
+              },
+              "mitjana": 5.6,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 5
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "RT",
+      "nom": "Roger Torres Vila",
+      "global": 6.4,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 5.9
+              },
+              "mitjana": 5.9,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 7.5
+              },
+              "mitjana": 7.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.5
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.8
+              },
+              "mitjana": 5.8,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 7.3
+              },
+              "mitjana": 7.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 6.2
+              },
+              "mitjana": 6.2,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.2
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.3
+              },
+              "mitjana": 6.3,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 7.5
+              },
+              "mitjana": 7.5,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 6.4
+              },
+              "mitjana": 6.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.4
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 6
+              },
+              "mitjana": 6,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.4
+              },
+              "mitjana": 7.4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 7.7
+              },
+              "mitjana": 7.7,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 6.6
+        }
+      },
+      "comentari": ""
+    },
+    {
+      "id": "",
+      "ini": "IC",
+      "nom": "Irene Comas Prat",
+      "global": 4.2,
+      "competencies": {
+        "ef-comp-1": {
+          "nom": "Resolucio motriu",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-1",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 3.4
+              },
+              "mitjana": 3.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-1",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 4.2
+              },
+              "mitjana": 4.2,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-1",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 3.7
+              },
+              "mitjana": 3.7,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-1",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Habilitats de moviment i tactiques de joc": 3.8
+              },
+              "mitjana": 3.8,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 3.8
+        },
+        "ef-comp-2": {
+          "nom": "Salut i seguretat",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-2",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-2",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.6
+              },
+              "mitjana": 3.6,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-2",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.4
+              },
+              "mitjana": 3.4,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-2",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Benestar fisic, escalfament i higiene": 3.3
+              },
+              "mitjana": 3.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 3.7
+        },
+        "ef-comp-3": {
+          "nom": "Expressio corporal",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-3",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.4
+              },
+              "mitjana": 5.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-3",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 3.3
+              },
+              "mitjana": 3.3,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-3",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 5.3
+              },
+              "mitjana": 5.3,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-3",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Comunicacio gestual i ritme musical": 3.9
+              },
+              "mitjana": 3.9,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.5
+        },
+        "ef-comp-4": {
+          "nom": "Interaccio social",
+          "activitats": [
+            {
+              "id": "a0_ef-comp-4",
+              "nom": "Circuit d'habilitats",
+              "data": "15/01/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.4
+              },
+              "mitjana": 4.4,
+              "comentari": ""
+            },
+            {
+              "id": "a1_ef-comp-4",
+              "nom": "Joc net",
+              "data": "15/02/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4
+              },
+              "mitjana": 4,
+              "comentari": ""
+            },
+            {
+              "id": "a2_ef-comp-4",
+              "nom": "Dansa i ritme",
+              "data": "15/03/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 5.5
+              },
+              "mitjana": 5.5,
+              "comentari": ""
+            },
+            {
+              "id": "a3_ef-comp-4",
+              "nom": "Prova de resistencia",
+              "data": "15/04/2026",
+              "notesCriteris": {
+                "Joc net, respecte i cooperacio en grup": 4.3
+              },
+              "mitjana": 4.3,
+              "comentari": ""
+            }
+          ],
+          "mitjana": 4.6
+        }
+      },
+      "comentari": ""
+    }
+  ]
+}
