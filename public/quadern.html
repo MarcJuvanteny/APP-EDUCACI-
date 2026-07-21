@@ -118,6 +118,15 @@
     </div>
     <div id="inf-curs-body" style="display:none;">
       <div class="fg">
+        <label class="flbl">Etapa de l'informe</label>
+        <select class="input" id="inf-trim-sel" onchange="infSeleccionarCurs()">
+          <option value="1r Trimestre">1r Trimestre</option>
+          <option value="2n Trimestre">2n Trimestre</option>
+          <option value="3r Trimestre">3r Trimestre</option>
+          <option value="">Informe de tot el curs</option>
+        </select>
+      </div>
+      <div class="fg">
         <label class="flbl">Títol de l'informe</label>
         <input class="input" id="inf-titol" placeholder="Ex: Informe 3r A - 2n Trimestre">
       </div>
@@ -128,19 +137,14 @@
         <input type="file" id="inf-json-inp" accept=".json" multiple style="display:none;" onchange="infHandleFiles(this)">
         <div style="font-size:24px;margin-bottom:6px;">📂</div>
         <div style="font-size:13px;font-weight:600;margin-bottom:2px;" id="inf-dropzone-titol">Puja els JSON de la resta de professors</div>
-        <div style="font-size:11px;color:var(--ink3);">Pots seleccionar múltiples fitxers · han de ser d'aquest mateix curs</div>
+        <div style="font-size:11px;color:var(--ink3);">Pots seleccionar múltiples fitxers · han de ser d'aquest mateix curs i etapa</div>
       </label>
       <div id="inf-fitxers-list" style="margin-bottom:12px;"></div>
-      <div class="fg">
-        <label class="flbl">Filtrar per trimestre</label>
-        <select class="input" id="inf-trim-sel">
-          <option value="">Tots els trimestres (mitjana anual)</option>
-          <option value="1r Trimestre">1r Trimestre</option>
-          <option value="2n Trimestre">2n Trimestre</option>
-          <option value="3r Trimestre">3r Trimestre</option>
-        </select>
-      </div>
       <button class="btn btn-clay" style="width:100%;" onclick="generarInforme()" id="inf-gen-btn" disabled>Generar informe →</button>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn inf-export-btn" style="flex:1;" onclick="exportarInformeDoc()" id="inf-doc-btn" disabled>📄 Word / Google Docs</button>
+        <button class="btn inf-export-btn" style="flex:1;" onclick="exportarInformeExcel()" id="inf-excel-btn" disabled>📊 Excel</button>
+      </div>
       <div id="inf-resultat" style="margin-top:14px;"></div>
     </div>
   </div>

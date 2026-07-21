@@ -1087,6 +1087,9 @@ function renderHome(){
 function drawSpider(canvasId, labels, datasets, colors, W, H){
   var canvas=document.getElementById(canvasId); if(!canvas) return;
   var ctx=canvas.getContext('2d');
+  spiderCoreDraw(ctx, W, H, labels, datasets, colors);
+}
+function spiderCoreDraw(ctx, W, H, labels, datasets, colors){
   ctx.clearRect(0,0,W,H);
   var n=labels.length; var cx=W/2; var cy=H/2; var R=Math.min(W,H)/2-30;
   var angleStep=2*Math.PI/n;
@@ -2040,6 +2043,49 @@ function exportarPDF(){
 
 // Informe JSON
 var infJSONs=[];
+var infPeticioActual=0;
+// Igual que construirDadesInforme, pero llegint sempre les dades reals de Supabase per al
+// curs/assignatura/trimestre indicats — no fa servir alumnes/activitats en memoria, que
+// nomes reflecteixen el curs i l'assignatura que hi ha oberts en aquell moment a l'app.
+// Cal per generar l'informe conjunt: es poden triar cursos/assignatures diferents als que
+// s'estan veient a la pantalla principal.
+function construirDadesInformeDB(mc, subj, trim, nomInforme){
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb||!mc.id) return Promise.resolve(construirDadesInforme(mc,subj,trim,nomInforme));
+  var assignaturaId=mc.assignsIds&&mc.assignsIds[mc.assigns.indexOf(subj)];
+  if(!assignaturaId) return Promise.resolve(construirDadesInforme(mc,subj,trim,nomInforme));
+  var comps=getCompetenciesForSubject(subj);
+  return Promise.all([
+    dbCarregarAlumnes(mc.id),
+    sb.from('activitats').select('*').eq('curs_id',mc.id).eq('assignatura_id',assignaturaId).eq('trimestre',trim)
+  ]).then(function(res){
+    var alumnesDB=res[0]||[];
+    var actsRows=(res[1]&&res[1].data)||[];
+    var actsPerComp={};
+    actsRows.forEach(function(row){
+      if(!actsPerComp[row.competencia_id]) actsPerComp[row.competencia_id]=[];
+      actsPerComp[row.competencia_id].push(row);
+    });
+    var alumnesOut=alumnesDB.map(function(al){
+      var notesPerComp={};
+      comps.forEach(function(comp){
+        var rows=actsPerComp[comp.id]||[];
+        var notesPerAct=rows.map(function(row){
+          var notesRow=row.notes||{}; var notesAl=notesRow[al.ini]||{};
+          var notesCriteris={}; comp.criteris.forEach(function(crit){notesCriteris[crit]=notesAl[crit]!=null?notesAl[crit]:null;});
+          var t=0,c=0; comp.criteris.forEach(function(crit){var n=notesCriteris[crit]; if(n!=null){t+=n;c++;}});
+          return {id:row.id,nom:row.nom,data:formatarDataActivitat(row.data,row.hora),notesCriteris:notesCriteris,mitjana:c?Math.round(t/c*10)/10:null,comentari:(row.comentaris||{})[al.ini]||''};
+        });
+        var tC=0,cC=0; notesPerAct.forEach(function(a){if(a.mitjana!=null){tC+=a.mitjana;cC++;}});
+        notesPerComp[comp.id]={nom:comp.nom,activitats:notesPerAct,mitjana:cC?Math.round(tC/cC*10)/10:null};
+      });
+      var vals=Object.values(notesPerComp).map(function(c){return c.mitjana;}).filter(function(v){return v!==null;});
+      var global=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10:null;
+      return {id:al.dbId||'',ini:al.ini,nom:al.nom,global:global,competencies:notesPerComp,comentari:al.comentari||''};
+    });
+    return {versio:'1.0',exportat:new Date().toISOString(),nomInforme:nomInforme||mc.curs,professor:prof.nom,centre:prof.centre,any:prof.any,curs:mc.curs,trimestre:trim,assignatura:subj,alumnes:alumnesOut};
+  });
+}
 function obrirGenerarInforme(){
   var sel=document.getElementById('inf-curs-sel');
   sel.innerHTML='<option value="">— Selecciona un curs —</option>'
@@ -2064,19 +2110,34 @@ function infSeleccionarCurs(){
   }
   var mc=mesCursos[parseInt(idx,10)];
   if(!mc){ body.style.display='none'; return; }
-  mc.assigns.forEach(function(subj){
-    trimestres.forEach(function(trim){
-      var dades=construirDadesInforme(mc,subj,trim,mc.curs);
-      var key=mc.curs+'_'+trim+'_'+subj;
-      infJSONs=infJSONs.filter(function(j){ return j.key!==key; });
-      infJSONs.push({key:key,nom:'Les meves dades ('+subj+')',dades:dades,propi:true});
-    });
-  });
-  document.getElementById('inf-propi-info').innerHTML='✓ Ja s\'han afegit les teves assignatures de <b>'+escHtml(mc.curs)+'</b>: '+escHtml(mc.assigns.join(', '))+'.';
+  var trimSel=(document.getElementById('inf-trim-sel')||{}).value;
+  var trimsAGenerar=trimSel?[trimSel]:trimestres; // etapa concreta, o els 3 trimestres si es "tot el curs"
   var titolInp=document.getElementById('inf-titol'); if(titolInp&&!titolInp.value) titolInp.value='Informe '+mc.curs;
   var dzTitol=document.getElementById('inf-dropzone-titol'); if(dzTitol) dzTitol.textContent='Puja aquí els JSON de la resta de professors de '+mc.curs;
   body.style.display='block';
-  infRenderFitxers();
+  document.getElementById('inf-propi-info').innerHTML='Carregant les teves dades de '+escHtml(mc.curs)+'...';
+  var genBtn=document.getElementById('inf-gen-btn'); if(genBtn) genBtn.disabled=true;
+
+  var peticio=++infPeticioActual; // evita que una crida antiga sobreescrigui una de mes nova (canvi rapid de curs/etapa)
+  var tasks=[];
+  mc.assigns.forEach(function(subj){
+    trimsAGenerar.forEach(function(trim){
+      tasks.push(construirDadesInformeDB(mc,subj,trim,mc.curs).then(function(dades){
+        var key=mc.curs+'_'+trim+'_'+subj;
+        infJSONs=infJSONs.filter(function(j){ return j.key!==key; });
+        infJSONs.push({key:key,nom:'Les meves dades ('+subj+')',dades:dades,propi:true});
+      }));
+    });
+  });
+  Promise.all(tasks).then(function(){
+    if(peticio!==infPeticioActual) return; // s'ha triat un altre curs/etapa mentre carregava
+    document.getElementById('inf-propi-info').innerHTML='✓ Ja s\'han afegit les teves assignatures de <b>'+escHtml(mc.curs)+'</b> ('+escHtml(trimSel||'tot el curs')+'): '+escHtml(mc.assigns.join(', '))+'.';
+    infRenderFitxers();
+  }).catch(function(err){
+    if(peticio!==infPeticioActual) return;
+    toast('Error carregant les dades: '+err.message);
+    infRenderFitxers();
+  });
 }
 function infHandleDrop(e){infLlegirFitxers(Array.from(e.dataTransfer.files).filter(function(f){return f.name.endsWith('.json');}));}
 function infHandleFiles(inp){infLlegirFitxers(Array.from(inp.files));inp.value='';}
@@ -2094,8 +2155,8 @@ function infLlegirFitxers(files){
 }
 function infRenderFitxers(){
   var el=document.getElementById('inf-fitxers-list'); if(!el) return;
-  var btn=document.getElementById('inf-gen-btn');
-  if(!infJSONs.length){el.innerHTML='';if(btn)btn.disabled=true;return;}
+  var btns=['inf-gen-btn','inf-doc-btn','inf-excel-btn'].map(function(id){return document.getElementById(id);});
+  if(!infJSONs.length){el.innerHTML='';btns.forEach(function(b){if(b)b.disabled=true;});return;}
   el.innerHTML=infJSONs.map(function(j,i){
     var d=j.dades;
     return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);">'
@@ -2105,20 +2166,61 @@ function infRenderFitxers(){
       +'<button class="btn btn-sm btn-danger" onclick="infJSONs.splice('+i+',1);infRenderFitxers()">✕</button>'
     +'</div>';
   }).join('');
-  if(btn) btn.disabled=false;
+  btns.forEach(function(b){if(b)b.disabled=false;});
 }
-function generarInforme(){
+// 1-4 No Assolit · 5-6 Assolit · 7-8 Assoliment notable · 9-10 Assoliment excel·lent
+function qualificacioText(n){
+  if(n===null||n===undefined) return '—';
+  if(n<5) return 'No Assolit';
+  if(n<7) return 'Assolit';
+  if(n<9) return 'Assoliment notable';
+  return 'Assoliment excel·lent';
+}
+// Gràfic d'aranya com a SVG inline (no depèn de canvas/toDataURL, es veu sempre
+// en obrir l'informe en una pestanya nova, i s'imprimeix/exporta millor que un raster).
+function spiderSvg(labels, datasets, colors, W, H){
+  var n=labels.length; if(!n) return '';
+  var cx=W/2, cy=H/2, R=Math.min(W,H)/2-26;
+  var angleStep=2*Math.PI/n;
+  var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  for(var g=2;g<=10;g+=2){
+    var pts=[];
+    for(var i=0;i<n;i++){ var a=angleStep*i-Math.PI/2; var r=R*(g/10); pts.push((cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)); }
+    svg+='<polygon points="'+pts.join(' ')+'" fill="none" stroke="#00000014" stroke-width="1"/>';
+  }
+  for(var i=0;i<n;i++){
+    var a=angleStep*i-Math.PI/2;
+    var x2=cx+R*Math.cos(a), y2=cy+R*Math.sin(a);
+    svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="#00000022" stroke-width="1"/>';
+    var lx=cx+(R+13)*Math.cos(a), ly=cy+(R+13)*Math.sin(a);
+    var anchor=Math.abs(Math.cos(a))<0.35?'middle':(Math.cos(a)>0?'start':'end');
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="8" font-weight="700" fill="#6E665E" text-anchor="'+anchor+'" dominant-baseline="middle">'+escHtml(labels[i])+'</text>';
+  }
+  var palette=['#B5562F','#566B47','#3C6B82'];
+  datasets.forEach(function(data,di){
+    var hex=colors&&colors[di]||palette[di]||palette[0];
+    var pts=data.map(function(v,i){ var a=angleStep*i-Math.PI/2; var r=R*(Math.min(10,Math.max(0,v||0))/10); return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); });
+    svg+='<polygon points="'+pts.join(' ')+'" fill="'+hex+'33" stroke="'+hex+'" stroke-width="2"/>';
+    data.forEach(function(v,i){ var a=angleStep*i-Math.PI/2; var r=R*(Math.min(10,Math.max(0,v||0))/10); var x=cx+r*Math.cos(a), y=cy+r*Math.sin(a); svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.5" fill="'+hex+'"/>'; });
+  });
+  svg+='</svg>';
+  return svg;
+}
+// Calcula totes les dades de l'informe conjunt (comuna a la vista, l'exportacio a
+// Word/Google Docs i l'exportacio a Excel), perque les tres surtin identiques.
+function prepararDadesInforme(){
   var trimFilt=document.getElementById('inf-trim-sel').value;
   var jsonsFilt=trimFilt?infJSONs.filter(function(j){return j.dades.trimestre===trimFilt;}):infJSONs;
-  if(!jsonsFilt.length){toast('Cap fitxer');return;}
+  if(!jsonsFilt.length){toast('Cap fitxer');return null;}
 
   // Tots els fitxers han de ser del mateix curs: l'emparellament d'alumnes es fa
   // per ordre d'entrada (posicio 1,2,3...) dins la llista, no per nom ni codi,
   // aixi que nomes te sentit si tots venen de la mateixa llista de classe.
   var cursos=[]; jsonsFilt.forEach(function(j){ var c=j.dades.curs||''; if(cursos.indexOf(c)===-1) cursos.push(c); });
-  if(cursos.length>1){ toast('Els fitxers son de cursos diferents ('+cursos.join(', ')+'). Han de ser tots del mateix curs.'); return; }
+  if(cursos.length>1){ toast('Els fitxers son de cursos diferents ('+cursos.join(', ')+'). Han de ser tots del mateix curs.'); return null; }
 
   var titolInforme=(document.getElementById('inf-titol')||{}).value.trim()||'Informe de notes consolidades';
+  var etapaText=trimFilt||'Informe de tot el curs';
 
   var alumnesMap={};
   jsonsFilt.forEach(function(j){
@@ -2126,29 +2228,199 @@ function generarInforme(){
     (d.alumnes||[]).forEach(function(al,idx){
       var uid=idx; // ordre d'entrada dins la llista de classe, no nom ni codi
       if(!alumnesMap[uid]) alumnesMap[uid]={ordre:idx+1,nom:al.nom,assigns:{}};
-      alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre};
+      alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre,competencies:al.competencies||{}};
     });
   });
   var totsSubjs=[]; jsonsFilt.forEach(function(j){if(totsSubjs.indexOf(j.dades.assignatura)===-1)totsSubjs.push(j.dades.assignatura);});
   var ordres=Object.keys(alumnesMap).map(Number).sort(function(a,b){return a-b;});
-  var cont='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+escHtml(titolInforme)+'</title><style>body{font-family:Arial,sans-serif;padding:24px;font-size:12px;}table{width:100%;border-collapse:collapse;margin-bottom:20px;}th,td{border:1px solid #ddd;padding:6px 8px;text-align:center;}th{background:#f0ece4;font-size:10px;text-transform:uppercase;font-weight:700;}td:first-child{text-align:center;color:#999;}td:nth-child(2){text-align:left;font-weight:bold;}.v{color:#566B47;font-weight:700;}.m{color:#B98627;font-weight:700;}.d{color:#B5562F;font-weight:700;}h1{font-size:18px;margin-bottom:4px;}p{color:#888;font-size:11px;margin-bottom:14px;}</style></head><body>';
-  cont+='<h1>'+escHtml(titolInforme)+'</h1>';
-  cont+='<p>'+(cursos[0]?escHtml(cursos[0])+' · ':'')+(trimFilt||'Mitjana anual')+' · Generat: '+new Date().toLocaleDateString('ca-ES')+'</p>';
-  cont+='<table><thead><tr><th>#</th><th>Alumne</th>'+totsSubjs.map(function(s){return '<th>'+escHtml(s)+'</th>';}).join('')+'<th>Global</th></tr></thead><tbody>';
+
+  // Nota global de cada alumne (mitjana de les assignatures que te)
+  var globalsAlu={};
   ordres.forEach(function(uid){
-    var al=alumnesMap[uid]; cont+='<tr><td>'+al.ordre+'</td><td>'+escHtml(al.nom)+'</td>';
-    var vals=[];
-    totsSubjs.forEach(function(s){var n=al.assigns[s]?al.assigns[s].nota:null;if(n!==null)vals.push(n);var cls=n>=7?'v':n>=5?'m':'d';cont+='<td class="'+(n?cls:'')+'">'+(n||'—')+'</td>';});
-    var global=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10:null;
-    var gcls=global>=7?'v':global>=5?'m':'d';
-    cont+='<td class="'+(global?gcls:'')+'" style="font-size:14px;">'+(global||'—')+'</td></tr>';
+    var al=alumnesMap[uid]; var vals=[];
+    totsSubjs.forEach(function(s){var n=al.assigns[s]?al.assigns[s].nota:null; if(n!=null) vals.push(n);});
+    globalsAlu[uid]=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10:null;
   });
-  cont+='</tbody></table></body></html>';
+  var totsGlobals=ordres.map(function(uid){return globalsAlu[uid];}).filter(function(v){return v!=null;});
+  var mitjanaClasse=totsGlobals.length?Math.round(totsGlobals.reduce(function(a,b){return a+b;},0)/totsGlobals.length*10)/10:null;
+
+  // Mitjana de classe per assignatura (pel gràfic d'aranya de classe i la fila "Global")
+  var subjClasseAvg={};
+  totsSubjs.forEach(function(s){
+    var vals=[]; ordres.forEach(function(uid){ var a=alumnesMap[uid].assigns[s]; if(a&&a.nota!=null) vals.push(a.nota); });
+    subjClasseAvg[s]=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10:null;
+  });
+  // Mitjana de classe per competència de cada assignatura (per la taula de resum)
+  var subjCompClasseAvg={};
+  jsonsFilt.forEach(function(j){
+    var d=j.dades; var acc={};
+    (d.alumnes||[]).forEach(function(al){
+      var comps=al.competencies||{};
+      Object.keys(comps).forEach(function(ck){
+        var c=comps[ck]; if(!acc[ck]) acc[ck]={nom:c.nom,sum:0,count:0};
+        if(c.mitjana!=null){ acc[ck].sum+=c.mitjana; acc[ck].count++; }
+      });
+    });
+    subjCompClasseAvg[d.assignatura]=Object.keys(acc).map(function(ck){ var a=acc[ck]; return {nom:a.nom,mitjana:a.count?Math.round(a.sum/a.count*10)/10:null}; });
+  });
+
+  return {
+    titolInforme:titolInforme, etapaText:etapaText, curs:cursos[0]||'',
+    alumnesMap:alumnesMap, ordres:ordres, totsSubjs:totsSubjs,
+    globalsAlu:globalsAlu, mitjanaClasse:mitjanaClasse,
+    subjClasseAvg:subjClasseAvg, subjCompClasseAvg:subjCompClasseAvg
+  };
+}
+// Construeix l'HTML de l'informe a partir de les dades de prepararDadesInforme().
+// renderChart(labels,datasets,colors,W,H) genera el gràfic d'aranya — SVG per veure
+// l'informe al navegador, o una imatge PNG quan cal exportar a Word/Google Docs
+// (el visor HTML de Word no interpreta SVG incrustat).
+function generarInformeHTML(d, renderChart){
+  var COMENT_IA_HTML='<div style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;">🤖 Comentari generat amb IA — <i>disponible properament</i></div>';
+
+  var cont='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+escHtml(d.titolInforme)+'</title><style>'
+    +'body{font-family:Arial,sans-serif;padding:20px;font-size:11px;color:#222;}'
+    +'table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ddd;padding:5px 7px;}'
+    +'th{background:#f0ece4;font-size:9px;text-transform:uppercase;font-weight:700;text-align:center;}'
+    +'h1{font-size:17px;margin-bottom:2px;}h2{font-size:13px;margin:16px 0 6px;border-bottom:2px solid #B5562F;padding-bottom:3px;}'
+    +'.meta{color:#666;font-size:11px;margin-bottom:14px;}.meta b{color:#222;}'
+    +'.q{font-size:8.5px;color:#888;display:block;}'
+    +'.stu{border:1px solid #ddd;border-radius:6px;padding:8px 10px;margin-bottom:10px;page-break-inside:avoid;}'
+    +'@media print{body{padding:8px;}}'
+    +'</style></head><body>';
+
+  cont+='<h1>'+escHtml(d.titolInforme)+'</h1>';
+  cont+='<div class="meta"><b>Curs:</b> '+escHtml(d.curs||'—')+' &nbsp;·&nbsp; <b>Any escolar:</b> '+escHtml(prof.any||'—')
+    +' &nbsp;·&nbsp; <b>Tutor/a:</b> '+escHtml(prof.nom||'—')+' &nbsp;·&nbsp; <b>Etapa:</b> '+escHtml(d.etapaText)
+    +' &nbsp;·&nbsp; Generat: '+new Date().toLocaleDateString('ca-ES')+'</div>';
+
+  // ── Resum de classe ── assignatura → competència (mitjana de classe) → global
+  cont+='<h2>Resum de classe</h2>';
+  cont+='<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">';
+  var taulaClasse='<table style="flex:1;min-width:260px;"><thead><tr><th style="text-align:left;">Assignatura</th><th style="text-align:left;">Competència</th><th>Mitjana de classe</th></tr></thead><tbody>';
+  d.totsSubjs.forEach(function(s){
+    var comps=d.subjCompClasseAvg[s]||[];
+    if(!comps.length){
+      taulaClasse+='<tr><td colspan="2">'+escHtml(s)+'</td><td style="text-align:center;">'+(d.subjClasseAvg[s]!=null?d.subjClasseAvg[s]:'—')+'</td></tr>';
+    } else {
+      comps.forEach(function(c,ci){
+        taulaClasse+='<tr>'+(ci===0?'<td rowspan="'+comps.length+'" style="font-weight:700;vertical-align:top;background:#fafafa;">'+escHtml(s)+'</td>':'')
+          +'<td>'+escHtml(c.nom)+'</td><td style="text-align:center;">'+(c.mitjana!=null?c.mitjana:'—')+'</td></tr>';
+      });
+    }
+    var g=d.subjClasseAvg[s];
+    taulaClasse+='<tr style="background:#f0ece4;"><td colspan="2" style="font-weight:700;">Global '+escHtml(s)+'</td><td style="text-align:center;font-weight:700;">'+(g!=null?g:'—')+'<span class="q">'+qualificacioText(g)+'</span></td></tr>';
+  });
+  taulaClasse+='</tbody></table>';
+  cont+=taulaClasse;
+  cont+='<div style="text-align:center;min-width:220px;">'
+    +renderChart(d.totsSubjs, [d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;})], ['#B5562F'], 220,190)
+    +'<div style="font-size:10px;color:#888;">Gràfic d\'aranya — mitjana de classe per assignatura</div>'
+    +'</div></div>';
+  cont+='<div style="margin-top:8px;font-size:12px;"><b>Nota mitjana global de la classe:</b> '+(d.mitjanaClasse!=null?d.mitjanaClasse:'—')+' <span style="color:#888;">('+qualificacioText(d.mitjanaClasse)+')</span></div>';
+  cont+=COMENT_IA_HTML;
+
+  // ── Notes dels alumnes ── nomes la nota global de cada assignatura + global de l'alumne
+  cont+='<h2>Notes dels alumnes</h2>';
+  d.ordres.forEach(function(uid){
+    var al=d.alumnesMap[uid];
+    var alVals=d.totsSubjs.map(function(s){var a=al.assigns[s]; return a&&a.nota!=null?a.nota:0;});
+    var classeVals=d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;});
+    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#B5562F','#566B47'],160,140);
+    var g=d.globalsAlu[uid];
+
+    var taulaNotes='<table style="font-size:10.5px;"><thead><tr><th style="text-align:left;">Assignatura</th><th>Nota global</th></tr></thead><tbody>';
+    d.totsSubjs.forEach(function(s){
+      var a=al.assigns[s]; var n=a?a.nota:null;
+      taulaNotes+='<tr><td style="text-align:left;">'+escHtml(s)+'</td><td style="text-align:center;">'+(n!=null?n:'—')+'<span class="q">'+qualificacioText(n)+'</span></td></tr>';
+    });
+    taulaNotes+='<tr style="background:#f0ece4;"><td style="font-weight:700;">Global alumne</td><td style="text-align:center;font-weight:700;">'+(g!=null?g:'—')+'<span class="q">'+qualificacioText(g)+'</span></td></tr>';
+    taulaNotes+='</tbody></table>';
+
+    cont+='<div class="stu"><div style="font-size:12.5px;font-weight:700;margin-bottom:6px;">'+al.ordre+'. '+escHtml(al.nom)+'</div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">'
+        +'<div style="flex-shrink:0;">'+chartAlu+'</div>'
+        +'<div style="flex:1;min-width:200px;">'+taulaNotes+'</div>'
+      +'</div>'
+      +COMENT_IA_HTML
+    +'</div>';
+  });
+
+  cont+='</body></html>';
+  return cont;
+}
+function nomFitxerInforme(dades){ return (dades.titolInforme||'informe').replace(/[^a-zA-Z0-9_-]/g,'_'); }
+
+function generarInforme(){
+  var dades=prepararDadesInforme(); if(!dades) return;
+  var cont=generarInformeHTML(dades, spiderSvg);
   var blob=new Blob([cont],{type:'text/html'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
   setTimeout(function(){URL.revokeObjectURL(url);},5000);
   toast('Informe generat ✓');
+}
+
+// Mateix gràfic d'aranya, pero renderitzat sobre un canvas i retornat com a <img> amb
+// una imatge PNG en base64 — cal per exportar a Word/Google Docs (el seu conversor
+// d'HTML no interpreta SVG incrustat, nomes imatges).
+function chartImgPng(labels, datasets, colors, W, H){
+  var canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H;
+  spiderCoreDraw(canvas.getContext('2d'), W, H, labels, datasets, colors);
+  return '<img src="'+canvas.toDataURL('image/png')+'" width="'+W+'" height="'+H+'">';
+}
+function exportarInformeDoc(){
+  var dades=prepararDadesInforme(); if(!dades) return;
+  var cont=generarInformeHTML(dades, chartImgPng);
+  // Namespaces perque Word (i el conversor d'importacio de Google Docs) interpretin
+  // el fitxer .doc com un document real, no com una pagina web qualsevol.
+  cont=cont.replace('<html>','<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">');
+  var blob=new Blob([cont],{type:'application/msword'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.doc'; a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+  toast('Document Word exportat ✓ — obre\'l amb Word o puja\'l a Google Drive i obre\'l amb Google Docs');
+}
+
+function csvEscape(v){
+  v=(v===null||v===undefined)?'':String(v);
+  if(/[;"\n]/.test(v)) v='"'+v.replace(/"/g,'""')+'"';
+  return v;
+}
+function exportarInformeExcel(){
+  var d=prepararDadesInforme(); if(!d) return;
+  var rows=[];
+  rows.push(['Curs',d.curs]);
+  rows.push(['Any escolar',prof.any||'']);
+  rows.push(['Tutor/a',prof.nom||'']);
+  rows.push(['Etapa',d.etapaText]);
+  rows.push([]);
+  rows.push(['RESUM DE CLASSE']);
+  rows.push(['Assignatura','Competència','Mitjana de classe']);
+  d.totsSubjs.forEach(function(s){
+    var comps=d.subjCompClasseAvg[s]||[];
+    if(!comps.length){ rows.push([s,'',d.subjClasseAvg[s]!=null?d.subjClasseAvg[s]:'']); }
+    else{ comps.forEach(function(c){ rows.push([s,c.nom,c.mitjana!=null?c.mitjana:'']); }); }
+    rows.push(['Global '+s,'',d.subjClasseAvg[s]!=null?d.subjClasseAvg[s]:'']);
+  });
+  rows.push([]);
+  rows.push(['Nota mitjana global de la classe',d.mitjanaClasse!=null?d.mitjanaClasse:'']);
+  rows.push([]);
+  rows.push(['NOTES DELS ALUMNES']);
+  rows.push(['#','Alumne'].concat(d.totsSubjs).concat(['Global']));
+  d.ordres.forEach(function(uid){
+    var al=d.alumnesMap[uid];
+    var row=[al.ordre,al.nom];
+    d.totsSubjs.forEach(function(s){ var a=al.assigns[s]; row.push(a&&a.nota!=null?a.nota:''); });
+    row.push(d.globalsAlu[uid]!=null?d.globalsAlu[uid]:'');
+    rows.push(row);
+  });
+  var csv=rows.map(function(r){ return r.map(csvEscape).join(';'); }).join('\r\n');
+  var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}); // BOM perque Excel llegeixi be els accents
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(d)+'.csv'; a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+  toast('CSV exportat ✓ — obre\'l amb Excel o importa\'l a Google Sheets');
 }
 
 // ─── FUNCIONS QUE FALTAVEN ───
