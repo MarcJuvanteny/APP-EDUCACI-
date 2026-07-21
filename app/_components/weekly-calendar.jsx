@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "../programacio/programacio-calendari.css";
+import { createSupabaseClient } from "../lib/supabaseClient";
 
 const DIES = ["Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres"];
 const MESOS = [
@@ -187,22 +188,20 @@ const EVENTS_INICIALS = [
 
 const CURSOS = ["3r A", "3r B", "4t A", "4t B", "5e A", "General"];
 
-const PROG_EVENTS_KEY = "arrel_prog_events_v1";
-
-function loadStoredEvents() {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(PROG_EVENTS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    return null;
-  }
-}
-function saveStoredEvents(evs) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(PROG_EVENTS_KEY, JSON.stringify(evs));
-  } catch (e) {}
+function rowToEvent(row) {
+  return {
+    id: row.id,
+    dbId: row.id,
+    dia: row.dia_setmana,
+    hora: row.franja_hora,
+    titol: row.titol,
+    curs: row.curs_nom || "",
+    tipus: row.tipus || "clay",
+    nota: row.nota || "",
+    data: row.data || null,
+    creatPelProfessor: row.origen === "manual",
+    origen: row.origen,
+  };
 }
 
 function startOfWeek(date) {
@@ -219,11 +218,10 @@ function getWeekNum(d) {
 }
 
 export default function WeeklyCalendar() {
+  const [supabase] = useState(() => createSupabaseClient());
+  const [professorId, setProfessorId] = useState(null);
   const [offset, setOffset] = useState(0);
-  const [events, setEvents] = useState(() => {
-    const stored = loadStoredEvents();
-    return stored && stored.length ? stored : EVENTS_INICIALS;
-  });
+  const [events, setEvents] = useState(EVENTS_INICIALS);
   const [nextId, setNextId] = useState(100);
   const [evSel, setEvSel] = useState(null);
   const [showNou, setShowNou] = useState(false);
@@ -351,22 +349,28 @@ export default function WeeklyCalendar() {
     return () => clearInterval(i);
   }, []);
 
-  // Desa els events perque sobrevisquin a un refresc de pagina
+  // Carrega els events reals des de Supabase (la sessio ja hi es, es comparteix
+  // via localStorage amb la resta de l'app perque son la mateixa pagina web)
   useEffect(() => {
-    saveStoredEvents(events);
-  }, [events]);
-
-  // Escolta canvis fets des de fora d'aquest frame (quan es crea una activitat
-  // a Competencies, l'app principal escriu al mateix localStorage)
-  useEffect(() => {
-    function onStorage(e) {
-      if (e.key !== PROG_EVENTS_KEY) return;
-      const stored = loadStoredEvents();
-      if (stored) setEvents(stored);
-    }
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+    if (!supabase) return;
+    let cancelat = false;
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data && data.session && data.session.user && data.session.user.id;
+      if (!uid || cancelat) return;
+      setProfessorId(uid);
+      supabase
+        .from("cal_events")
+        .select("*")
+        .eq("professor_id", uid)
+        .then(({ data: rows, error }) => {
+          if (cancelat || error) return;
+          if (rows) setEvents(rows.map(rowToEvent));
+        });
+    });
+    return () => {
+      cancelat = true;
+    };
+  }, [supabase]);
 
   const navS = useCallback((d) => setOffset((x) => x + d), []);
   const goAvui = useCallback(() => setOffset(0), []);
@@ -398,21 +402,50 @@ export default function WeeklyCalendar() {
       showToast("Escriu el titol");
       return;
     }
+    const dia = parseInt(String(nvDia), 10);
+    const hora = parseInt(String(nvHora), 10);
+    const nota = nvNota.trim();
+    if (supabase && professorId) {
+      supabase
+        .from("cal_events")
+        .insert({
+          professor_id: professorId,
+          titol,
+          dia_setmana: dia,
+          franja_hora: hora,
+          curs_nom: nvCurs,
+          tipus: "clay",
+          origen: "manual",
+          nota,
+        })
+        .select()
+        .single()
+        .then(({ data, error }) => {
+          if (error) {
+            showToast("Error desant l'event");
+            return;
+          }
+          setEvents((prev) => [...prev, rowToEvent(data)]);
+          setShowNou(false);
+          showToast('"' + titol + '" afegit al calendari');
+        });
+      return;
+    }
     const nou = {
       id: nextId,
-      dia: parseInt(String(nvDia), 10),
-      hora: parseInt(String(nvHora), 10),
+      dia,
+      hora,
       titol,
       curs: nvCurs,
       tipus: "clay",
       creatPelProfessor: true,
-      nota: nvNota.trim(),
+      nota,
     };
     setEvents((prev) => [...prev, nou]);
     setNextId((x) => x + 1);
     setShowNou(false);
     showToast('"' + titol + '" afegit al calendari');
-  }, [nextId, nvCurs, nvDia, nvHora, nvNota, nvTitol, showToast]);
+  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, nvTitol, showToast]);
 
   const obrirDet = useCallback((ev) => {
     setEvSel(ev);
@@ -421,11 +454,28 @@ export default function WeeklyCalendar() {
 
   const eliminarEv = useCallback(() => {
     if (!evSel) return;
+    if (supabase && evSel.dbId) {
+      supabase
+        .from("cal_events")
+        .delete()
+        .eq("id", evSel.dbId)
+        .then(({ error }) => {
+          if (error) {
+            showToast("Error eliminant l'event");
+            return;
+          }
+          setEvents((prev) => prev.filter((e) => e.id !== evSel.id));
+          setEvSel(null);
+          setShowDet(false);
+          showToast("Event eliminat");
+        });
+      return;
+    }
     setEvents((prev) => prev.filter((e) => e.id !== evSel.id));
     setEvSel(null);
     setShowDet(false);
     showToast("Event eliminat");
-  }, [evSel, showToast]);
+  }, [evSel, showToast, supabase]);
 
   return (
     <div className="spg-root">

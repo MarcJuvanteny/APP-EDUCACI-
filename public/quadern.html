@@ -12,7 +12,7 @@
     <div class="fg"><label class="flbl">Contrasenya</label><input class="input" id="login-pass" type="password" placeholder="••••••••"></div>
     <button class="btn btn-clay" style="width:100%;padding:10px;margin-bottom:8px;" onclick="iniciarSessio()">Entrar →</button>
     <button class="btn" style="width:100%;padding:10px;margin-bottom:8px;" onclick="showGatePas('g-register')">Crear compte</button>
-    <button class="btn btn-sm" style="width:100%;" onclick="entrarModeDev()">Entrar com a desenvolupador</button>
+    <div style="text-align:center;"><span class="gate-back" style="border:none;background:none;padding:0;" onclick="showGatePas('g-recuperar')">Has oblidat la contrasenya?</span></div>
   </div>
 
   <!-- PAS 0b: REGISTRE -->
@@ -26,6 +26,25 @@
     <div class="fg"><label class="flbl">Contrasenya</label><input class="input" id="reg-user-pass" type="password" placeholder="Mínim 6 caràcters"></div>
     <button class="btn btn-clay" style="width:100%;padding:10px;margin-bottom:8px;" onclick="registrarCompte()">Crear compte i continuar →</button>
     <button class="btn" style="width:100%;" onclick="showGatePas('g-login')">Ja tinc compte</button>
+  </div>
+
+  <!-- PAS 0c: RECUPERAR CONTRASENYA -->
+  <div class="gate-step" id="g-recuperar">
+    <button class="gate-back" onclick="showGatePas('g-login')">← Tornar</button>
+    <div class="gate-eyebrow">Recuperar accés</div>
+    <div class="gate-title">Has oblidat la contrasenya?</div>
+    <div class="gate-sub">Escriu el teu correu i t'enviarem un enllaç per crear-ne una de nova.</div>
+    <div class="fg"><label class="flbl">Correu electrònic</label><input class="input" id="rec-email" type="email" placeholder="nom@centre.cat"></div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;" onclick="demanarRecuperacio()">Enviar enllaç →</button>
+  </div>
+
+  <!-- PAS 0d: NOVA CONTRASENYA (des de l'enllaç del correu) -->
+  <div class="gate-step" id="g-nova-contrasenya">
+    <div class="gate-eyebrow">Recuperar accés</div>
+    <div class="gate-title">Crea una nova contrasenya</div>
+    <div class="gate-sub">Escriu la nova contrasenya per al teu compte.</div>
+    <div class="fg"><label class="flbl">Contrasenya nova</label><input class="input" id="nova-pass" type="password" placeholder="Mínim 6 caràcters"></div>
+    <button class="btn btn-clay" style="width:100%;padding:10px;" onclick="guardarNovaContrasenya()">Guardar i entrar →</button>
   </div>
 
   <!-- PAS 1: DADES -->
@@ -287,17 +306,6 @@
 
   <div class="cfg-section" id="cfg-rubrica">
     <div id="rubrica-body"></div>
-  </div>
-
-  <div class="cfg-section" id="cfg-visual">
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-        <div style="font-size:13px;font-weight:600;">Mostrar notes amb icones</div>
-        <div class="toggle" id="vis-toggle" onclick="toggleVis()"></div>
-      </div>
-      <div style="font-size:12px;color:var(--ink2);margin-bottom:12px;">En lloc del número, es mostra una icona personalitzable.</div>
-      <div id="vis-editor"></div>
-    </div>
   </div>
 </div>
 

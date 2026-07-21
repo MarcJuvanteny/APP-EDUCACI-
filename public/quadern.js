@@ -26,7 +26,6 @@ var alumnes = [
 ];
 var missatgesAlumnes = {};
 
-var AUTH_KEY = 'arrel_auth_v1';
 var PERFIL_KEY = 'arrel_perfil_v1';
 var authState = { isLogged: false, user: null };
 
@@ -122,7 +121,6 @@ var activitats = {};
 var missatgesAlumnes = {};
 var calEvents = []; // [{id,titol,data,tipus}]
 var currentCompId = '';
-var visualConfig = {actiu:false, emojis:{'10':'A+','9':'A','8':'B+','7':'B','6':'C+','5':'C','4':'D+','3':'D','2':'E','1':'F'}};
 var calMes = new Date().getMonth();
 var calAny = new Date().getFullYear();
 
@@ -182,7 +180,70 @@ function seedDemo(){
     {id:'e5',titol:'Examen Matematiques',data:'2026-04-20',tipus:'examen'}
   ];
 }
-seedDemo();
+// Amb Supabase configurat, els cursos/alumnes/notes reals es carreguen a anarAPasPostAuth();
+// aquest seed generic nomes cal per al mode sense base de dades (fallback local).
+if(!window.__QUADERN_SUPABASE__) seedDemo();
+
+// Genera activitats i notes de mostra per a UN curs concret amb el seu propi roster
+// (fa falta perque, amb Supabase, cada curs te els seus propis alumnes en comptes
+// d'una llista global unica com passava abans).
+function generarNotesDemoPerCurs(mc, roster){
+  // Nivell base per alumne segons la seva posicio a la llista (no per inicials,
+  // que poden no coincidir segons quants cognoms tingui el nom).
+  var nivellsBase = [8.5,7.2,6.1,7.8,4.3,9.0,6.8,7.5,5.2,8.1,6.4,7.9];
+  var defActs = {
+    'Catala':['Comprensio oral - Conte','Redaccio - La familia','Dictat setmana 8','Exposicio oral'],
+    'Castella':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
+    'Angles':['Oral presentation','Writing exercise','Reading comp.'],
+    'Matematiques':['Fraccions','Geometria','Calcul mental','Estadistica']
+  };
+  var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
+  roster.forEach(function(al){ missatgesAlumnes[al.nom]=al.comentari||''; });
+
+  var perInserir=[]; // { fila per Supabase, act: referencia a l'objecte local per assignar-hi el dbId }
+  trimestres.forEach(function(trim){
+    mc.assigns.forEach(function(subj,si){
+      var assignaturaId=mc.assignsIds&&mc.assignsIds[si];
+      var compsSubj = getCompetenciesForSubject(subj);
+      var actDef = defActs[subj]||['Activitat 1','Activitat 2'];
+      compsSubj.forEach(function(comp){
+        var k = mc.curs+'_'+trim+'_'+subj+'_'+comp.id;
+        activitats[k] = actDef.map(function(nom,i){
+          var diaISO=dataISO(dates[i]||dates[0]);
+          var act = {id:'a'+i+'_'+k,nom:nom,data:dates[i]||dates[0],dataISO:diaISO,notes:{},altres:{},notaAltres:{}};
+          roster.forEach(function(al,ai){
+            act.notes[al.ini]={};
+            act.altres[al.ini]='';
+            act.notaAltres[al.ini]=null;
+            comp.criteris.forEach(function(crit){
+              var base = nivellsBase[ai]!=null?nivellsBase[ai]:6;
+              var v = (Math.random()-0.5)*2.5;
+              act.notes[al.ini][crit] = Math.round(Math.min(10,Math.max(1,base+v))*10)/10;
+            });
+          });
+          if(assignaturaId){
+            perInserir.push({
+              fila:{curs_id:mc.id,assignatura_id:assignaturaId,professor_id:dbUid(),competencia_id:comp.id,trimestre:trim,nom:nom,data:diaISO,hora:null,notes:act.notes,comentaris:act.altres},
+              act:act
+            });
+          }
+          return act;
+        });
+      });
+    });
+  });
+
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb||!perInserir.length) return Promise.resolve();
+  return sb.from('activitats').insert(perInserir.map(function(p){return p.fila;})).select().then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+    var pendents=perInserir.slice();
+    res.data.forEach(function(row){
+      var idx=pendents.findIndex(function(p){ return p.fila.trimestre===row.trimestre && p.fila.competencia_id===row.competencia_id && p.fila.nom===row.nom; });
+      if(idx!==-1){ pendents[idx].act.dbId=row.id; pendents[idx].act.id=row.id; pendents.splice(idx,1); }
+    });
+  });
+}
 
 // ═══════════════ HELPERS ═══════════════
 function ava(al,w,fs){ return '<div class="ava" style="width:'+w+'px;height:'+w+'px;font-size:'+fs+'px;background:var(--'+al.color+'-l);color:var(--'+al.color+');">'+al.ini+'</div>'; }
@@ -212,7 +273,6 @@ function afegirAssignaturaGlobal(nom){
 }
 function renderNota(n,big){
   if(n===null||n===undefined||n==='') return '<span style="color:var(--ink3);">'+(big?'—':'—')+'</span>';
-  if(visualConfig.actiu){ var v=visualConfig.emojis[String(Math.round(n))]; if(v) return '<span style="font-size:'+(big?18:14)+'px;">'+v+'</span>'; }
   var col=getColor(n); var sz=big?'14':'12';
   return '<span style="font-size:'+sz+'px;font-weight:700;color:var(--'+col+');">'+n+'</span>';
 }
@@ -240,12 +300,24 @@ function lsGet(key){
 function lsSet(key,val){
   try{ window.localStorage.setItem(key, JSON.stringify(val)); }catch(err){}
 }
-function guardarAuth(){ lsSet(AUTH_KEY, authState); }
 function carregarAuth(){
-  var saved=lsGet(AUTH_KEY);
-  if(saved&&saved.isLogged&&saved.user&&saved.user.email){
-    authState=saved;
-  }
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb) return Promise.resolve();
+  return sb.auth.getSession().then(function(res){
+    var session=res.data&&res.data.session;
+    if(session&&session.user){
+      authState={isLogged:true,user:{id:session.user.id,email:session.user.email,nom:(session.user.user_metadata&&session.user.user_metadata.nom)||''}};
+    }
+  }).catch(function(){});
+}
+function escoltarCanvisAuthSupabase(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return;
+  sb.auth.onAuthStateChange(function(event){
+    if(event==='PASSWORD_RECOVERY'){
+      document.getElementById('gate').classList.remove('hide');
+      showGatePas('g-nova-contrasenya');
+    }
+  });
 }
 function guardarPerfil(){
   lsSet(PERFIL_KEY, { prof: prof, mesCursos: mesCursos, estat: estat, assignaturesList: assignaturesList });
@@ -300,69 +372,273 @@ function tePerfilConfigurat(){
   if(!mesCursos||!mesCursos.length) return false;
   return mesCursos.every(function(mc){ return mc.assigns&&mc.assigns.length; });
 }
-function anarAPasPostAuth(){
-  document.getElementById('gate').classList.remove('hide');
-  if(carregarPerfil()&&tePerfilConfigurat()){
-    renderGateCursos();
-    showGatePas('g-sel-cursos');
-    return;
-  }
-  if(authState.user&&authState.user.nom){
-    prof.nom=authState.user.nom;
-    var inpNom=document.getElementById('reg-nom');
-    if(inpNom) inpNom.value=authState.user.nom;
-  }
-  showGatePas('g-dades');
-}
-function validarEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-function hashPassword(pass){
-  if(!(window.crypto&&window.crypto.subtle)) return Promise.resolve(pass);
-  var data=new TextEncoder().encode(pass);
-  return window.crypto.subtle.digest('SHA-256',data).then(function(buf){
-    return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+
+// ═══════════════ BASE DE DADES (Supabase): cursos, assignatures, alumnes ═══════════════
+function dbUid(){ return authState.user && authState.user.id; }
+function dbCarregarPerfil(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve(null);
+  return sb.from('profiles').select('*').eq('id',dbUid()).maybeSingle().then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return null; }
+    return res.data;
   });
 }
+function dbGuardarPerfil(nom,centre,anyEscolar){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('profiles').upsert({id:dbUid(),nom:nom,centre:centre,any_escolar:anyEscolar});
+}
+function trobarCompetencia(compId){
+  var trobada=null;
+  Object.keys(competenciesByArea).some(function(area){
+    var found=competenciesByArea[area].find(function(c){return c.id===compId;});
+    if(found){ trobada=found; return true; }
+    return false;
+  });
+  return trobada;
+}
+function dbCarregarRubricaCustom(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
+  return sb.from('rubrica_custom').select('*').eq('professor_id',dbUid()).then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+    (res.data||[]).forEach(function(row){
+      var comp=trobarCompetencia(row.competencia_id);
+      if(!comp||!row.criteris||!row.criteris.length) return;
+      comp.criteris=row.criteris.map(function(c){return c.nom;});
+      rubrica[row.competencia_id]=row.criteris.map(function(c){return c.rubrica||{'1-4':'','5-6':'','7-8':'','9-10':''};});
+    });
+  });
+}
+function dbGuardarRubricaCustom(compId){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return;
+  var comp=trobarCompetencia(compId); if(!comp) return;
+  var rubComp=rubrica[compId]||[];
+  var criteris=comp.criteris.map(function(nom,i){ return {nom:nom, rubrica:rubComp[i]||{'1-4':'','5-6':'','7-8':'','9-10':''}}; });
+  sb.from('rubrica_custom').upsert({professor_id:dbUid(),competencia_id:compId,criteris:criteris,updated_at:new Date().toISOString()},{onConflict:'professor_id,competencia_id'}).then(function(res){
+    if(res.error) console.warn('[Arrel]',res.error.message);
+  });
+}
+function dbCarregarCursosComplet(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve([]);
+  return sb.from('cursos').select('id,nom,assignatures(id,nom)').eq('professor_id',dbUid()).order('created_at').then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
+    return (res.data||[]).map(function(c){
+      var assigs=c.assignatures||[];
+      return {id:c.id, curs:c.nom, assigns:assigs.map(function(a){return a.nom;}), assignsIds:assigs.map(function(a){return a.id;})};
+    });
+  });
+}
+function dbCrearCurs(nom,assigns){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('cursos').insert({professor_id:dbUid(),nom:nom}).select().single().then(function(res){
+    if(res.error) throw res.error;
+    var cursId=res.data.id;
+    if(!assigns.length) return {id:cursId,curs:nom,assigns:[],assignsIds:[]};
+    var files=assigns.map(function(a){ return {curs_id:cursId,professor_id:dbUid(),nom:a}; });
+    return sb.from('assignatures').insert(files).select().then(function(res2){
+      if(res2.error) throw res2.error;
+      var ids=assigns.map(function(a){ var row=res2.data.find(function(r){return r.nom===a;}); return row?row.id:null; });
+      return {id:cursId,curs:nom,assigns:assigns.slice(),assignsIds:ids};
+    });
+  });
+}
+function dbEliminarCurs(cursId){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('cursos').delete().eq('id',cursId);
+}
+function dbAfegirAssignatura(cursId,nom){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('assignatures').insert({curs_id:cursId,professor_id:dbUid(),nom:nom}).select().single();
+}
+function dbEliminarAssignatura(cursId,nom){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('assignatures').delete().eq('curs_id',cursId).eq('nom',nom);
+}
+function dbCarregarAlumnes(cursId){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve([]);
+  return sb.from('alumnes').select('*').eq('curs_id',cursId).order('ordre').then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
+    return (res.data||[]).map(function(a,i){
+      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentari:a.comentari||''};
+    });
+  });
+}
+function carregarAlumnesDelCursActiu(){
+  var mc=mesCursos[estat.cursIdx];
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb||!mc||!mc.id){ return Promise.resolve(); }
+  return dbCarregarAlumnes(mc.id).then(function(llista){
+    alumnes=llista;
+    missatgesAlumnes={};
+    alumnes.forEach(function(al){ missatgesAlumnes[al.nom]=al.comentari||''; });
+  });
+}
+// Data DB (yyyy-mm-dd) -> format de visualitzacio de l'app (dd/mm/yyyy [· hh:mm])
+function formatarDataActivitat(dataISO,hora){
+  if(!dataISO) return '';
+  return dataISO.split('-').reverse().join('/')+(hora?' · '+hora:'');
+}
+function carregarActivitatsDelContext(){
+  var sb=window.__QUADERN_SUPABASE__;
+  var mc=mesCursos[estat.cursIdx];
+  if(!sb||!mc||!mc.id) return Promise.resolve();
+  var subj=mc.assigns[estat.subjIdx];
+  var assignaturaId=mc.assignsIds&&mc.assignsIds[estat.subjIdx];
+  if(!subj||!assignaturaId) return Promise.resolve();
+  return sb.from('activitats').select('*').eq('curs_id',mc.id).eq('assignatura_id',assignaturaId).then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+    // Neteja nomes les claus d'aquest curs+assignatura, per no perdre el que ja hi hagi carregat d'altres
+    Object.keys(activitats).forEach(function(k){
+      if(k.indexOf(mc.curs+'_')===0 && k.indexOf('_'+subj+'_')!==-1) delete activitats[k];
+    });
+    (res.data||[]).forEach(function(row){
+      var k=mc.curs+'_'+row.trimestre+'_'+subj+'_'+row.competencia_id;
+      if(!activitats[k]) activitats[k]=[];
+      activitats[k].push({
+        dbId:row.id, id:row.id, nom:row.nom,
+        data:formatarDataActivitat(row.data,row.hora), dataISO:row.data, hora:row.hora,
+        notes:row.notes||{}, altres:row.comentaris||{}, notaAltres:{}
+      });
+    });
+  });
+}
+function dbCrearActivitat(cursId,assignaturaId,compId,trim,nom,dataISO,hora){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('activitats').insert({
+    curs_id:cursId,assignatura_id:assignaturaId,professor_id:dbUid(),
+    competencia_id:compId,trimestre:trim,nom:nom,data:dataISO||null,hora:hora||null,
+    notes:{},comentaris:{}
+  }).select().single();
+}
+function dbActualitzarNotesActivitat(actDbId,notes){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('activitats').update({notes:notes}).eq('id',actDbId);
+}
+function dbActualitzarComentarisActivitat(actDbId,comentaris){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('activitats').update({comentaris:comentaris}).eq('id',actDbId);
+}
+function dbEliminarActivitat(actDbId){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('activitats').delete().eq('id',actDbId);
+}
+function dbAfegirAlumne(cursId,nom,ordre){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').insert({curs_id:cursId,professor_id:dbUid(),nom:nom,ordre:ordre}).select().single();
+}
+function dbEliminarAlumne(alumneDbId){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').delete().eq('id',alumneDbId);
+}
+function dbActualitzarComentariAlumne(alumneDbId,text){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').update({comentari:text}).eq('id',alumneDbId);
+}
+// Sembra dues classes de mostra la primera vegada que un professor entra sense cap curs:
+// una plena (per veure com es fa servir) i una buida (tal com trobaria un curs nou de veritat).
+function dbSembrarDemo(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
+  var noms=['Marc Roca Bosch','Sofia Vila Torrent','Laia Esteve Mas','Joan Puig Serra','Arnau Oms Ferrer','Marta Font Giro','Pol Llopis Camps','Neus Carbonell Costa','Jordi Badia Valls','Alba Trias Nadal','Roger Torres Vila','Irene Comas Prat'];
+  var missatgesArr=["Excel·lent actitud.","Cal reforçar l'expressió oral.","Necessita més suport.","Molt participatiu.","Pla de reforç actiu.","Alumna destacada.","Millora progressiva.","Bona actitud.","En millora.","Molt bona alumna.","Pot millorar.","Excel·lent en tot."];
+  return dbCrearCurs('3r A',['Catala','Castella','Angles']).then(function(curPle){
+    var files=noms.map(function(nom,i){
+      return {curs_id:curPle.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:missatgesArr[i]||''};
+    });
+    return sb.from('alumnes').insert(files).select().then(function(res){
+      if(res.error) throw res.error;
+      var dades=res.data.slice().sort(function(a,b){return a.ordre-b.ordre;});
+      var roster=dades.map(function(row,i){ return {dbId:row.id,id:'',ini:ini2(row.nom),nom:row.nom,color:colorIdx(i),comentari:row.comentari||''}; });
+      return generarNotesDemoPerCurs(curPle, roster);
+    });
+  }).then(function(){
+    return dbCrearCurs('4t B',['Catala','Matematiques']); // curs buit, sense alumnes ni notes
+  });
+}
+function anarAPasPostAuth(){
+  document.getElementById('gate').classList.remove('hide');
+  carregarPerfil();
+  if(authState.user&&authState.user.nom) prof.nom=authState.user.nom;
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb){
+    // Sense base de dades configurada: mode antic, nomes local
+    if(tePerfilConfigurat()){ renderGateCursos(); showGatePas('g-sel-cursos'); return; }
+    var inpNom=document.getElementById('reg-nom'); if(inpNom) inpNom.value=prof.nom;
+    showGatePas('g-dades');
+    return;
+  }
+  dbCarregarPerfil().then(function(perfil){
+    if(perfil){ prof.nom=perfil.nom||prof.nom; prof.centre=perfil.centre||''; prof.any=perfil.any_escolar||''; }
+    return dbCarregarRubricaCustom();
+  }).then(function(){
+    return dbCarregarCursosComplet();
+  }).then(function(cursos){
+    if(cursos.length) return cursos;
+    toast('Preparant el teu espai...');
+    return dbSembrarDemo().then(function(){ return dbCarregarCursosComplet(); });
+  }).then(function(cursos){
+    mesCursos=cursos;
+    if(estat.cursIdx>=mesCursos.length) estat.cursIdx=0;
+    if(estat.subjIdx>=(mesCursos[estat.cursIdx]?mesCursos[estat.cursIdx].assigns.length:0)) estat.subjIdx=0;
+    return carregarAlumnesDelCursActiu();
+  }).then(function(){
+    renderGateCursos();
+    showGatePas('g-sel-cursos');
+  }).catch(function(err){
+    toast('Error carregant les dades: '+err.message);
+  });
+}
+function validarEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
 function registrarCompte(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb){toast('Base de dades no configurada');return;}
   var nom=(document.getElementById('reg-user-nom').value||'').trim();
   var email=(document.getElementById('reg-user-email').value||'').trim().toLowerCase();
   var pass=(document.getElementById('reg-user-pass').value||'').trim();
   if(!nom){toast('Escriu el nom i cognoms');return;}
   if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
   if(pass.length<6){toast('La contrasenya ha de tenir mínim 6 caràcters');return;}
-  hashPassword(pass).then(function(passHash){
-    authState={isLogged:true,user:{nom:nom,email:email,pass:passHash}};
-    guardarAuth();
+  sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom}}}).then(function(res){
+    if(res.error){toast(res.error.message);return;}
+    if(!res.data.session){
+      toast('Compte creat ✓ Revisa el teu correu per confirmar-lo');
+      showGatePas('g-login');
+      return;
+    }
+    authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:nom}};
     prof.nom=nom;
     toast('Compte creat ✓');
     anarAPasPostAuth();
   });
 }
 function iniciarSessio(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb){toast('Base de dades no configurada');return;}
   var email=(document.getElementById('login-email').value||'').trim().toLowerCase();
   var pass=(document.getElementById('login-pass').value||'').trim();
-  var saved=lsGet(AUTH_KEY);
-  if(!saved||!saved.user){toast('No hi ha cap compte. Registra\'t primer');return;}
-  hashPassword(pass).then(function(passHash){
-    if(saved.user.email!==email||saved.user.pass!==passHash){toast('Correu o contrasenya incorrectes');return;}
-    authState=saved;
-    authState.isLogged=true;
-    guardarAuth();
+  if(!email||!pass){toast('Escriu el correu i la contrasenya');return;}
+  sb.auth.signInWithPassword({email:email,password:pass}).then(function(res){
+    if(res.error){toast('Correu o contrasenya incorrectes');return;}
+    authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:(res.data.user.user_metadata&&res.data.user.user_metadata.nom)||''}};
     toast('Sessió iniciada ✓');
     anarAPasPostAuth();
   });
 }
-function entrarModeDev(){
-  authState={
-    isLogged:true,
-    user:{nom:'Desenvolupador Arrel',email:'dev@arrel.local',pass:'devmode',dev:true}
-  };
-  guardarAuth();
-  if(!lsGet(PERFIL_KEY)){
-    prof.nom=authState.user.nom;
-    guardarPerfil();
-  }
-  toast('Mode desenvolupador actiu ✓');
-  anarAPasPostAuth();
+function demanarRecuperacio(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb){toast('Base de dades no configurada');return;}
+  var email=(document.getElementById('rec-email').value||'').trim().toLowerCase();
+  if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
+  sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/inici'}).then(function(res){
+    if(res.error){toast(res.error.message);return;}
+    toast('T\'hem enviat un correu amb l\'enllaç ✓');
+    showGatePas('g-login');
+  });
+}
+function guardarNovaContrasenya(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb){toast('Base de dades no configurada');return;}
+  var pass=(document.getElementById('nova-pass').value||'').trim();
+  if(pass.length<6){toast('La contrasenya ha de tenir mínim 6 caràcters');return;}
+  sb.auth.updateUser({password:pass}).then(function(res){
+    if(res.error){toast(res.error.message);return;}
+    toast('Contrasenya actualitzada ✓');
+    authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:(res.data.user.user_metadata&&res.data.user.user_metadata.nom)||''}};
+    anarAPasPostAuth();
+  });
 }
 function obrirEditarPerfil(){
   var overlay=document.createElement('div');
@@ -399,15 +675,18 @@ function guardarEdicioPerfil(){
   renderGateCursos();
   updateNav();
   toast('Perfil actualitzat ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb) dbGuardarPerfil(prof.nom,prof.centre,prof.any).catch(function(err){ console.warn('[Arrel]',err.message); });
 }
 function tancarSessio(){
-  // Manté el compte guardat (email+contrasenya) perquè es pugui tornar a iniciar sessió;
-  // només es tanca la sessió activa.
-  authState={isLogged:false,user:authState.user};
-  guardarAuth();
-  document.getElementById('gate').classList.remove('hide');
-  showGatePas('g-login');
-  toast('Sessió tancada');
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(){
+    authState={isLogged:false,user:null};
+    document.getElementById('gate').classList.remove('hide');
+    showGatePas('g-login');
+    toast('Sessió tancada');
+  };
+  if(sb) sb.auth.signOut().then(acabar); else acabar();
 }
 
 // ═══════════════ GATE ═══════════════
@@ -524,14 +803,22 @@ function eliminarCursConfirmat(ci){
     if(k.indexOf(mc.curs+'_')===0) delete activitats[k];
   });
   calEvents=calEvents.filter(function(e){ return e.curs!==mc.curs; });
-  mesCursos.splice(ci,1);
-  if(estat.cursIdx>=mesCursos.length) estat.cursIdx=0;
-  estat.subjIdx=0;
-  tancarDelCurs();
-  guardarPerfil(); guardarDades();
-  renderGateCursos();
-  updateNav(); renderAll();
-  toast('Curs eliminat');
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(){
+    mesCursos.splice(ci,1);
+    if(estat.cursIdx>=mesCursos.length) estat.cursIdx=0;
+    estat.subjIdx=0;
+    tancarDelCurs();
+    guardarPerfil(); guardarDades();
+    renderGateCursos();
+    carregarAlumnesDelCursActiu().then(function(){ updateNav(); renderAll(); });
+    toast('Curs eliminat');
+  };
+  if(sb&&mc.id){
+    dbEliminarCurs(mc.id).then(acabar).catch(function(err){ toast('Error eliminant el curs: '+err.message); });
+  }else{
+    acabar();
+  }
 }
 
 function selCurs(ci){
@@ -587,13 +874,22 @@ function eliminarAssignaturaConfirmat(ci,si){
   Object.keys(activitats).forEach(function(k){
     if(k.indexOf(mc.curs+'_')===0 && k.indexOf('_'+subj+'_')!==-1) delete activitats[k];
   });
-  mc.assigns.splice(si,1);
-  if(estat.cursIdx===ci && estat.subjIdx>=mc.assigns.length) estat.subjIdx=0;
-  tancarDelAssig();
-  guardarPerfil(); guardarDades();
-  selCurs(ci);
-  updateNav(); renderAll();
-  toast('Assignatura eliminada');
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(){
+    mc.assigns.splice(si,1);
+    if(mc.assignsIds) mc.assignsIds.splice(si,1);
+    if(estat.cursIdx===ci && estat.subjIdx>=mc.assigns.length) estat.subjIdx=0;
+    tancarDelAssig();
+    guardarPerfil(); guardarDades();
+    selCurs(ci);
+    updateNav(); renderAll();
+    toast('Assignatura eliminada');
+  };
+  if(sb&&mc.id){
+    dbEliminarAssignatura(mc.id,subj).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
+  }else{
+    acabar();
+  }
 }
 
 function obrirAfegirAssignatura(ci){
@@ -639,13 +935,26 @@ function guardarNovaAssignatura(ci){
   if(!nom){toast('Escriu l\'assignatura');return;}
   var existeix=mc.assigns.some(function(s){return s.toLowerCase()===nom.toLowerCase();});
   if(existeix){toast('Aquesta assignatura ja existeix');return;}
-  mc.assigns.push(nom);
-  afegirAssignaturaGlobal(nom);
-  guardarPerfil();
-  tancarAfegirAssignatura();
-  selCurs(ci);
-  updateNav();
-  toast('Assignatura afegida ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(novaId){
+    mc.assigns.push(nom);
+    if(!mc.assignsIds) mc.assignsIds=[];
+    mc.assignsIds.push(novaId||null);
+    afegirAssignaturaGlobal(nom);
+    guardarPerfil();
+    tancarAfegirAssignatura();
+    selCurs(ci);
+    updateNav();
+    toast('Assignatura afegida ✓');
+  };
+  if(sb&&mc.id){
+    dbAfegirAssignatura(mc.id,nom).then(function(res){
+      if(res.error){ toast('Error afegint: '+res.error.message); return; }
+      acabar(res.data.id);
+    });
+  }else{
+    acabar();
+  }
 }
 
 
@@ -654,7 +963,9 @@ function selSubj(si){
   guardarPerfil();
   document.getElementById('gate').classList.add('hide');
   syncCompetenciesForCurrentSubject();
-  updateNav(); renderAll();
+  Promise.all([carregarAlumnesDelCursActiu(), carregarActivitatsDelContext()]).then(function(){
+    updateNav(); renderAll();
+  });
 }
 function updateNav(){
   var mc=mesCursos[estat.cursIdx]; if(!mc) return;
@@ -689,15 +1000,22 @@ function crearNouCurs(){
   if(!nom){toast('Escriu el nom del curs');return;}
   var assigns=Array.from(document.querySelectorAll('#nc-subj-chips .subj-chip.sel')).map(function(el){return el.textContent;});
   if(!assigns.length){toast('Selecciona almenys una assignatura');return;}
-  mesCursos.push({curs:nom,assigns:assigns});
-  document.getElementById('pop-nou-curs').style.display='none';
-  toast('Curs "'+nom+'" creat ✓');
-  // Seleccionar el nou curs automàticament
-  estat.cursIdx=mesCursos.length-1;
-  estat.trimIdx=0;
-  estat.subjIdx=0;
-  guardarPerfil();
-  renderGateCursos();
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(nouCurs){
+    mesCursos.push(nouCurs);
+    document.getElementById('pop-nou-curs').style.display='none';
+    toast('Curs "'+nom+'" creat ✓');
+    estat.cursIdx=mesCursos.length-1;
+    estat.trimIdx=0;
+    estat.subjIdx=0;
+    guardarPerfil();
+    renderGateCursos();
+  };
+  if(sb){
+    dbCrearCurs(nom,assigns).then(acabar).catch(function(err){ toast('Error creant el curs: '+err.message); });
+  }else{
+    acabar({curs:nom,assigns:assigns});
+  }
 }
 
 // ═══════════════ NAV ═══════════════
@@ -962,10 +1280,17 @@ function obrirMissatgeAlu(nom){
 }
 function guardarMissatge(){
   var nom=document.getElementById('pop-miss').dataset.nom;
-  missatgesAlumnes[nom]=document.getElementById('pop-miss-text').value.trim();
+  var text=document.getElementById('pop-miss-text').value.trim();
+  missatgesAlumnes[nom]=text;
   document.getElementById('pop-miss').style.display='none';
+  var al=alumnes.find(function(a){return a.nom===nom;});
+  if(al) al.comentari=text;
   guardarDades();
   renderAlumnes(); toast('Comentari guardat ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&al&&al.dbId){
+    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+  }
 }
 
 // ═══════════════ COMPETÈNCIES ═══════════════
@@ -1031,13 +1356,27 @@ function saveNota(inp){
   var compId=inp.dataset.compid; var actId=inp.dataset.actid;
   var comp=competencies.find(function(c){return c.id===compId;});
   var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
-  if(isNaN(val)||inp.value===''){if(act.notes[ini]) delete act.notes[ini][comp.criteris[ci]]; inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); guardarDades(); return;}
+  if(isNaN(val)||inp.value===''){
+    if(act.notes[ini]) delete act.notes[ini][comp.criteris[ci]];
+    inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); guardarDades();
+    sincronitzarNotesActivitat(act);
+    return;
+  }
   val=Math.max(0,Math.min(10,Math.round(val*10)/10)); inp.value=val;
   if(!act.notes[ini]) act.notes[ini]={};
   act.notes[ini][comp.criteris[ci]]=val;
   inp.className='nota-input '+notaClass(val);
   recalcGlobal(act,comp,ini);
   guardarDades();
+  sincronitzarNotesActivitat(act);
+}
+function sincronitzarNotesActivitat(act){
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&act.dbId) dbActualitzarNotesActivitat(act.dbId,act.notes).catch(function(err){ console.warn('[Arrel]',err.message); });
+}
+function sincronitzarComentarisActivitat(act){
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&act.dbId) dbActualitzarComentarisActivitat(act.dbId,act.altres).catch(function(err){ console.warn('[Arrel]',err.message); });
 }
 function recalcGlobal(act,comp,ini){
   var t=0,c=0;
@@ -1062,6 +1401,7 @@ function saveAltres(inp){
   var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
   if(!act.altres) act.altres={}; act.altres[ini]=inp.value;
   guardarDades();
+  sincronitzarComentarisActivitat(act);
 }
 function navNota(event,inp){
   if(event.key!=='Enter'&&event.key!=='Tab') return;
@@ -1128,33 +1468,45 @@ function crearActivitat(){
   if(hora && !/^([01]\d|2[0-3]):(00|30)$/.test(hora)){toast('L\'hora ha de ser en franges de :00 o :30');return;}
   var data=dia.split('-').reverse().join('/')+(hora?' · '+hora:'');
   var ov=document.getElementById('pop-nova-act'); if(ov) ov.remove();
-  var id='a'+Date.now();
-  var act={id:id,nom:nom,data:data,notes:{},altres:{},notaAltres:{},missatges:{}};
-  alumnes.forEach(function(al){act.notes[al.ini]={};act.altres[al.ini]='';act.notaAltres[al.ini]=null;});
-  var k=getKey(_novaActCompId); if(!activitats[k]) activitats[k]=[];
-  activitats[k].push(act);
   var mc2=mesCursos[estat.cursIdx];
-  calEvents.push({
-    id:'ev_'+id,
-    titol:nom+(mc2?' ('+mc2.assigns[estat.subjIdx]+')':''),
-    data:dia,
-    dataFi:dia,
-    hora:hora,
-    tipus:'activitat',
-    source:'auto',
-    curs:mc2?mc2.curs:'',
-    assignatura:mc2?mc2.assigns[estat.subjIdx]:''
-  });
-  sincronitzarActivitatAProgramacio(id,nom,dia,hora,mc2);
-  guardarDades();
-  toast('"'+nom+'" creada ✓');
-  openComp(_novaActCompId);
-  setTimeout(function(){openGraella(_novaActCompId,id);},60);
+  var trim=trimestres[estat.trimIdx];
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(id,dbId){
+    var act={id:id,dbId:dbId,nom:nom,data:data,dataISO:dia,hora:hora,notes:{},altres:{},notaAltres:{}};
+    alumnes.forEach(function(al){act.notes[al.ini]={};act.altres[al.ini]='';act.notaAltres[al.ini]=null;});
+    var k=getKey(_novaActCompId); if(!activitats[k]) activitats[k]=[];
+    activitats[k].push(act);
+    calEvents.push({
+      id:'ev_'+id,
+      titol:nom+(mc2?' ('+mc2.assigns[estat.subjIdx]+')':''),
+      data:dia,
+      dataFi:dia,
+      hora:hora,
+      tipus:'activitat',
+      source:'auto',
+      curs:mc2?mc2.curs:'',
+      assignatura:mc2?mc2.assigns[estat.subjIdx]:''
+    });
+    sincronitzarActivitatAProgramacio(id,nom,dia,hora,mc2);
+    guardarDades();
+    toast('"'+nom+'" creada ✓');
+    openComp(_novaActCompId);
+    setTimeout(function(){openGraella(_novaActCompId,id);},60);
+  };
+  var assignaturaId=mc2&&mc2.assignsIds&&mc2.assignsIds[estat.subjIdx];
+  if(sb&&mc2&&mc2.id&&assignaturaId){
+    dbCrearActivitat(mc2.id,assignaturaId,_novaActCompId,trim,nom,dia,hora).then(function(res){
+      if(res.error){ toast('Error creant activitat: '+res.error.message); return; }
+      acabar(res.data.id,res.data.id);
+    });
+  }else{
+    acabar('a'+Date.now());
+  }
 }
 // Publica l'activitat al calendari setmanal de Programacio (component React, iframe).
 // Es comparteixen via localStorage perque son dos "mons" separats (JS classic + React).
-var PROG_EVENTS_KEY='arrel_prog_events_v1';
 function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return;
   var dataObj=new Date(diaISO+'T00:00:00');
   if(isNaN(dataObj.getTime())) return;
   var dow=(dataObj.getDay()+6)%7; // 0=Dilluns...6=Diumenge
@@ -1164,14 +1516,10 @@ function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
     var hp=hora.split(':'); var minTotal=parseInt(hp[0],10)*60+parseInt(hp[1],10);
     if(minTotal>=480 && minTotal<1020) horaIdx=Math.floor((minTotal-480)/60);
   }
-  var llista=lsGet(PROG_EVENTS_KEY)||[];
-  var evId='act_'+actId;
-  llista=llista.filter(function(e){ return e.id!==evId; });
-  llista.push({
-    id:evId, dia:dow, hora:horaIdx, data:diaISO,
-    titol:nom, curs:mc2?mc2.curs:'', tipus:'moss', nota:'', origen:'activitat'
-  });
-  lsSet(PROG_EVENTS_KEY, llista);
+  sb.from('cal_events').insert({
+    professor_id:dbUid(), titol:nom, dia_setmana:dow, franja_hora:horaIdx,
+    data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
+  }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
 }
 
 function tancarComentariAct(){var e=document.getElementById('pop-comentari-act');if(e)e.remove();}
@@ -1201,6 +1549,8 @@ function guardarComentariAct(ini,actId,compId){
   if(!act.altres) act.altres={};
   var text=document.getElementById('comentari-act-text').value;
   act.altres[ini]=text;
+  guardarDades();
+  sincronitzarComentarisActivitat(act);
   var ov=document.getElementById('pop-comentari-act'); if(ov) ov.remove();
   openGraella(compId,actId);
   toast('Comentari guardat ✓');
@@ -1316,9 +1666,7 @@ function cfgTab(btn,id){
   if(id==='cfg-rubrica') renderRubrica();
   if(id==='cfg-alumnes') renderCfgAlumnes();
 }
-function renderConfig(){ renderCfgAlumnes(); renderRubrica(); renderVis(); }
-function renderVis(){}
-function toggleVis(){}
+function renderConfig(){ renderCfgAlumnes(); renderRubrica(); }
 
 function renderCfgAlumnes(){
   var cnt=document.getElementById('alu-count'); if(cnt) cnt.textContent=alumnes.length;
@@ -1337,10 +1685,21 @@ function addAlumneManual(){
   var inp=document.getElementById('inp-alu'); var nom=inp.value.trim();
   if(!nom){toast('Escriu el nom');return;}
   if(alumnes.find(function(a){return a.nom.toLowerCase()===nom.toLowerCase();})){toast('Ja existeix');return;}
-  var parts=nom.trim().split(' ').filter(function(x){return x.length>0;});
-  var ini=parts.length>=2?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():nom.substring(0,2).toUpperCase();
-  alumnes.push({ini:ini,nom:nom,color:colorIdx(alumnes.length)});
-  inp.value=''; inp.focus(); guardarDades(); renderCfgAlumnes(); toast(nom+' afegit ✓');
+  var ini=ini2(nom);
+  var mc=mesCursos[estat.cursIdx];
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(dbId){
+    alumnes.push({dbId:dbId,ini:ini,nom:nom,color:colorIdx(alumnes.length),comentari:''});
+    inp.value=''; inp.focus(); guardarDades(); renderCfgAlumnes(); toast(nom+' afegit ✓');
+  };
+  if(sb&&mc&&mc.id){
+    dbAfegirAlumne(mc.id,nom,alumnes.length+1).then(function(res){
+      if(res.error){ toast('Error afegint: '+res.error.message); return; }
+      acabar(res.data.id);
+    });
+  }else{
+    acabar(undefined);
+  }
 }
 function tancarDelAlu(){var e=document.getElementById('pop-del-alu');if(e)e.remove();}
 function confirmarEliminarAlumne(idx){
@@ -1361,7 +1720,16 @@ function confirmarEliminarAlumne(idx){
 }
 function delAlumne(idx){
   var ov=document.getElementById('pop-del-alu'); if(ov) ov.remove();
-  alumnes.splice(idx,1); guardarDades(); renderCfgAlumnes(); toast('Alumne eliminat');
+  var al=alumnes[idx];
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(){
+    alumnes.splice(idx,1); guardarDades(); renderCfgAlumnes(); toast('Alumne eliminat');
+  };
+  if(sb&&al&&al.dbId){
+    dbEliminarAlumne(al.dbId).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
+  }else{
+    acabar();
+  }
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
 function handleExcelFile(inp){ var f=inp.files[0]; if(f) processFile(f); inp.value=''; }
@@ -1375,7 +1743,8 @@ function processFile(file){
 }
 function readXLSX(file){var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});var ws=wb.Sheets[wb.SheetNames[0]];processRows(XLSX.utils.sheet_to_json(ws,{header:1,defval:''}));}catch(err){document.getElementById('excel-feedback').innerHTML='<div style="color:var(--clay);">Error: '+err.message+'</div>';}};r.readAsArrayBuffer(file);}
 function processRows(rows){
-  var nous=0,dups=0;
+  var dups=0;
+  var candidats=[];
   rows.forEach(function(row,idx){
     var col0=String(row[0]||'').trim(); var col1=String(row[1]||'').trim(); var col2=String(row[2]||'').trim();
     if(!col0||col0.length<1) return;
@@ -1386,16 +1755,37 @@ function processRows(rows){
     else{id='';nom=col0;cognom=(col1&&col1.length>1&&isNaN(col1))?col1:'';}
     var nomComplet=(cognom?nom+' '+cognom:nom).trim();
     if(nomComplet.length<2) return;
-    if(id&&alumnes.find(function(a){return a.id===id;})){dups++;return;}
-    if(!id&&alumnes.find(function(a){return a.nom.toLowerCase()===nomComplet.toLowerCase();})){dups++;return;}
-    var parts=nomComplet.split(' ').filter(function(x){return x.length>0;});
-    var ini2=parts.length>=2?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():nomComplet.substring(0,2).toUpperCase();
-    alumnes.push({id:id,ini:ini2,nom:nomComplet,color:colorIdx(alumnes.length)}); nous++;
+    var jaExisteix=alumnes.find(function(a){return a.nom.toLowerCase()===nomComplet.toLowerCase();})
+      ||candidats.find(function(c){return c.nom.toLowerCase()===nomComplet.toLowerCase();});
+    if(jaExisteix){dups++;return;}
+    candidats.push({nom:nomComplet});
   });
-  guardarDades();
-  renderCfgAlumnes();
-  document.getElementById('excel-feedback').innerHTML='<div style="padding:8px 10px;background:var(--moss-l);color:var(--moss);border-radius:var(--r);font-size:12px;font-weight:500;">✓ '+nous+' importats'+(dups?' · '+dups+' duplicats':'')+' </div>';
-  toast(nous+' alumnes importats ✓');
+  var mc=mesCursos[estat.cursIdx];
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(nousAlumnes){
+    nousAlumnes.forEach(function(al){ alumnes.push(al); });
+    guardarDades();
+    renderCfgAlumnes();
+    document.getElementById('excel-feedback').innerHTML='<div style="padding:8px 10px;background:var(--moss-l);color:var(--moss);border-radius:var(--r);font-size:12px;font-weight:500;">✓ '+nousAlumnes.length+' importats'+(dups?' · '+dups+' duplicats':'')+' </div>';
+    toast(nousAlumnes.length+' alumnes importats ✓');
+  };
+  if(!candidats.length){ acabar([]); return; }
+  if(sb&&mc&&mc.id){
+    var base=alumnes.length;
+    var files=candidats.map(function(c,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:c.nom,ordre:base+i+1}; });
+    sb.from('alumnes').insert(files).select().then(function(res){
+      if(res.error){ toast('Error important: '+res.error.message); return; }
+      var nousAlumnes=res.data.map(function(row,i){
+        return {dbId:row.id,id:'',ini:ini2(row.nom),nom:row.nom,color:colorIdx(base+i),comentari:''};
+      });
+      acabar(nousAlumnes);
+    });
+  }else{
+    var nousAlumnes=candidats.map(function(c,i){
+      return {id:'',ini:ini2(c.nom),nom:c.nom,color:colorIdx(alumnes.length+i)};
+    });
+    acabar(nousAlumnes);
+  }
 }
 
 function renderRubrica(){
@@ -1530,6 +1920,7 @@ function saveRubrica(ta){
   if(!rubrica[compId][ci]) rubrica[compId][ci]={};
   rubrica[compId][ci][rang]=ta.value.trim();
   guardarDades();
+  dbGuardarRubricaCustom(compId);
   toast('Guardat ✓');
 }
 function afegirCriteriBtn(b){afegirCriteri(b.dataset.cid);}
@@ -1538,6 +1929,7 @@ function editarNomCriteri(inp){
   var comp=competencies.find(function(c){return c.id===inp.dataset.compid;}); if(!comp) return;
   comp.criteris[parseInt(inp.dataset.ci)]=inp.value;
   guardarDades();
+  dbGuardarRubricaCustom(inp.dataset.compid);
 }
 function afegirCriteri(compId){
   var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
@@ -1545,6 +1937,7 @@ function afegirCriteri(compId){
   if(!rubrica[compId]) rubrica[compId]=[];
   rubrica[compId].push({'1-4':'','5-6':'','7-8':'','9-10':''});
   guardarDades();
+  dbGuardarRubricaCustom(compId);
   renderRubrica(); toast('Criteri afegit ✓');
 }
 function eliminarCriteri(compId,ci){
@@ -1553,6 +1946,7 @@ function eliminarCriteri(compId,ci){
   comp.criteris.splice(ci,1);
   if(rubrica[compId]) rubrica[compId].splice(ci,1);
   guardarDades();
+  dbGuardarRubricaCustom(compId);
   renderRubrica(); toast('Criteri eliminat');
 }
 
@@ -1846,35 +2240,36 @@ function eliminarActivitatConfirmat(){
   var acts=getActs(compId);
   var idx=acts.findIndex(function(a){return a.id===_currentGraellaActId;});
   if(idx===-1) return;
-  acts.splice(idx,1);
-  tancarDelActivitat();
-  guardarDades();
-  toast('Activitat eliminada');
-  showCV('cv-activitats','cv-graella');
-  openComp(compId);
+  var act=acts[idx];
+  var sb=window.__QUADERN_SUPABASE__;
+  var acabar=function(){
+    acts.splice(idx,1);
+    tancarDelActivitat();
+    guardarDades();
+    toast('Activitat eliminada');
+    showCV('cv-activitats','cv-graella');
+    openComp(compId);
+  };
+  if(sb&&act.dbId){
+    dbEliminarActivitat(act.dbId).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
+  }else{
+    acabar();
+  }
 }
 
 // ═══════════════ INIT ═══════════════
 initGate();
-carregarAuth();
-carregarPerfil();
-carregarDades();
-syncCompetenciesForCurrentSubject();
-updateNav(); renderAll();
-if(authState.isLogged){
-  anarAPasPostAuth();
-}else{
-  document.getElementById('gate').classList.remove('hide');
-  showGatePas('g-login');
-}
-setTimeout(function(){ renderEntradaRapida(); }, 10);
-
-// ─── Comprovacio de connexio amb Supabase (nomes diagnostic, no canvia res encara) ───
-(function comprovarSupabase(){
-  var sb=window.__QUADERN_SUPABASE__;
-  if(!sb){ console.warn('[Arrel] Supabase no configurat (falten les variables d\'entorn).'); return; }
-  sb.auth.getSession().then(function(res){
-    if(res.error){ console.warn('[Arrel] Supabase connectat pero amb error:', res.error.message); }
-    else{ console.info('[Arrel] Connexio amb Supabase OK ✓'); }
-  }).catch(function(err){ console.warn('[Arrel] No s\'ha pogut connectar amb Supabase:', err.message); });
-})();
+escoltarCanvisAuthSupabase();
+carregarAuth().then(function(){
+  carregarPerfil();
+  carregarDades();
+  syncCompetenciesForCurrentSubject();
+  updateNav(); renderAll();
+  if(authState.isLogged){
+    anarAPasPostAuth();
+  }else{
+    document.getElementById('gate').classList.remove('hide');
+    showGatePas('g-login');
+  }
+  setTimeout(function(){ renderEntradaRapida(); }, 10);
+});

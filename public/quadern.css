@@ -167,12 +167,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .cfg-section{display:none;}
 .cfg-section.on{display:block;}
 
-/* TOGGLE */
-.toggle{position:relative;width:36px;height:20px;border-radius:20px;background:var(--line2);cursor:pointer;transition:background .2s;flex-shrink:0;}
-.toggle.on{background:var(--moss);}
-.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-.toggle.on::after{left:19px;}
-
 /* CALENDARI */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:10px;}
 .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px 3px;border-radius:6px;font-size:12px;cursor:pointer;position:relative;min-height:40px;}
