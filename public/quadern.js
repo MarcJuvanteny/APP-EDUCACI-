@@ -648,7 +648,7 @@ function demanarRecuperacio(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb){toast('Base de dades no configurada');return;}
   var email=(document.getElementById('rec-email').value||'').trim().toLowerCase();
   if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
-  sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/inici'}).then(function(res){
+  sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/recuperar-contrasenya'}).then(function(res){
     if(res.error){toast(res.error.message);return;}
     toast('T\'hem enviat un correu amb l\'enllaç ✓');
     showGatePas('g-login');
