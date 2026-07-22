@@ -7,158 +7,112 @@
 - AE = Assoliment Excel·lent (9–10)
 ---
  
-## ÀREA DE LLENGÜES
-### Assignatures: Català, Castellà, Anglès
-### Les 5 competències i descriptors són idèntics per a les tres assignatures.
- 
-### Competència 1: Comprensió Oral
-- Criteri clau: Escoltar i comprendre idees clau
-- NA: No ho entén o demana molta repetició
-- AS: Entén les idees clau i dades directes
-- AN: Entén detalls i el sentit global
-- AE: Interpreta intencions i fa inferències
-### Competència 2: Comprensió Escrita
-- Criteri clau: Lectura i interpretació de textos
-- NA: Li costa descodificar o no s'aclareix
-- AS: Llegeix amb fluïdesa i troba dades directes
-- AN: Fa inferències i comprèn l'estructura
-- AE: Llegeix amb esperit crític i total autonomia
-### Competència 3: Expressió Oral
-- Criteri clau: Parla i interacció (debats, exposicions)
-- NA: Discurs incomprensible o molt limitat
-- AS: S'expressa de forma senzilla i entenedora
-- AN: Parla amb fluïdesa, ordre i bon lèxic
-- AE: Discurs ric, estructurat i interactua molt bé
-### Competència 4: Expressió Escrita
-- Criteri clau: Redacció de textos i ortografia
-- NA: Idees desordenades i molts errors
-- AS: Text senzill i coherent amb errors bàsics
-- AN: Text ben estructurat, connectors i ortografia bona
-- AE: Text molt creatiu, ric i ortografia impecable
-### Competència 5: Plurilingüisme
-- Criteri clau: Relació entre llengües i diversitat
-- NA: No connecta llengües ni mostra interès
-- AS: Detecta paraules similars entre llengües
-- AN: Transfereix estratègies i valora la diversitat
-- AE: Fa de mediador i compara llengües de forma innata
+# Graella de Rúbriques i Criteris d'Avaluació (Decret 175/2022)
+
+## 1. Àrea de Llengües
+
+| Competència Específica | Criteri d'Avaluació | No Assolit (NA) | Assolit Satisfactori (AS) | Assolit Notable (AN) | Assolit Excel·lent (AE) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CE 1. Diversitat lingüística** | **1.1 Reconèixer i respectar la diversitat lingüística.** | Mostra rebuig o indiferència cap a altres llengües i cultures. | Reconeix les llengües de l'aula i les respecta si se li recorda. | Mostra interès actiu i respecte cap a les diferents llengües. | Promou i valora activament la diversitat com una riquesa col·lectiva. |
+| | **1.2 Identificar prejudicis lingüístics i cohesió.** | Reprodueix prejudicis lingüístics sense qüestionar-los. | Identifica alguns prejudicis quan l'adult el guia. | Detecta prejudicis de forma autònoma i hi argumenta en contra. | Analitza de forma crítica els usos i proposa alternatives inclusives. |
+| **CE 2. Comprensió oral** | **2.1 Comprendre idees principals de textos orals.** | No capta la idea global del text oral ni amb suport. | Identifica la idea principal si rep preguntes o guiatge directament. | Extreu les idees principals i secundàries de forma autònoma. | Sintetitza el discurs amb precisió, captant detalls subtils i relacions. |
+| | **2.2 Valorar la intenció del discurs oral.** | Es queda en la literalitat i confon la intenció de l'emissor. | Reconeix la intenció bàsica (informar, convèncer) amb pautes. | Detecta la intenció de l'emissor i en fa una valoració raonada. | Analitza de forma crítica la intenció, detectant biaixos o ironies. |
+| **CE 3. Expressió oral** | **3.1 Produir textos orals coherents i estructurats.** | Expressa idees de forma desordenada, incomprensible o molt pobre. | S'expressa de forma entenedora, tot i que amb dubtes o repeticions. | Exposa idees amb ordre, fluïdesa i un vocabulari variat i adequat. | Construeix un discurs estructurat, ric, fluid i adaptat a l'audiència. |
+| | **3.2 Participar en converses i debats respectant normes.** | Interromp sistemàticament, no escolta o es nega a participar. | Participa en la conversa i manté el torn si se li recorda. | Intervé activament, escolta els altres i manté un diàleg fluid. | Lidera el diàleg de forma empàtica, integrant les aportacions d'altres. |
+| **CE 4. Comprensió lectora** | **4.1 Extreure informació directa i implícita de textos.** | No extreu la informació bàsica del text encara que tingui suport. | Troba la informació literal directa, però li costa fer deduccions. | Extreu informació explícita i implícita de manera autònoma. | Interpreta el sentit profund, establint relacions complexes i crítiques. |
+| | **4.2 Aplicar estratègies de lectura per la comprensió.** | Abandona la lectura en trobar un bloqueig o paraula desconeguda. | Utilitza el context o relegeix si l'adult el guia en el procés. | Aplica trucs i estratègies autònomament quan no entén alguna cosa. | Selecciona i combina estratègies segons la complexitat del text. |
+| **CE 5. Expressió escrita** | **5.1 Escriure textos estructurats segons la tipologia.** | Redacta textos incoherents que no mantenen l'estructura. | Escriu textos entenedors que mantenen l'estructura bàsica. | Redacta de forma coherent, organitzada i ajustada a la tipologia. | Organitza el text amb una estructura impecable, estil fluid i creatiu. |
+| | **5.2 Aplicar el procés d'escriptura (planificar, revisar).** | Escriu directament sense planificar i no revisa mai el text. | Planifica amb ajuts visuals i corregeix errors ortogràfics evidents. | Planifica el text i en revisa l'ortografia i gramàtica autònomament. | Mostra un procés d'auto-revisió rigorós, polint el text per millorar-lo. |
+| **CE 6. Cerca d'informació** | **6.1 Cercar informació en fonts analògiques i digitals.** | Es perd en la cerca i no troba informació rellevant o útil. | Localitza informació si se li donen fonts i pautes molt concretes. | Cerca i selecciona informació rellevant en fonts fiables autònomament. | Contrasta diferents fonts, n'avalua la fiabilitat i selecciona el millor contingut. |
+| | **6.2 Processar i sintetitzar la informació (no plagiar).** | Copia i enganxa literalment fragments del text sense processar. | Reescriu la informació canviant només algunes paraules soltes. | Redacta la informació amb les seves pròpies paraules organitzant idees. | Sintetitza i personalitza la informació elaborant un discurs propi. |
+| **CE 7. Educació literària** | **7.1 Llegir de manera autònoma obres literàries.** | Rebutja la lectura de forma sistemàtica. | Llegeix els llibres proposats a classe, però no en tria per iniciativa. | Mostra hàbit lector, triant obres segons els seus gustos i interessos. | Té un hàbit lector consolidat i comparteix recomanacions. |
+| | **7.2 Reconèixer elements bàsics del relat.** | No sap identificar els personatges ni el context de la història. | Identifica els personatges principals i el lloc si són evidents. | Reconeix clarament personatges, espai, temps i el gènere. | Analitza l'evolució dels personatges, el narrador i recursos expressius. |
+| **CE 8. Plurilingüisme** | **8.1 Transferir estratègies d'una llengua a una altra.** | Bloqueja l'aprenentatge sense relacionar-ho amb el que coneix. | Reconeix semblances lingüístiques simples quan se li fan notar. | Transfereix estructures, vocabulari i estratègies entre llengües. | Utilitza el repertori multilingüe de manera estratègica per resoldre reptes. |
+| | **8.2 Actitud oberta cap a diferents llengües.** | Rebutja aprendre o escoltar llengües diferents a la pròpia. | Tolera diferents llengües a l'aula sense mostrar iniciativa activa. | Manifesta interès i curiositat per aprendre paraules noves. | Es mostra entusiasta i actua com a pont lingüístic a l'aula. |
+| **CE 9. Reflexió lingüística** | **9.1 Formular hipòtesis i usar terminologia gramatical.** | No reconeix les categories gramaticals ni la funció de paraules. | Identifica elements gramaticals bàsics amb suport de la pauta. | Utilitza els termes gramaticals bàsics per explicar la llengua. | Aplica la reflexió metalingüística de forma precisa per argumentar la tria. |
+| | **9.2 Revisar i auto-corregir les produccions.** | No detecta els seus propis errors ni quan se li assenyalen. | Corregeix errors quan el docent li indica exactament on són. | Revisa el text autònomament i detecta i corregeix errades. | Autocorregeix i millora la cohesió, la precisió i la sintaxi amb criteri. |
+
 ---
- 
-## ÀREA DE MATEMÀTIQUES
-### Assignatures: Matemàtiques
- 
-### Competència 1: Resolució de problemes
-- Criteri clau: Identificar dades i aplicar operacions
-- NA: No sap identificar dades ni l'operació
-- AS: Identifica dades i l'operació amb èxit
-- AN: Resol provant diferents estratègies i comprova
-- AE: Cerca diferents vies i formula nous problemes
-### Competència 2: Raonament i connexions
-- Criteri clau: Buscar patrons i connectar conceptes
-- NA: No veu relacions ni justifica què fa
-- AS: Descriu patrons i relacions evidents
-- AN: Argumenta decisions i connecta amb altres àrees
-- AE: Generalitza regles i fa raonaments complexos
-### Competència 3: Comunicació
-- Criteri clau: Expressar processos matemàtics
-- NA: No sap explicar com ha fet el càlcul
-- AS: S'explica de forma bàsica i usa algun dibuix
-- AN: Explica amb claredat el procés i el representa
-- AE: Comunica idees abstractes amb rigor i precisió
-### Competència 4: Sentit matemàtic
-- Criteri clau: Domini del càlcul, mesura i geometria
-- NA: Moltes dificultats en operacions bàsiques
-- AS: Domina el càlcul escrit i conceptes comuns
-- AN: Àgil en càlcul mental, mesura i gràfics
-- AE: Excel·lent flexibilitat numèrica i visualització
+
+## 2. Àrea de Matemàtiques
+
+| Competència Específica | Criteri d'Avaluació | No Assolit (NA) | Assolit Satisfactori (AS) | Assolit Notable (AN) | Assolit Excel·lent (AE) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CE 1. Resolució de problemes** | **1.1 Comprendre enunciats i identificar dades.** | Es bloqueja davant l'enunciat i no sap quines dades calen. | Identifica les dades principals del problema amb lectura guiada. | Extreu i organitza les dades rellevants de l'enunciat autònomament. | Interpreta enunciats complexos, extreu dades implícites i descarta no rellevants. |
+| | **1.2 Aplicar estratègies i operacions.** | Aplica operacions a l'atzar sense cap lògica ni sentit. | Tria l'operació correcta quan rep orientació en l'estratègia. | Selecciona l'estratègia adequada i resol operacions amb precisió. | Descobreix i utilitza diferents camins de resolució eficients. |
+| | **1.3 Comprovar la validesa de la solució.** | Dóna una xifra com a resposta sense comprovar si té sentit. | Verifica el resultat si el docent li demana explícitament. | Revisa si la solució té sentit respecte a la pregunta plantejada. | Comprova la validesa del resultat i argumenta la solidesa. |
+| **CE 2. Raonament** | **2.1 Identificar patrons i relacions lògiques.** | No identifica relacions ni continuïtat en sèries. | Detecta la continuació d'un patró senzill si se li donen pistes. | Reconeix i descriu patrons i relacions lògiques autònomament. | Generalitza patrons complexos i crea noves estructures lògiques. |
+| | **2.2 Justificar resultats amb arguments lògics.** | Realitza els procediments mecànicament sense explicar-los. | Explica els passos del seu càlcul si se li fan preguntes directes. | Argumenta i justifica de manera lògica la decisió en el càlcul. | Ofereix demostracions estructurades i avalua raonaments d'altres. |
+| **CE 3. Connexions** | **3.1 Relacionar diferents conceptes matemàtics.** | Veu les matemàtiques com a blocs aïllats sense connexió. | Reconeix connexions evidents entre blocs quan se li posen exemples. | Connecta idees de diferents blocs de forma espontània. | Aplica conceptes d'un bloc per resoldre problemes d'un altre. |
+| | **3.2 Aplicar matemàtiques a la vida quotidiana.** | No sap utilitzar les matemàtiques fora de la matèria. | Aplica la mesura o càlcul en altres àrees si se li indica pas a pas. | Utilitza les eines matemàtiques com a recurs natural en la vida diària. | Modela i resol situacions complexes de la vida real amb matemàtiques. |
+| **CE 4. Representació** | **4.1 Representar situacions (dibuixos, gràfics).** | Incapaç de passar una dada numèrica a suport visual. | Dibuixa o fa un esquema senzill si se li demana explícitament. | Tradueix el problema a una taula, gràfic o model simbòlic. | Dissenya representacions visuals molt clares de dades complexes. |
+| | **4.2 Canviar entre formats de representació.** | Es bloqueja en demanar-li un format no habitual. | Passa d'un format a un altre seguint un model molt fix. | Canvia de format de representació amb fluïdesa i autonomia. | Selecciona i combina el format de representació més eficient. |
+| **CE 5. Comunicació** | **5.1 Explicar processos amb vocabulari adequat.** | Utilitza un llenguatge ambigu o no matemàtic. | Utilitza termes matemàtics bàsics barrejats amb informal. | Empreu el vocabulari propi de l'àrea amb precisió. | Comunica idees amb claredat, rigor i precisió tècnica. |
+| | **5.2 Comprendre raonaments dels companys.** | No segueix ni entén les explicacions dels companys. | Entén el procés d'un company només si és molt lent i senzill. | Comprèn els raonaments exposats pels companys a l'aula. | Identifica encerts, errors o camins alternatius en els companys. |
+| **CE 6. Socioafectiva** | **6.1 Mostrar perseverança i aprendre de l'error.** | S'abandona davant la dificultat i es frustra amb l'error. | Persisteix en la tasca si rep suport o ànims continus. | Afronta els reptes amb actitud positiva i accepta l'error. | Mostra alta resiliència i reconstrueix la seva estratègia des de l'error. |
+| | **6.2 Treballar cooperativament en equip.** | Imposa idees, no escolta o es nega a treballar en equip. | Participa en el grup, tot i que li costa coordinar-se amb els ritmes. | Treballa de manera cooperativa, respectant opinions i ritmes. | Fomenta un treball en equip inclusiu i potencia el grup. |
+
 ---
- 
-## ÀREA DE CONEIXEMENT DEL MEDI
-### Assignatures: Medi Natural, Medi Social, Medi (genèric)
- 
-### Competència 1: Indagació i ciència
-- Criteri clau: Preguntes, experiments i conclusions
-- NA: No té iniciativa per observar ni indagar
-- AS: Segueix l'experiment de classe i en descriu el resultat
-- AN: Planteja hipòtesis, experimenta i treu conclusions
-- AE: Dissenya recerques amb gran rigor científic
-### Competència 2: Tecnologia i disseny
-- Criteri clau: Crear prototips i ús d'eines digitals
-- NA: No sap utilitzar tecnologia ni crear objectes
-- AS: Fa anar dispositius i participa en maquetes senzilles
-- AN: Cerca a la xarxa i dissenya maquetes funcionals
-- AE: Resol reptes tècnics o digitals de forma innovadora
-### Competència 3: Ciutadania i història
-- Criteri clau: Fets històrics i convivència democràtica
-- NA: No ubica fets en el temps ni respecta normes
-- AS: Ubica canvis en la història i conviu amb respecte
-- AN: Ordena etapes històriques i s'implica a l'aula
-- AE: Analitza el passat de forma crítica i és ciutadà actiu
-### Competència 4: Salut i sostenibilitat
-- Criteri clau: Hàbits saludables i consum responsable
-- NA: No té cura d'ell mateix ni de l'entorn
-- AS: Aplica hàbits bàsics i directrius de reciclatge
-- AN: Manté estils de vida sans i col·labora en el medi
-- AE: Lidera i proposa campanyes de sostenibilitat
+
+## 3. Àrea de Coneixement del Medi Natural, Social i Cultural
+
+| Competència Específica | Criteri d'Avaluació | No Assolit (NA) | Assolit Satisfactori (AS) | Assolit Notable (AN) | Assolit Excel·lent (AE) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CE 1. Mètode científic** | **1.1 Formular preguntes i hipòtesis.** | No fa preguntes ni és capaç de predir què passarà. | Formula preguntes molt guiades i hipòtesis de "sí/no". | Planteja preguntes investigables i hipòtesis lògiques. | Formula hipòtesis ben fonamentades amb pensament científic. |
+| | **1.2 Realitzar experiments o investigacions.** | No segueix les instruccions ni manipula el material bé. | Realitza l'experiment seguint una pauta pas a pas dirigida. | Aplica els passos del mètode experimental amb ordre i seguretat. | Proposa o ajusta el disseny experimental introduint variables. |
+| | **1.3 Recollir dades i extreure conclusions.** | No anota dades o ho fa de forma caòtica sense conclusions. | Anota les dades en una taula donada i diu conclusions amb ajut. | Organitza les dades en suports adequats i redacta conclusions. | Analitza dades críticament i redacta conclusions científiques. |
+| **CE 2. Tecnologia** | **2.1 Dissenyar i construir prototips.** | Incapaç de planificar o construir un objecte per a un repte. | Construeix un prototip bàsic si se li dóna un model a copiar. | Dissenya i construeix un prototip funcional que respon al repte. | Crea solucions tecnològiques innovadores i ben executades. |
+| | **2.2 Avaluar el disseny i millorar-lo.** | No avalua si el seu objecte funciona ni com millorar-lo. | Identifica si funciona, però li costa trobar la causa de l'error. | Posa a prova el prototip, detecta fallades i proposa canvis. | Realitza proves sistemàtiques i redissenya optimitzant el resultat. |
+| **CE 3. Salut i benestar** | **3.1 Aplicar hàbits de vida saludable.** | Manté hàbits poc saludables sense adonar-se dels riscos. | Reconeix hàbits saludables en la teoria, però li costa aplicar-los. | Aplica hàbits d'higiene, alimentació, descans i activitat diària. | Argumenta els beneficis de la salut i en promou la pràctica. |
+| | **3.2 Gestionar emocions pel benestar.** | No identifica el que sent ni com afecta la seva salut. | Identifica emocions bàsiques i demana ajut quan no està bé. | Relaciona l'estat emocional amb el benestar i s'autoregula. | Gestiona emocions i accions promovent el benestar de tots. |
+| **CE 4. Ecosocial** | **4.1 Identificar relacions als ecosistemes.** | No distingeix els éssers vius principals ni les relacions. | Identifica éssers vius i en reconeix la funció bàsica si se'l guia. | Classifica els éssers vius i explica les relacions a l'ecosistema. | Analitza l'equilibri dels ecosistemes i la biodiversitat. |
+| | **4.2 Consum responsable i estalvi de recursos.** | Mostra conductes de malbaratament i no recicla. | Recicla i estalvia recursos només quan se li recorda. | Actua conscientment reciclant i reduint el consum de recursos. | Promou iniciatives sostenibles i raona la transició ecològica. |
+| | **4.3 Accions locals per al medi ambient.** | Es mostra indiferent davant els problemes mediambientals. | Reconeix problemes de contaminació si se li mostren imatges. | Proposa accions concretes i realistes per millorar el medi. | Dissenya i lidera accions de sensibilització ambiental a l'escola. |
+| **CE 5. Història** | **5.1 Ordenar fets i etapes històriques.** | Incapaç de situar-se en el temps o confon passat i present. | Ordena fets cronològics evidents de la seva vida o etapes. | Situa correctament esdeveniments en les grans etapes. | Relaciona causes i conseqüències entre diferents etapes. |
+| | **5.2 Valorar el patrimoni històric i cultural.** | Desconeix o menysprea el patrimoni i les tradicions. | Identifica els monuments o festes més populars de la localitat. | Valora i explica l'origen i importància dels elements culturals. | Investiga sobre el patrimoni, en defensa la conservació i en difon el valor. |
+| | **5.3 Analitzar causes i conseqüències històriques.** | Veu els fets històrics com a esdeveniments aïllats. | Identifica una causa senzilla d'un fet històric quan se li explica. | Explica causes i conseqüències dels fets treballats. | Analitza múltiples factors (socials, econòmics) de la història. |
+| **CE 6. Geografia** | **6.1 Utilitzar eines d'orientació i mapes.** | No s'orienta en l'espai ni interpreta un plànol bàsic. | Se situa en un plànol o mapa senzill amb la guia de l'adult. | Utilitza mapes, plànols, llegendes i coordenades autònomament. | Interpreta mapes complexos, en creua informació i fa plànols. |
+| | **6.2 Relació paisatge, clima i activitat humana.** | No relaciona l'entorn natural amb les formes de vida. | Explica relacions senzilles (ex: fa fred, ens cobrim). | Relaciona clima i relleu amb l'activitat econòmica i paisatge. | Analitza com l'acció humana transforma el paisatge i proposa millores. |
+| **CE 7. Ciutadania** | **7.1 Normes de convivència i diàleg.** | Incompleix normes i respon amb agressivitat o bloqueig. | Respecta normes la major part del temps i accepta el diàleg. | Segueix les normes i utilitza el diàleg per resoldre desacords. | Actua com a mediador natural afavorint un clima democràtic. |
+| | **7.2 Respectar Drets de la Infància i diversitat.** | Ignora els drets dels altres i manté actituds d'exclusió. | Reconeix els drets bàsics de la infància i tolera la diferència. | Respecta els Drets de la Infància i conviu amb empatia. | Defensa activament els drets de tothom i enriqueix el grup. |
+
 ---
- 
-## ÀREA D'EDUCACIÓ FÍSICA
-### Assignatures: Educació Física
- 
-### Competència 1: Resolució motriu
-- Criteri clau: Habilitats de moviment i tàctiques de joc
-- NA: Dificultats de coordinació o desorientació
-- AS: Controla habilitats bàsiques en jocs pautats
-- AN: Adapta el cos a canvis de ritme, espai i tàctica
-- AE: Domina i anticipa qualsevol moviment o joc tàctic
-### Competència 2: Salut i seguretat
-- Criteri clau: Benestar físic, escalfament i higiene
-- NA: Mostra rebuig a l'esforç i oblida la higiene
-- AS: Participa en l'escalfament i té cura de la higiene
-- AN: Regula l'esforç i entén els beneficis de l'esport
-- AE: Gestiona de forma autònoma la seva salut i seguretat
-### Competència 3: Expressió corporal
-- Criteri clau: Comunicació gestual i ritme musical
-- NA: Inhibit en gestos i no segueix el ritme
-- AS: Expressa coses bàsiques i fa danses pautades
-- AN: Comunica sentiments i es mou a tempo
-- AE: Crea moviments i coreografies amb gran originalitat
-### Competència 4: Interacció social
-- Criteri clau: Joc net, respecte i cooperació en grup
-- NA: Provoca disputes, no accepta regles ni ajuda
-- AS: Respecta les regles i tolera el resultat del joc
-- AN: Ajuda els companys i resol conflictes dialogant
-- AE: Lidera el joc net (fair play) i fomenta la inclusió
+
+## 4. Àrea d'Educació Artística
+
+| Competència Específica | Criteri d'Avaluació | No Assolit (NA) | Assolit Satisfactori (AS) | Assolit Notable (AN) | Assolit Excel·lent (AE) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CE 1. Recepció** | **1.1 Escoltar i observar manifestacions artístiques.** | No manté l'atenció ni el silenci durant les obres. | Escolta o observa les obres durant un temps breu si se'l dirigeix. | Mostra atenció, concentració i interès actiu davant l'art. | Analitza detalls tècnics, d'estil i d'expressió de forma madura. |
+| | **1.2 Expressar sensacions amb vocabulari adequat.** | No sap expressar què li transmet l'obra o desqualifica. | Diu si una obra li agrada o no amb termes molt bàsics. | Expressa emocions i opinions sobre l'obra emprant vocabulari adequat. | Elabora comentaris crítics argumentats respectant la diversitat. |
+| **CE 2. Exploració** | **2.1 Experimentar amb eines i mitjans digitals.** | Es nega a manipular materials o en fa un ús destructiu. | Utilitza eines i tècniques plàstiques seguint el model donat. | Experimenta amb diferents materials, tècniques i eines digitals. | Domina i combina tècniques plàstiques i digitals de forma innovadora. |
+| | **2.2 Utilitzar la veu, el cos i els instruments.** | Es mostra descompassat, no canta ni segueix la música. | Canta o toca mantenint el ritme quan va acompanyat pel grup. | Ajusta la veu, l'afinació, el ritme i el moviment autònomament. | Demostra gran precisió rítmica, oïda i expressivitat. |
+| **CE 3. Creació** | **3.1 Crear obres visuals o musicals originals.** | Copia el treball dels companys sense aportar res propi. | Realitza produccions senzilles que compleixen el mínim de la tasca. | Elabora produccions originals aportant idees pròpies i creatives. | Destaca per la seva gran creativitat, estil propi i cura en detalls. |
+| | **3.2 Participar en projectes artístics col·lectius.** | Es desentén del grup, destorba o es nega a participar. | Participa en la creació col·lectiva fent el paper bàsic assignat. | S'implica en el projecte comú, coopera en assajos i aporta idees. | Lidera la producció col·lectiva ajudant a coordinar el grup. |
+| | **3.3 Presentar creacions artístiques.** | Es nega a mostrar el seu treball als altres per vergonya. | Mostra la seva creació si se li demana i rep suport directe. | Presenta la seva producció explicant el procés amb claredat. | Exposa i comunica el significat de la seva obra amb seguretat i orgull. |
+
 ---
- 
-## ÀREA D'EDUCACIÓ ARTÍSTICA
-### Assignatures: Educació Artística, Arts Plàstiques, Música, Visual i Plàstica
- 
-### Competència 1: Recepció i anàlisi
-- Criteri clau: Observar i valorar elements de l'art
-- NA: Desinterès o incapaç de descriure una obra
-- AS: Identifica colors o formes evidents en imatges
-- AN: Analitza obres explicant l'emoció que transmeten
-- AE: Fa valoracions crítiques i documentades molt riques
-### Competència 2: Creació i expressió
-- Criteri clau: Ús de tècniques i creativitat pròpia
-- NA: Poc acurat amb materials o deixa feines a mitges
-- AS: Aplica la tècnica pautada amb prou destresa
-- AN: Experimenta amb materials i mostra estil propi
-- AE: Combina tècniques amb gran originalitat i plasticitat
-### Competència 3: Procés i col·laboració
-- Criteri clau: Planificació i treball cooperatiu
-- NA: No planifica, no comparteix i no acaba el treball
-- AS: Segueix els passos de l'activitat i respecta l'equip
-- AN: Esbossa abans d'actuar i col·labora activament
-- AE: Executa projectes des de la idea fins a l'exposició
+
+## 5. Àrea d'Educació Física
+
+| Competència Específica | Criteri d'Avaluació | No Assolit (NA) | Assolit Satisfactori (AS) | Assolit Notable (AN) | Assolit Excel·lent (AE) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CE 1. Motricitat** | **1.1 Controlar el cos (coordinació i equilibri).** | Té dificultats de coordinació i perd l'equilibri fàcilment. | Executa moviments de forma acceptable, tot i mostrar rigidesa. | Executa habilitats motrius (carreres, salts, girs) de forma fluida. | Demostra un domini corporal excel·lent amb moviments molt precisos. |
+| | **1.2 Adaptar moviments a entorns canviants.** | Es mostra molt insegur i es bloqueja quan canvia l'espai. | S'adapta a espais nous anant amb molta precaució i pautes. | Ajusta els seus moviments de forma ràpida a l'entorn. | Respon amb gran habilitat i seguretat davant qualsevol obstacle. |
+| **CE 2. Hàbits saludables** | **2.1 Reconèixer els beneficis de l'activitat.** | No mostra interès per l'exercici i busca estar inactiu. | Participa en les sessions reconeixent que és bo per la salut. | Valora l'exercici i manté una actitud activa tota la sessió. | Promou l'activitat física com un estil de vida essencial. |
+| | **2.2 Aplicar escalfament, seguretat i higiene.** | Oblida la roba d'esport, no fa escalfament o actua amb risc. | Fa escalfament i segueix normes si el docent ho indica. | Realitza l'escalfament de forma responsable i té cura de la higiene. | Gestiona l'escalfament autònomament i preveu riscos. |
+| **CE 3. Interacció** | **3.1 Cooperar en jocs acceptant regles i resultat.** | S'enfada si perd, fa trampes o exclou companys. | Juga en equip respectant les regles, tot i costar-li la derrota. | Coopera activament, demostra esportivitat i accepta el resultat. | Destaca pel joc net, anima els companys i afavoreix la inclusió. |
+| | **3.2 Aplicar estratègies i pautes tàctiques.** | Es desplaça pel camp sense cap sentit tàctic. | Manté la seva posició bàsica si se li recorda constantment. | Aplica trucs i estratègies d'equip per assolir l'objectiu. | Modifica la tàctica individual i col·lectiva en temps real. |
+| **CE 4. Expressió corporal** | **4.1 Crear i executar seqüències de moviment.** | Es nega a moure's al ritme de la música o a la dansa. | Repeteix una seqüència de passos dissenyada per l'adult/grup. | Aporta passos i idees per muntar una coreografia en grup. | Dissenya coreografies riques, originals i amb molt de ritme. |
+| | **4.2 Emprar el cos com a mitjà d'expressió.** | Mostra una rigidesa o vergonya que impideix l'expressió. | Utilitza el gest i el cos per fer mímica o dramatització guiada. | Comunica històries i emocions a través del cos amb claredat. | Transmet estats d'ànim complexos amb gran riquesa gestual. |
+
 ---
- 
-## MAPATGE ASSIGNATURA → COMPETÈNCIES
- 
-Català        → ÀREA DE LLENGÜES (5 competències)
-Castellà      → ÀREA DE LLENGÜES (5 competències)
-Anglès        → ÀREA DE LLENGÜES (5 competències)
-Matemàtiques  → ÀREA DE MATEMÀTIQUES (4 competències)
-Medi          → ÀREA DE CONEIXEMENT DEL MEDI (4 competències)
-Educació Física → ÀREA D'EDUCACIÓ FÍSICA (4 competències)
-Educació Artística → ÀREA D'EDUCACIÓ ARTÍSTICA (3 competències)
+
+## 6. Àrea d'Educació en Valors Cívics i Ètics
+
+| Competència Específica | Criteri d'Avaluació | No Assolit (NA) | Assolit Satisfactori (AS) | Assolit Notable (AN) | Assolit Excel·lent (AE) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CE 1. Autoconeixement** | **1.1 Expressar opinions i emocions assertivament.** | Reacciona amb crits o es tanca en banda quan opina. | Diu el que pensa o sent, tot i que de vegades ho fa de forma impulsiva. | Expressa opinions i emocions de forma calmada, clara i educada. | Demostra gran intel·ligència emocional en idees complexes. |
+| | **1.2 Reflexionar sobre dilemes morals.** | No veu cap dimensió ètica en els conflictes ("m'és igual"). | Distingeix el que està bé o malament si l'adult li analitza el cas. | Reflexiona i aporta raons lògiques sobre el que és just. | Demostra pensament crític profund cercant el bé comú. |
+| **CE 2. Compromís ètic** | **2.1 Mostrar empatia i respecte a la igualtat.** | Fa comentaris intolerants, masclistes o no es posa a l'altre lloc. | Respecta els companys, tot i costar-li empatitzar amb el diferent. | Se situa al lloc dels altres i respecta tothom sense distinció. | Actua com a motor d'inclusió defensant els qui ho necessiten. |
+| | **2.2 Resoldre conflictes amb el diàleg.** | Recorre a la força, l'insult o la fugida per solucionar problemes. | S'asseu a parlar del conflicte quan el docent l'obliga. | Escolta la versió de l'altre i busca un pacte negociat parlant. | Aplica tècniques de mediació espontània per calmar tensions. |
+| | **2.3 Valorar normes democràtiques i drets.** | Ignora les normes de convivència i els drets bàsics. | Comprèn la necessitat de les normes si se li expliquen. | Valora i respecta les normes col·lectives i els drets humans. | Promou el funcionament democràtic i proposa millores. |
