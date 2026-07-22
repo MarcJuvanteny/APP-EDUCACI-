@@ -1134,9 +1134,10 @@ function spiderCoreDraw(ctx, W, H, labels, datasets, colors){
     ctx.fillText(labels[i],lx,ly);
   }
   // Datasets
+  var VAR_HEX_MAP={'var(--clay)':'#B5562F','var(--moss)':'#566B47','var(--sky)':'#3C6B82','var(--honey)':'#B98627','var(--plum)':'#6B4A6E'};
   datasets.forEach(function(data,di){
     var col=colors[di]||'var(--clay)';
-    var hex=col.startsWith('var(')? (di===0?'#B5562F':'#566B47') : col;
+    var hex=VAR_HEX_MAP[col]||(col.startsWith('var(')?'#B5562F':col);
     ctx.beginPath();
     data.forEach(function(v,i){
       var a=angleStep*i-Math.PI/2; var r=R*(Math.min(10,Math.max(0,v))/10);
@@ -1257,11 +1258,11 @@ function obrirAlumne(ini){
       +(missatge?'<div style="font-size:13px;color:var(--ink2);background:var(--paper);border-radius:8px;padding:9px 12px;font-style:italic;margin-bottom:14px;">'+escHtml(missatge)+'</div>':'')
       +'<div class="g2">'
         +'<div>'
-          +'<div class="sec" style="margin-bottom:4px;">Gràfic d\'aranya <span style="color:var(--clay);font-weight:700;">'+escHtml(al.nom.split(' ')[0])+'</span> vs classe</div>'
+          +'<div class="sec" style="margin-bottom:4px;">Gràfic d\'aranya <span style="color:var(--moss);font-weight:700;">'+escHtml(al.nom.split(' ')[0])+'</span> vs classe</div>'
           +'<div class="spider-wrap"><canvas id="'+canvasId+'" width="240" height="200"></canvas></div>'
           +'<div style="display:flex;gap:14px;justify-content:center;margin-top:6px;">'
-            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--clay);border-radius:2px;"></div>'+escHtml(al.nom.split(' ')[0])+'</div>'
-            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--moss);border-radius:2px;"></div>Classe</div>'
+            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--moss);border-radius:2px;"></div>'+escHtml(al.nom.split(' ')[0])+'</div>'
+            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--clay);border-radius:2px;"></div>Classe</div>'
           +'</div>'
         +'</div>'
         +'<div>'
@@ -1286,7 +1287,7 @@ function obrirAlumne(ini){
       var words=c.nom.split(' ');
       return words.length<=2?c.nom:(words[0]+' '+words[1]);
     });
-    drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--clay)','var(--moss)'], 240, 200);
+    drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--moss)','var(--clay)'], 240, 200);
   }, 30);
 }
 
@@ -2324,7 +2325,7 @@ function generarInformeHTML(d, renderChart){
     var al=d.alumnesMap[uid];
     var alVals=d.totsSubjs.map(function(s){var a=al.assigns[s]; return a&&a.nota!=null?a.nota:0;});
     var classeVals=d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;});
-    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#B5562F','#566B47'],200,175);
+    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#566B47','#B5562F'],200,175);
     var g=d.globalsAlu[uid];
 
     var taulaNotes='<table style="font-size:10.5px;"><thead><tr><th style="text-align:left;">Assignatura</th><th>Nota global</th></tr></thead><tbody>';
