@@ -1,7 +1,7 @@
 // ═══════════════ DADES ═══════════════
 var prof = {nom:'Anna Garcia', centre:'Escola Montserrat', any:'2025-2026'};
 var cursosList = ['1r A','1r B','2n A','2n B','3r A','3r B','4t A','4t B','5e A','5e B','6e A','6e B'];
-var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts'];
+var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts','Valors'];
 var trimestres = ['1r Trimestre','2n Trimestre','3r Trimestre'];
 
 var mesCursos = [
@@ -32,47 +32,166 @@ var authState = { isLogged: false, user: null };
 function normTxt(s){
   return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 }
-function comp(id, nom, ico, color, criteris, na, as, an, ae){
+// Un criteri d'avaluacio te el seu propi text i la seva propia rubrica de 4 nivells
+// (a diferencia d'una rubrica unica compartida per tots els criteris d'una competencia).
+function crit(text,na,as,an,ae){
+  return {text:text,na:na,as:as,an:an,ae:ae};
+}
+function comp(id, nom, ico, color, criteris){
   return {
     id:id,
     nom:nom,
     ico:ico,
     color:color,
-    criteris:criteris,
-    rubrica:{'1-4':na,'5-6':as,'7-8':an,'9-10':ae}
+    criteris:criteris.map(function(c){return c.text;}),
+    rubriques:criteris.map(function(c){return {'1-4':c.na,'5-6':c.as,'7-8':c.an,'9-10':c.ae};})
   };
 }
 
+// Competencies, criteris d'avaluacio i rubriques per defecte — Decret 175/2022
+// (Currículum de Catalunya, Primària). Font: app/docs/Competencies.md
 var competenciesByArea = {
   llengues: [
-    comp('lleng-comp-1','Comprensio Oral','CO','sky',['Identifica el sentit global de textos orals','Reconeix informacio rellevant en missatges orals','Mostra atencio i respecte durant l\'escolta'],'No ho entén o demana molta repetició','Entén les idees clau i dades directes','Entén detalls i el sentit global','Interpreta intencions i fa inferències'),
-    comp('lleng-comp-2','Comprensio Escrita','CE','clay',['Llegeix amb fluïdesa textos adequats al nivell','Identifica informacio explicita en el text','Fa inferències senzilles sobre el contingut'],'Li costa descodificar o no s\'aclareix','Llegeix amb fluïdesa i troba dades directes','Fa inferències i comprèn l\'estructura','Llegeix amb esperit crític i total autonomia'),
-    comp('lleng-comp-3','Expressio Oral','EO','plum',['Produeix intervencions orals ordenades','Utilitza un vocabulari adequat i variat','Participa en interaccions orals amb respecte'],'Discurs incomprensible o molt limitat','S\'expressa de forma senzilla i entenedora','Parla amb fluïdesa, ordre i bon lèxic','Discurs ric, estructurat i interactua molt bé'),
-    comp('lleng-comp-4','Expressio Escrita','EE','moss',['Escriu textos organitzats amb estructura clara','Aplica correctament ortografia i puntuacio','Utilitza connectors per enllaçar idees'],'Idees desordenades i molts errors','Text senzill i coherent amb errors bàsics','Text ben estructurat, connectors i ortografia bona','Text molt creatiu, ric i ortografia impecable'),
-    comp('lleng-comp-5','Plurilinguisme','PL','honey',['Compara paraules i estructures entre llengües','Utilitza terminologia gramatical bàsica','Valora la diversitat lingüística de l\'aula'],'No connecta llengües ni mostra interès','Detecta paraules similars entre llengües','Transfereix estratègies i valora la diversitat','Fa de mediador i compara llengües de forma innata')
+    comp('lleng-ce1','Diversitat lingüística','DL','sky',[
+      crit('Reconèixer i respectar la diversitat lingüística.','Mostra rebuig o indiferència cap a altres llengües i cultures.','Reconeix les llengües de l\'aula i les respecta si se li recorda.','Mostra interès actiu i respecte cap a les diferents llengües.','Promou i valora activament la diversitat com una riquesa col·lectiva.'),
+      crit('Identificar prejudicis lingüístics i cohesió.','Reprodueix prejudicis lingüístics sense qüestionar-los.','Identifica alguns prejudicis quan l\'adult el guia.','Detecta prejudicis de forma autònoma i hi argumenta en contra.','Analitza de forma crítica els usos i proposa alternatives inclusives.')
+    ]),
+    comp('lleng-ce2','Comprensió oral','CO','clay',[
+      crit('Comprendre idees principals de textos orals.','No capta la idea global del text oral ni amb suport.','Identifica la idea principal si rep preguntes o guiatge directament.','Extreu les idees principals i secundàries de forma autònoma.','Sintetitza el discurs amb precisió, captant detalls subtils i relacions.'),
+      crit('Valorar la intenció del discurs oral.','Es queda en la literalitat i confon la intenció de l\'emissor.','Reconeix la intenció bàsica (informar, convèncer) amb pautes.','Detecta la intenció de l\'emissor i en fa una valoració raonada.','Analitza de forma crítica la intenció, detectant biaixos o ironies.')
+    ]),
+    comp('lleng-ce3','Expressió oral','EO','plum',[
+      crit('Produir textos orals coherents i estructurats.','Expressa idees de forma desordenada, incomprensible o molt pobre.','S\'expressa de forma entenedora, tot i que amb dubtes o repeticions.','Exposa idees amb ordre, fluïdesa i un vocabulari variat i adequat.','Construeix un discurs estructurat, ric, fluid i adaptat a l\'audiència.'),
+      crit('Participar en converses i debats respectant normes.','Interromp sistemàticament, no escolta o es nega a participar.','Participa en la conversa i manté el torn si se li recorda.','Intervé activament, escolta els altres i manté un diàleg fluid.','Lidera el diàleg de forma empàtica, integrant les aportacions d\'altres.')
+    ]),
+    comp('lleng-ce4','Comprensió lectora','CL','moss',[
+      crit('Extreure informació directa i implícita de textos.','No extreu la informació bàsica del text encara que tingui suport.','Troba la informació literal directa, però li costa fer deduccions.','Extreu informació explícita i implícita de manera autònoma.','Interpreta el sentit profund, establint relacions complexes i crítiques.'),
+      crit('Aplicar estratègies de lectura per la comprensió.','Abandona la lectura en trobar un bloqueig o paraula desconeguda.','Utilitza el context o rellegeix si l\'adult el guia en el procés.','Aplica trucs i estratègies autònomament quan no entén alguna cosa.','Selecciona i combina estratègies segons la complexitat del text.')
+    ]),
+    comp('lleng-ce5','Expressió escrita','EE','honey',[
+      crit('Escriure textos estructurats segons la tipologia.','Redacta textos incoherents que no mantenen l\'estructura.','Escriu textos entenedors que mantenen l\'estructura bàsica.','Redacta de forma coherent, organitzada i ajustada a la tipologia.','Organitza el text amb una estructura impecable, estil fluid i creatiu.'),
+      crit('Aplicar el procés d\'escriptura (planificar, revisar).','Escriu directament sense planificar i no revisa mai el text.','Planifica amb ajuts visuals i corregeix errors ortogràfics evidents.','Planifica el text i en revisa l\'ortografia i gramàtica autònomament.','Mostra un procés d\'auto-revisió rigorós, polint el text per millorar-lo.')
+    ]),
+    comp('lleng-ce6','Cerca d\'informació','CI','sky',[
+      crit('Cercar informació en fonts analògiques i digitals.','Es perd en la cerca i no troba informació rellevant o útil.','Localitza informació si se li donen fonts i pautes molt concretes.','Cerca i selecciona informació rellevant en fonts fiables autònomament.','Contrasta diferents fonts, n\'avalua la fiabilitat i selecciona el millor contingut.'),
+      crit('Processar i sintetitzar la informació (no plagiar).','Copia i enganxa literalment fragments del text sense processar.','Reescriu la informació canviant només algunes paraules soltes.','Redacta la informació amb les seves pròpies paraules organitzant idees.','Sintetitza i personalitza la informació elaborant un discurs propi.')
+    ]),
+    comp('lleng-ce7','Educació literària','EL','clay',[
+      crit('Llegir de manera autònoma obres literàries.','Rebutja la lectura de forma sistemàtica.','Llegeix els llibres proposats a classe, però no en tria per iniciativa.','Mostra hàbit lector, triant obres segons els seus gustos i interessos.','Té un hàbit lector consolidat i comparteix recomanacions.'),
+      crit('Reconèixer elements bàsics del relat.','No sap identificar els personatges ni el context de la història.','Identifica els personatges principals i el lloc si són evidents.','Reconeix clarament personatges, espai, temps i el gènere.','Analitza l\'evolució dels personatges, el narrador i recursos expressius.')
+    ]),
+    comp('lleng-ce8','Plurilingüisme','PL','plum',[
+      crit('Transferir estratègies d\'una llengua a una altra.','Bloqueja l\'aprenentatge sense relacionar-ho amb el que coneix.','Reconeix semblances lingüístiques simples quan se li fan notar.','Transfereix estructures, vocabulari i estratègies entre llengües.','Utilitza el repertori multilingüe de manera estratègica per resoldre reptes.'),
+      crit('Actitud oberta cap a diferents llengües.','Rebutja aprendre o escoltar llengües diferents a la pròpia.','Tolera diferents llengües a l\'aula sense mostrar iniciativa activa.','Manifesta interès i curiositat per aprendre paraules noves.','Es mostra entusiasta i actua com a pont lingüístic a l\'aula.')
+    ]),
+    comp('lleng-ce9','Reflexió lingüística','RL','moss',[
+      crit('Formular hipòtesis i usar terminologia gramatical.','No reconeix les categories gramaticals ni la funció de paraules.','Identifica elements gramaticals bàsics amb suport de la pauta.','Utilitza els termes gramaticals bàsics per explicar la llengua.','Aplica la reflexió metalingüística de forma precisa per argumentar la tria.'),
+      crit('Revisar i auto-corregir les produccions.','No detecta els seus propis errors ni quan se li assenyalen.','Corregeix errors quan el docent li indica exactament on són.','Revisa el text autònomament i detecta i corregeix errades.','Autocorregeix i millora la cohesió, la precisió i la sintaxi amb criteri.')
+    ])
   ],
   matematiques: [
-    comp('mates-comp-1','Resolucio de problemes','RP','sky',['Identifica les dades rellevants d\'un problema','Selecciona i aplica l\'operacio adequada','Comprova el resultat i el contextualitza'],'No sap identificar dades ni l\'operació','Identifica dades i l\'operació amb èxit','Resol provant diferents estratègies i comprova','Cerca diferents vies i formula nous problemes'),
-    comp('mates-comp-2','Raonament i connexions','RC','clay',['Detecta patrons numèrics i geomètrics','Justifica les decisions preses','Connecta els continguts amb altres àrees'],'No veu relacions ni justifica què fa','Descriu patrons i relacions evidents','Argumenta decisions i connecta amb altres àrees','Generalitza regles i fa raonaments complexos'),
-    comp('mates-comp-3','Comunicacio','CM','plum',['Explica el procés seguit amb claredat','Utilitza representacions (dibuixos, taules, gràfics)','Empra vocabulari matemàtic adequat'],'No sap explicar com ha fet el càlcul','S\'explica de forma bàsica i usa algun dibuix','Explica amb claredat el procés i el representa','Comunica idees abstractes amb rigor i precisió'),
-    comp('mates-comp-4','Sentit matematic','SM','moss',['Domina el càlcul mental i escrit','Aplica conceptes de mesura amb precisió','Reconeix i utilitza figures geomètriques'],'Moltes dificultats en operacions bàsiques','Domina el càlcul escrit i conceptes comuns','Àgil en càlcul mental, mesura i gràfics','Excel·lent flexibilitat numèrica i visualització')
+    comp('mates-ce1','Resolució de problemes','RP','sky',[
+      crit('Comprendre enunciats i identificar dades.','Es bloqueja davant l\'enunciat i no sap quines dades calen.','Identifica les dades principals del problema amb lectura guiada.','Extreu i organitza les dades rellevants de l\'enunciat autònomament.','Interpreta enunciats complexos, extreu dades implícites i descarta no rellevants.'),
+      crit('Aplicar estratègies i operacions.','Aplica operacions a l\'atzar sense cap lògica ni sentit.','Tria l\'operació correcta quan rep orientació en l\'estratègia.','Selecciona l\'estratègia adequada i resol operacions amb precisió.','Descobreix i utilitza diferents camins de resolució eficients.'),
+      crit('Comprovar la validesa de la solució.','Dóna una xifra com a resposta sense comprovar si té sentit.','Verifica el resultat si el docent li demana explícitament.','Revisa si la solució té sentit respecte a la pregunta plantejada.','Comprova la validesa del resultat i argumenta la solidesa.')
+    ]),
+    comp('mates-ce2','Raonament','RA','clay',[
+      crit('Identificar patrons i relacions lògiques.','No identifica relacions ni continuïtat en sèries.','Detecta la continuació d\'un patró senzill si se li donen pistes.','Reconeix i descriu patrons i relacions lògiques autònomament.','Generalitza patrons complexos i crea noves estructures lògiques.'),
+      crit('Justificar resultats amb arguments lògics.','Realitza els procediments mecànicament sense explicar-los.','Explica els passos del seu càlcul si se li fan preguntes directes.','Argumenta i justifica de manera lògica la decisió en el càlcul.','Ofereix demostracions estructurades i avalua raonaments d\'altres.')
+    ]),
+    comp('mates-ce3','Connexions','CN','plum',[
+      crit('Relacionar diferents conceptes matemàtics.','Veu les matemàtiques com a blocs aïllats sense connexió.','Reconeix connexions evidents entre blocs quan se li posen exemples.','Connecta idees de diferents blocs de forma espontània.','Aplica conceptes d\'un bloc per resoldre problemes d\'un altre.'),
+      crit('Aplicar matemàtiques a la vida quotidiana.','No sap utilitzar les matemàtiques fora de la matèria.','Aplica la mesura o càlcul en altres àrees si se li indica pas a pas.','Utilitza les eines matemàtiques com a recurs natural en la vida diària.','Modela i resol situacions complexes de la vida real amb matemàtiques.')
+    ]),
+    comp('mates-ce4','Representació','RE','moss',[
+      crit('Representar situacions (dibuixos, gràfics).','Incapaç de passar una dada numèrica a suport visual.','Dibuixa o fa un esquema senzill si se li demana explícitament.','Tradueix el problema a una taula, gràfic o model simbòlic.','Dissenya representacions visuals molt clares de dades complexes.'),
+      crit('Canviar entre formats de representació.','Es bloqueja en demanar-li un format no habitual.','Passa d\'un format a un altre seguint un model molt fix.','Canvia de format de representació amb fluïdesa i autonomia.','Selecciona i combina el format de representació més eficient.')
+    ]),
+    comp('mates-ce5','Comunicació','CM','honey',[
+      crit('Explicar processos amb vocabulari adequat.','Utilitza un llenguatge ambigu o no matemàtic.','Utilitza termes matemàtics bàsics barrejats amb informal.','Empra el vocabulari propi de l\'àrea amb precisió.','Comunica idees amb claredat, rigor i precisió tècnica.'),
+      crit('Comprendre raonaments dels companys.','No segueix ni entén les explicacions dels companys.','Entén el procés d\'un company només si és molt lent i senzill.','Comprèn els raonaments exposats pels companys a l\'aula.','Identifica encerts, errors o camins alternatius en els companys.')
+    ]),
+    comp('mates-ce6','Socioafectiva','SA','sky',[
+      crit('Mostrar perseverança i aprendre de l\'error.','S\'abandona davant la dificultat i es frustra amb l\'error.','Persisteix en la tasca si rep suport o ànims continus.','Afronta els reptes amb actitud positiva i accepta l\'error.','Mostra alta resiliència i reconstrueix la seva estratègia des de l\'error.'),
+      crit('Treballar cooperativament en equip.','Imposa idees, no escolta o es nega a treballar en equip.','Participa en el grup, tot i que li costa coordinar-se amb els ritmes.','Treballa de manera cooperativa, respectant opinions i ritmes.','Fomenta un treball en equip inclusiu i potencia el grup.')
+    ])
   ],
   medi: [
-    comp('medi-comp-1','Indagacio i ciencia','IC','sky',['Formula preguntes investigables','Dissenya i realitza experiments senzills','Extreu conclusions a partir de les observacions'],'No té iniciativa per observar ni indagar','Segueix l\'experiment de classe i en descriu el resultat','Planteja hipòtesis, experimenta i treu conclusions','Dissenya recerques amb gran rigor científic'),
-    comp('medi-comp-2','Tecnologia i disseny','TD','clay',['Utilitza eines digitals amb autonomia','Dissenya i construeix prototips senzills','Resol problemes tècnics de forma creativa'],'No sap utilitzar tecnologia ni crear objectes','Fa anar dispositius i participa en maquetes senzilles','Cerca a la xarxa i dissenya maquetes funcionals','Resol reptes tècnics o digitals de forma innovadora'),
-    comp('medi-comp-3','Ciutadania i historia','CH','plum',['Ubica fets històrics en el temps','Reconeix canvis i continuïtats al llarg del temps','Participa de forma democràtica i respectuosa'],'No ubica fets en el temps ni respecta normes','Ubica canvis en la història i conviu amb respecte','Ordena etapes històriques i s\'implica a l\'aula','Analitza el passat de forma crítica i és ciutadà actiu'),
-    comp('medi-comp-4','Salut i sostenibilitat','SS','moss',['Aplica hàbits d\'higiene i alimentacio saludable','Adopta pràctiques de consum responsable','S\'implica en accions de cura del medi ambient'],'No té cura d\'ell mateix ni de l\'entorn','Aplica hàbits bàsics i directrius de reciclatge','Manté estils de vida sans i col·labora en el medi','Lidera i proposa campanyes de sostenibilitat')
+    comp('medi-ce1','Mètode científic','MC','sky',[
+      crit('Formular preguntes i hipòtesis.','No fa preguntes ni és capaç de predir què passarà.','Formula preguntes molt guiades i hipòtesis de "sí/no".','Planteja preguntes investigables i hipòtesis lògiques.','Formula hipòtesis ben fonamentades amb pensament científic.'),
+      crit('Realitzar experiments o investigacions.','No segueix les instruccions ni manipula el material bé.','Realitza l\'experiment seguint una pauta pas a pas dirigida.','Aplica els passos del mètode experimental amb ordre i seguretat.','Proposa o ajusta el disseny experimental introduint variables.'),
+      crit('Recollir dades i extreure conclusions.','No anota dades o ho fa de forma caòtica sense conclusions.','Anota les dades en una taula donada i diu conclusions amb ajut.','Organitza les dades en suports adequats i redacta conclusions.','Analitza dades críticament i redacta conclusions científiques.')
+    ]),
+    comp('medi-ce2','Tecnologia','TE','clay',[
+      crit('Dissenyar i construir prototips.','Incapaç de planificar o construir un objecte per a un repte.','Construeix un prototip bàsic si se li dóna un model a copiar.','Dissenya i construeix un prototip funcional que respon al repte.','Crea solucions tecnològiques innovadores i ben executades.'),
+      crit('Avaluar el disseny i millorar-lo.','No avalua si el seu objecte funciona ni com millorar-lo.','Identifica si funciona, però li costa trobar la causa de l\'error.','Posa a prova el prototip, detecta fallades i proposa canvis.','Realitza proves sistemàtiques i redissenya optimitzant el resultat.')
+    ]),
+    comp('medi-ce3','Salut i benestar','SB','plum',[
+      crit('Aplicar hàbits de vida saludable.','Manté hàbits poc saludables sense adonar-se dels riscos.','Reconeix hàbits saludables en la teoria, però li costa aplicar-los.','Aplica hàbits d\'higiene, alimentació, descans i activitat diària.','Argumenta els beneficis de la salut i en promou la pràctica.'),
+      crit('Gestionar emocions pel benestar.','No identifica el que sent ni com afecta la seva salut.','Identifica emocions bàsiques i demana ajut quan no està bé.','Relaciona l\'estat emocional amb el benestar i s\'autoregula.','Gestiona emocions i accions promovent el benestar de tots.')
+    ]),
+    comp('medi-ce4','Ecosocial','EC','moss',[
+      crit('Identificar relacions als ecosistemes.','No distingeix els éssers vius principals ni les relacions.','Identifica éssers vius i en reconeix la funció bàsica si se\'l guia.','Classifica els éssers vius i explica les relacions a l\'ecosistema.','Analitza l\'equilibri dels ecosistemes i la biodiversitat.'),
+      crit('Consum responsable i estalvi de recursos.','Mostra conductes de malbaratament i no recicla.','Recicla i estalvia recursos només quan se li recorda.','Actua conscientment reciclant i reduint el consum de recursos.','Promou iniciatives sostenibles i raona la transició ecològica.'),
+      crit('Accions locals per al medi ambient.','Es mostra indiferent davant els problemes mediambientals.','Reconeix problemes de contaminació si se li mostren imatges.','Proposa accions concretes i realistes per millorar el medi.','Dissenya i lidera accions de sensibilització ambiental a l\'escola.')
+    ]),
+    comp('medi-ce5','Història','HI','honey',[
+      crit('Ordenar fets i etapes històriques.','Incapaç de situar-se en el temps o confon passat i present.','Ordena fets cronològics evidents de la seva vida o etapes.','Situa correctament esdeveniments en les grans etapes.','Relaciona causes i conseqüències entre diferents etapes.'),
+      crit('Valorar el patrimoni històric i cultural.','Desconeix o menysprea el patrimoni i les tradicions.','Identifica els monuments o festes més populars de la localitat.','Valora i explica l\'origen i importància dels elements culturals.','Investiga sobre el patrimoni, en defensa la conservació i en difon el valor.'),
+      crit('Analitzar causes i conseqüències històriques.','Veu els fets històrics com a esdeveniments aïllats.','Identifica una causa senzilla d\'un fet històric quan se li explica.','Explica causes i conseqüències dels fets treballats.','Analitza múltiples factors (socials, econòmics) de la història.')
+    ]),
+    comp('medi-ce6','Geografia','GE','sky',[
+      crit('Utilitzar eines d\'orientació i mapes.','No s\'orienta en l\'espai ni interpreta un plànol bàsic.','Se situa en un plànol o mapa senzill amb la guia de l\'adult.','Utilitza mapes, plànols, llegendes i coordenades autònomament.','Interpreta mapes complexos, en creua informació i fa plànols.'),
+      crit('Relació paisatge, clima i activitat humana.','No relaciona l\'entorn natural amb les formes de vida.','Explica relacions senzilles (ex: fa fred, ens cobrim).','Relaciona clima i relleu amb l\'activitat econòmica i paisatge.','Analitza com l\'acció humana transforma el paisatge i proposa millores.')
+    ]),
+    comp('medi-ce7','Ciutadania','CI','clay',[
+      crit('Normes de convivència i diàleg.','Incompleix normes i respon amb agressivitat o bloqueig.','Respecta normes la major part del temps i accepta el diàleg.','Segueix les normes i utilitza el diàleg per resoldre desacords.','Actua com a mediador natural afavorint un clima democràtic.'),
+      crit('Respectar Drets de la Infància i diversitat.','Ignora els drets dels altres i manté actituds d\'exclusió.','Reconeix els drets bàsics de la infància i tolera la diferència.','Respecta els Drets de la Infància i conviu amb empatia.','Defensa activament els drets de tothom i enriqueix el grup.')
+    ])
   ],
   educacioFisica: [
-    comp('ef-comp-1','Resolucio motriu','RM','sky',['Controla habilitats motrius bàsiques','Adapta els moviments a l\'espai i al ritme','Aplica estratègies tàctiques en jocs'],'Dificultats de coordinació o desorientació','Controla habilitats bàsiques en jocs pautats','Adapta el cos a canvis de ritme, espai i tàctica','Domina i anticipa qualsevol moviment o joc tàctic'),
-    comp('ef-comp-2','Salut i seguretat','SS','clay',['Realitza l\'escalfament de manera autònoma','Té cura de la seva higiene i seguretat','Regula l\'esforç segons l\'activitat'],'Mostra rebuig a l\'esforç i oblida la higiene','Participa en l\'escalfament i té cura de la higiene','Regula l\'esforç i entén els beneficis de l\'esport','Gestiona de forma autònoma la seva salut i seguretat'),
-    comp('ef-comp-3','Expressio corporal','EC','plum',['Expressa emocions i idees amb el cos','Segueix el ritme en activitats musicals','Crea moviments i petites coreografies'],'Inhibit en gestos i no segueix el ritme','Expressa coses bàsiques i fa danses pautades','Comunica sentiments i es mou a tempo','Crea moviments i coreografies amb gran originalitat'),
-    comp('ef-comp-4','Interaccio social','IS','moss',['Respecta les normes del joc','Coopera amb els companys per assolir objectius','Resol conflictes de manera dialogada'],'Provoca disputes, no accepta regles ni ajuda','Respecta les regles i tolera el resultat del joc','Ajuda els companys i resol conflictes dialogant','Lidera el joc net (fair play) i fomenta la inclusió')
+    comp('ef-ce1','Motricitat','MO','sky',[
+      crit('Controlar el cos (coordinació i equilibri).','Té dificultats de coordinació i perd l\'equilibri fàcilment.','Executa moviments de forma acceptable, tot i mostrar rigidesa.','Executa habilitats motrius (carreres, salts, girs) de forma fluida.','Demostra un domini corporal excel·lent amb moviments molt precisos.'),
+      crit('Adaptar moviments a entorns canviants.','Es mostra molt insegur i es bloqueja quan canvia l\'espai.','S\'adapta a espais nous anant amb molta precaució i pautes.','Ajusta els seus moviments de forma ràpida a l\'entorn.','Respon amb gran habilitat i seguretat davant qualsevol obstacle.')
+    ]),
+    comp('ef-ce2','Hàbits saludables','HS','clay',[
+      crit('Reconèixer els beneficis de l\'activitat.','No mostra interès per l\'exercici i busca estar inactiu.','Participa en les sessions reconeixent que és bo per la salut.','Valora l\'exercici i manté una actitud activa tota la sessió.','Promou l\'activitat física com un estil de vida essencial.'),
+      crit('Aplicar escalfament, seguretat i higiene.','Oblida la roba d\'esport, no fa escalfament o actua amb risc.','Fa escalfament i segueix normes si el docent ho indica.','Realitza l\'escalfament de forma responsable i té cura de la higiene.','Gestiona l\'escalfament autònomament i preveu riscos.')
+    ]),
+    comp('ef-ce3','Interacció','IN','plum',[
+      crit('Cooperar en jocs acceptant regles i resultat.','S\'enfada si perd, fa trampes o exclou companys.','Juga en equip respectant les regles, tot i costar-li la derrota.','Coopera activament, demostra esportivitat i accepta el resultat.','Destaca pel joc net, anima els companys i afavoreix la inclusió.'),
+      crit('Aplicar estratègies i pautes tàctiques.','Es desplaça pel camp sense cap sentit tàctic.','Manté la seva posició bàsica si se li recorda constantment.','Aplica trucs i estratègies d\'equip per assolir l\'objectiu.','Modifica la tàctica individual i col·lectiva en temps real.')
+    ]),
+    comp('ef-ce4','Expressió corporal','EC','moss',[
+      crit('Crear i executar seqüències de moviment.','Es nega a moure\'s al ritme de la música o a la dansa.','Repeteix una seqüència de passos dissenyada per l\'adult/grup.','Aporta passos i idees per muntar una coreografia en grup.','Dissenya coreografies riques, originals i amb molt de ritme.'),
+      crit('Emprar el cos com a mitjà d\'expressió.','Mostra una rigidesa o vergonya que impedeix l\'expressió.','Utilitza el gest i el cos per fer mímica o dramatització guiada.','Comunica històries i emocions a través del cos amb claredat.','Transmet estats d\'ànim complexos amb gran riquesa gestual.')
+    ])
   ],
   educacioArtistica: [
-    comp('art-comp-1','Recepcio i analisi','RA','sky',['Identifica elements bàsics d\'una obra (color, forma, textura)','Descriu les sensacions que li transmet una obra','Compara diferents obres i estils'],'Desinterès o incapaç de descriure una obra','Identifica colors o formes evidents en imatges','Analitza obres explicant l\'emoció que transmeten','Fa valoracions crítiques i documentades molt riques'),
-    comp('art-comp-2','Creacio i expressio','CE','clay',['Aplica tècniques plàstiques bàsiques','Mostra creativitat i iniciativa pròpia','Acaba les seves produccions amb cura'],'Poc acurat amb materials o deixa feines a mitges','Aplica la tècnica pautada amb prou destresa','Experimenta amb materials i mostra estil propi','Combina tècniques amb gran originalitat i plasticitat'),
-    comp('art-comp-3','Proces i col·laboracio','PC','plum',['Planifica les passes abans de crear','Col·labora activament en projectes de grup','Respecta i valora el treball dels altres'],'No planifica, no comparteix i no acaba el treball','Segueix els passos de l\'activitat i respecta l\'equip','Esbossa abans d\'actuar i col·labora activament','Executa projectes des de la idea fins a l\'exposició')
+    comp('art-ce1','Recepció','RC','sky',[
+      crit('Escoltar i observar manifestacions artístiques.','No manté l\'atenció ni el silenci durant les obres.','Escolta o observa les obres durant un temps breu si se\'l dirigeix.','Mostra atenció, concentració i interès actiu davant l\'art.','Analitza detalls tècnics, d\'estil i d\'expressió de forma madura.'),
+      crit('Expressar sensacions amb vocabulari adequat.','No sap expressar què li transmet l\'obra o desqualifica.','Diu si una obra li agrada o no amb termes molt bàsics.','Expressa emocions i opinions sobre l\'obra emprant vocabulari adequat.','Elabora comentaris crítics argumentats respectant la diversitat.')
+    ]),
+    comp('art-ce2','Exploració','EX','clay',[
+      crit('Experimentar amb eines i mitjans digitals.','Es nega a manipular materials o en fa un ús destructiu.','Utilitza eines i tècniques plàstiques seguint el model donat.','Experimenta amb diferents materials, tècniques i eines digitals.','Domina i combina tècniques plàstiques i digitals de forma innovadora.'),
+      crit('Utilitzar la veu, el cos i els instruments.','Es mostra descompassat, no canta ni segueix la música.','Canta o toca mantenint el ritme quan va acompanyat pel grup.','Ajusta la veu, l\'afinació, el ritme i el moviment autònomament.','Demostra gran precisió rítmica, oïda i expressivitat.')
+    ]),
+    comp('art-ce3','Creació','CR','plum',[
+      crit('Crear obres visuals o musicals originals.','Copia el treball dels companys sense aportar res propi.','Realitza produccions senzilles que compleixen el mínim de la tasca.','Elabora produccions originals aportant idees pròpies i creatives.','Destaca per la seva gran creativitat, estil propi i cura en detalls.'),
+      crit('Participar en projectes artístics col·lectius.','Es desentén del grup, destorba o es nega a participar.','Participa en la creació col·lectiva fent el paper bàsic assignat.','S\'implica en el projecte comú, coopera en assajos i aporta idees.','Lidera la producció col·lectiva ajudant a coordinar el grup.'),
+      crit('Presentar creacions artístiques.','Es nega a mostrar el seu treball als altres per vergonya.','Mostra la seva creació si se li demana i rep suport directe.','Presenta la seva producció explicant el procés amb claredat.','Exposa i comunica el significat de la seva obra amb seguretat i orgull.')
+    ])
+  ],
+  valorsCivics: [
+    comp('valors-ce1','Autoconeixement','AC','sky',[
+      crit('Expressar opinions i emocions assertivament.','Reacciona amb crits o es tanca en banda quan opina.','Diu el que pensa o sent, tot i que de vegades ho fa de forma impulsiva.','Expressa opinions i emocions de forma calmada, clara i educada.','Demostra gran intel·ligència emocional en idees complexes.'),
+      crit('Reflexionar sobre dilemes morals.','No veu cap dimensió ètica en els conflictes ("m\'és igual").','Distingeix el que està bé o malament si l\'adult li analitza el cas.','Reflexiona i aporta raons lògiques sobre el que és just.','Demostra pensament crític profund cercant el bé comú.')
+    ]),
+    comp('valors-ce2','Compromís ètic','CE','clay',[
+      crit('Mostrar empatia i respecte a la igualtat.','Fa comentaris intolerants, masclistes o no es posa a l\'altre lloc.','Respecta els companys, tot i costar-li empatitzar amb el diferent.','Se situa al lloc dels altres i respecta tothom sense distinció.','Actua com a motor d\'inclusió defensant els qui ho necessiten.'),
+      crit('Resoldre conflictes amb el diàleg.','Recorre a la força, l\'insult o la fugida per solucionar problemes.','S\'asseu a parlar del conflicte quan el docent l\'obliga.','Escolta la versió de l\'altre i busca un pacte negociat parlant.','Aplica tècniques de mediació espontània per calmar tensions.'),
+      crit('Valorar normes democràtiques i drets.','Ignora les normes de convivència i els drets bàsics.','Comprèn la necessitat de les normes si se li expliquen.','Valora i respecta les normes col·lectives i els drets humans.','Promou el funcionament democràtic i proposa millores.')
+    ])
   ]
 };
 
@@ -83,11 +202,21 @@ function areaForSubject(subj){
   if(['medi','medinatural','medisocial'].indexOf(n)!==-1) return 'medi';
   if(['educaciofisica','edfisica','edfisi','edfisica','edfísica'].indexOf(n)!==-1) return 'educacioFisica';
   if(['educacioartistica','artsplastiques','music','musica','visualiplastica','arts'].indexOf(n)!==-1) return 'educacioArtistica';
+  if(['valors','valorscivics','educacioenvalors','valorsciviciseticscritics'].indexOf(n)!==-1) return 'valorsCivics';
   return 'llengues';
 }
 
 function getCompetenciesForSubject(subj){
   return competenciesByArea[areaForSubject(subj)] || competenciesByArea.llengues;
+}
+// Tots els id de competencia vigents al curriculum actual — serveix per detectar
+// activitats "orfes" que apunten a competencies d'una versio anterior del curriculum.
+function totesLesCompetenciesIds(){
+  var ids=[];
+  Object.keys(competenciesByArea).forEach(function(area){
+    competenciesByArea[area].forEach(function(c){ ids.push(c.id); });
+  });
+  return ids;
 }
 
 function getCurrentSubject(){
@@ -102,9 +231,7 @@ var rubrica = {};
 var escales = [{rang:'1-4',label:'No Assolit',color:'clay'},{rang:'5-6',label:'Assol. suficient',color:'honey'},{rang:'7-8',label:'Assol. notable',color:'sky'},{rang:'9-10',label:'Assol. excellent',color:'moss'}];
 Object.keys(competenciesByArea).forEach(function(area){
   competenciesByArea[area].forEach(function(comp){
-    rubrica[comp.id] = comp.criteris.map(function(){
-      return {'1-4':comp.rubrica['1-4'],'5-6':comp.rubrica['5-6'],'7-8':comp.rubrica['7-8'],'9-10':comp.rubrica['9-10']};
-    });
+    rubrica[comp.id] = comp.rubriques;
   });
 });
 
@@ -351,11 +478,18 @@ function carregarDades(){
   if(saved.activitats) activitats=saved.activitats;
   if(saved.calEvents) calEvents=saved.calEvents;
   if(saved.missatgesAlumnes) missatgesAlumnes=saved.missatgesAlumnes;
-  if(saved.rubrica) rubrica=saved.rubrica;
-  if(saved.competenciesByArea){
-    Object.keys(saved.competenciesByArea).forEach(function(area){
-      if(competenciesByArea[area]) competenciesByArea[area]=saved.competenciesByArea[area];
-    });
+  // La rubrica i les competencies per defecte nomes es restauren del localStorage en
+  // mode sense base de dades. Amb Supabase connectat, els valors per defecte vius al
+  // codi son l'unica font de veritat, i les personalitzacions del professor arriben
+  // despres via dbCarregarRubricaCustom() — sino, una copia antiga desada al navegador
+  // tornaria a tapar qualsevol actualitzacio del currículum per defecte.
+  if(!window.__QUADERN_SUPABASE__){
+    if(saved.rubrica) rubrica=saved.rubrica;
+    if(saved.competenciesByArea){
+      Object.keys(saved.competenciesByArea).forEach(function(area){
+        if(competenciesByArea[area]) competenciesByArea[area]=saved.competenciesByArea[area];
+      });
+    }
   }
   return true;
 }
@@ -554,12 +688,18 @@ function omplirCursSiBuit(mc){
   if(!sb||!mc||!mc.id||!mc.assigns||!mc.assigns.length) return Promise.resolve();
   return dbCarregarAlumnes(mc.id).then(function(existents){
     if(existents.length){
-      // Ja te alumnes, pero pot ser que una execucio anterior s'hagues interromput
-      // abans de generar les activitats/notes. Comprovem si en te cap.
-      return sb.from('activitats').select('id').eq('curs_id',mc.id).limit(1).then(function(res){
+      // Ja te alumnes. Comprovem les activitats que ja te: poden ser inexistents
+      // (execucio anterior interrompuda) o "orfes" — apuntant a ids de competencia
+      // d'una versio anterior del curriculum, que ja no existeixen al codi actual.
+      var idsValids=totesLesCompetenciesIds();
+      return sb.from('activitats').select('id,competencia_id').eq('curs_id',mc.id).then(function(res){
         if(res.error){ console.warn('[Arrel]',res.error.message); return; }
-        if(res.data&&res.data.length) return; // ja te activitats, no toquem res
-        return generarNotesDemoPerCurs(mc, existents);
+        var files=res.data||[];
+        var orfes=files.filter(function(f){ return idsValids.indexOf(f.competencia_id)===-1; });
+        var vigents=files.filter(function(f){ return idsValids.indexOf(f.competencia_id)!==-1; });
+        if(vigents.length) return; // ja te activitats amb competencies actuals, no toquem res
+        var neteja=orfes.length?sb.from('activitats').delete().in('id',orfes.map(function(f){return f.id;})):Promise.resolve();
+        return neteja.then(function(){ return generarNotesDemoPerCurs(mc, existents); });
       });
     }
     var files=DEMO_ALUMNES_NOMS.map(function(nom,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''}; });
@@ -1164,6 +1304,7 @@ function renderAlumnes(){
   var cerca=cercaEl?cercaEl.value.toLowerCase().trim():'';
   var alumnesFiltrats=cerca?alumnes.filter(function(al){return al.nom.toLowerCase().indexOf(cerca)!==-1;}):alumnes;
   document.getElementById('alumne-detail').style.display='none';
+  document.getElementById('alumnes-table-wrap').style.display='block';
 
   var compCols=competencies.map(function(comp){
     var shortNom=comp.nom.split(' ').slice(0,2).join(' ');
@@ -2023,9 +2164,12 @@ function exportarPDF(){
   cont+='</body></html>';
   var blob=new Blob([cont],{type:'text/html'});
   var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
+  var win=window.open(url,'_blank');
+  if(win){
+    win.addEventListener('load',function(){ win.print(); });
+  }
   setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('PDF obert en nova pestanya — usa Ctrl+P per imprimir');
+  toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
 }
 
 // Informe JSON
