@@ -282,15 +282,6 @@ function notaMitjana(act,comp,ini){
   var ne=act.notaAltres?act.notaAltres[ini]:null; if(ne!=null){t+=parseFloat(ne);c++;}
   return c?Math.round(t/c*10)/10:null;
 }
-function compMitjanaAlumne(subj,compId,iniAlu){
-  var trim=trimestres[estat.trimIdx]; var mc=mesCursos[estat.cursIdx]; if(!mc) return null;
-  var comp=getCompetenciesForSubject(subj).find(function(c){return c.id===compId;});
-  if(!comp) return null;
-  var acts=getActsFor(mc.curs,trim,subj,compId); var t=0,c=0;
-  acts.forEach(function(act){ comp.criteris.forEach(function(crit){ var n=act.notes[iniAlu]?act.notes[iniAlu][crit]:null; if(n!=null){t+=n;c++;} }); });
-  return c?Math.round(t/c*10)/10:null;
-}
-
 function lsGet(key){
   try{
     var raw=window.localStorage.getItem(key);
@@ -532,15 +523,17 @@ function dbActualitzarComentariAlumne(alumneDbId,text){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').update({comentari:text}).eq('id',alumneDbId);
 }
+// Roster fictici compartit pel sembrat de demo, tant a la primera entrada (dbSembrarDemo)
+// com quan cal completar un curs que ja existeix pero encara esta buit (omplirCursSiBuit).
+var DEMO_ALUMNES_NOMS=['Marc Roca Bosch','Sofia Vila Torrent','Laia Esteve Mas','Joan Puig Serra','Arnau Oms Ferrer','Marta Font Giro','Pol Llopis Camps','Neus Carbonell Costa','Jordi Badia Valls','Alba Trias Nadal','Roger Torres Vila','Irene Comas Prat'];
+var DEMO_ALUMNES_MISSATGES=["Excel·lent actitud.","Cal reforçar l'expressió oral.","Necessita més suport.","Molt participatiu.","Pla de reforç actiu.","Alumna destacada.","Millora progressiva.","Bona actitud.","En millora.","Molt bona alumna.","Pot millorar.","Excel·lent en tot."];
 // Sembra dues classes de mostra la primera vegada que un professor entra sense cap curs:
 // una plena (per veure com es fa servir) i una buida (tal com trobaria un curs nou de veritat).
 function dbSembrarDemo(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
-  var noms=['Marc Roca Bosch','Sofia Vila Torrent','Laia Esteve Mas','Joan Puig Serra','Arnau Oms Ferrer','Marta Font Giro','Pol Llopis Camps','Neus Carbonell Costa','Jordi Badia Valls','Alba Trias Nadal','Roger Torres Vila','Irene Comas Prat'];
-  var missatgesArr=["Excel·lent actitud.","Cal reforçar l'expressió oral.","Necessita més suport.","Molt participatiu.","Pla de reforç actiu.","Alumna destacada.","Millora progressiva.","Bona actitud.","En millora.","Molt bona alumna.","Pot millorar.","Excel·lent en tot."];
   return dbCrearCurs('3r A',['Catala','Castella','Angles']).then(function(curPle){
-    var files=noms.map(function(nom,i){
-      return {curs_id:curPle.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:missatgesArr[i]||''};
+    var files=DEMO_ALUMNES_NOMS.map(function(nom,i){
+      return {curs_id:curPle.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''};
     });
     return sb.from('alumnes').insert(files).select().then(function(res){
       if(res.error) throw res.error;
@@ -569,9 +562,7 @@ function omplirCursSiBuit(mc){
         return generarNotesDemoPerCurs(mc, existents);
       });
     }
-    var noms=['Marc Roca Bosch','Sofia Vila Torrent','Laia Esteve Mas','Joan Puig Serra','Arnau Oms Ferrer','Marta Font Giro','Pol Llopis Camps','Neus Carbonell Costa','Jordi Badia Valls','Alba Trias Nadal','Roger Torres Vila','Irene Comas Prat'];
-    var missatgesArr=["Excel·lent actitud.","Cal reforçar l'expressió oral.","Necessita més suport.","Molt participatiu.","Pla de reforç actiu.","Alumna destacada.","Millora progressiva.","Bona actitud.","En millora.","Molt bona alumna.","Pot millorar.","Excel·lent en tot."];
-    var files=noms.map(function(nom,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:missatgesArr[i]||''}; });
+    var files=DEMO_ALUMNES_NOMS.map(function(nom,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''}; });
     return sb.from('alumnes').insert(files).select().then(function(res){
       if(res.error){ console.warn('[Arrel]',res.error.message); return; }
       var dades=res.data.slice().sort(function(a,b){return a.ordre-b.ordre;});
@@ -749,7 +740,6 @@ function gatePas3(){
   }).join('');
   showGatePas('g-assigns');
 }
-function toggleSubj(el){el.classList.toggle('sel');}
 function gateEntrar(){
   document.querySelectorAll('#assigns-container .subj-chips').forEach(function(div,i){
     mesCursos[i].assigns=Array.from(div.querySelectorAll('.subj-chip.sel')).map(function(el){return el.textContent;});
@@ -1011,13 +1001,6 @@ function updateNav(){
     if(btn) btn.className='trim-nav-btn'+(i===estat.trimIdx?' on':'');
   }
 }
-function selTrimDirect(ci,ti){
-  estat.cursIdx=ci; estat.trimIdx=ti;
-  renderGateCursos();
-  var mc=mesCursos[ci];
-  document.getElementById('g-sel-assigns-eyebrow').textContent=mc.curs+' · '+trimestres[ti];
-}
-
 function selTrimNav(ti){
   estat.trimIdx=ti; guardarPerfil(); updateNav(); renderAll();
   toast(trimestres[ti]);
@@ -1421,25 +1404,6 @@ function recalcGlobal(act,comp,ini){
   var g=c?Math.round(t/c*10)/10:null;
   var el=document.getElementById('global-'+ini); if(el) el.innerHTML=renderNota(g,true);
 }
-function saveNotaAltres(inp){
-  var val=parseFloat(inp.value.toString().replace(',','.'));
-  var ini=inp.dataset.ini; var compId=inp.dataset.compid; var actId=inp.dataset.actid;
-  var comp=competencies.find(function(c){return c.id===compId;});
-  var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act||!comp) return;
-  if(!act.notaAltres) act.notaAltres={};
-  if(isNaN(val)||inp.value===''){delete act.notaAltres[ini]; inp.value=''; inp.className='nota-input'; recalcGlobal(act,comp,ini); guardarDades(); return;}
-  val=Math.max(0,Math.min(10,Math.round(val*10)/10)); inp.value=val;
-  inp.className='nota-input '+notaClass(val); act.notaAltres[ini]=val;
-  recalcGlobal(act,comp,ini);
-  guardarDades();
-}
-function saveAltres(inp){
-  var ini=inp.dataset.ini; var compId=inp.dataset.compid; var actId=inp.dataset.actid;
-  var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
-  if(!act.altres) act.altres={}; act.altres[ini]=inp.value;
-  guardarDades();
-  sincronitzarComentarisActivitat(act);
-}
 function navNota(event,inp){
   if(event.key!=='Enter'&&event.key!=='Tab') return;
   event.preventDefault(); saveNota(inp);
@@ -1651,16 +1615,6 @@ function renderCal(){
         +'<button class="btn btn-sm btn-danger" data-evid="'+ev.id+'" onclick="eliminarEventBtn(this)">✕</button>'
       +'</div>';
     }).join('')+'</div>':'';
-}
-function calNavMes(d){calMes+=d;if(calMes<0){calMes=11;calAny--;}if(calMes>11){calMes=0;calAny++;}renderCal();}
-function obrirNouEvent(){
-  var today=new Date();
-  var ds=today.getFullYear()+'-'+('0'+(today.getMonth()+1)).slice(-2)+'-'+('0'+today.getDate()).slice(-2);
-  document.getElementById('ev-data').value=ds;
-  document.getElementById('ev-data-fi').value='';
-  document.getElementById('ev-titol').value='';
-  document.getElementById('pop-event').style.display='flex';
-  setTimeout(function(){document.getElementById('ev-titol').focus();},60);
 }
 function obrirNouEventDiaBtn(el){obrirNouEventDia(el.dataset.date);}
 function obrirNouEventDia(dateStr){
@@ -1960,8 +1914,6 @@ function saveRubrica(ta){
   dbGuardarRubricaCustom(compId);
   toast('Guardat ✓');
 }
-function afegirCriteriBtn(b){afegirCriteri(b.dataset.cid);}
-function eliminarCriteriBtn(b){eliminarCriteri(b.dataset.cid,parseInt(b.dataset.ci));}
 function editarNomCriteri(inp){
   var comp=competencies.find(function(c){return c.id===inp.dataset.compid;}); if(!comp) return;
   comp.criteris[parseInt(inp.dataset.ci)]=inp.value;
