@@ -32,47 +32,47 @@ var authState = { isLogged: false, user: null };
 function normTxt(s){
   return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 }
-function comp(id, nom, ico, color, criteri, na, as, an, ae){
+function comp(id, nom, ico, color, criteris, na, as, an, ae){
   return {
     id:id,
     nom:nom,
     ico:ico,
     color:color,
-    criteris:[criteri],
+    criteris:criteris,
     rubrica:{'1-4':na,'5-6':as,'7-8':an,'9-10':ae}
   };
 }
 
 var competenciesByArea = {
   llengues: [
-    comp('lleng-comp-1','Comprensio Oral','CO','sky','Escoltar i comprendre idees clau','No ho entén o demana molta repetició','Entén les idees clau i dades directes','Entén detalls i el sentit global','Interpreta intencions i fa inferències'),
-    comp('lleng-comp-2','Comprensio Escrita','CE','clay','Lectura i interpretació de textos','Li costa descodificar o no s\'aclareix','Llegeix amb fluïdesa i troba dades directes','Fa inferències i comprèn l\'estructura','Llegeix amb esperit crític i total autonomia'),
-    comp('lleng-comp-3','Expressio Oral','EO','plum','Parla i interacció (debats, exposicions)','Discurs incomprensible o molt limitat','S\'expressa de forma senzilla i entenedora','Parla amb fluïdesa, ordre i bon lèxic','Discurs ric, estructurat i interactua molt bé'),
-    comp('lleng-comp-4','Expressio Escrita','EE','moss','Redacció de textos i ortografia','Idees desordenades i molts errors','Text senzill i coherent amb errors bàsics','Text ben estructurat, connectors i ortografia bona','Text molt creatiu, ric i ortografia impecable'),
-    comp('lleng-comp-5','Plurilinguisme','PL','honey','Relació entre llengües i diversitat','No connecta llengües ni mostra interès','Detecta paraules similars entre llengües','Transfereix estratègies i valora la diversitat','Fa de mediador i compara llengües de forma innata')
+    comp('lleng-comp-1','Comprensio Oral','CO','sky',['Identifica el sentit global de textos orals','Reconeix informacio rellevant en missatges orals','Mostra atencio i respecte durant l\'escolta'],'No ho entén o demana molta repetició','Entén les idees clau i dades directes','Entén detalls i el sentit global','Interpreta intencions i fa inferències'),
+    comp('lleng-comp-2','Comprensio Escrita','CE','clay',['Llegeix amb fluïdesa textos adequats al nivell','Identifica informacio explicita en el text','Fa inferències senzilles sobre el contingut'],'Li costa descodificar o no s\'aclareix','Llegeix amb fluïdesa i troba dades directes','Fa inferències i comprèn l\'estructura','Llegeix amb esperit crític i total autonomia'),
+    comp('lleng-comp-3','Expressio Oral','EO','plum',['Produeix intervencions orals ordenades','Utilitza un vocabulari adequat i variat','Participa en interaccions orals amb respecte'],'Discurs incomprensible o molt limitat','S\'expressa de forma senzilla i entenedora','Parla amb fluïdesa, ordre i bon lèxic','Discurs ric, estructurat i interactua molt bé'),
+    comp('lleng-comp-4','Expressio Escrita','EE','moss',['Escriu textos organitzats amb estructura clara','Aplica correctament ortografia i puntuacio','Utilitza connectors per enllaçar idees'],'Idees desordenades i molts errors','Text senzill i coherent amb errors bàsics','Text ben estructurat, connectors i ortografia bona','Text molt creatiu, ric i ortografia impecable'),
+    comp('lleng-comp-5','Plurilinguisme','PL','honey',['Compara paraules i estructures entre llengües','Utilitza terminologia gramatical bàsica','Valora la diversitat lingüística de l\'aula'],'No connecta llengües ni mostra interès','Detecta paraules similars entre llengües','Transfereix estratègies i valora la diversitat','Fa de mediador i compara llengües de forma innata')
   ],
   matematiques: [
-    comp('mates-comp-1','Resolucio de problemes','RP','sky','Identificar dades i aplicar operacions','No sap identificar dades ni l\'operació','Identifica dades i l\'operació amb èxit','Resol provant diferents estratègies i comprova','Cerca diferents vies i formula nous problemes'),
-    comp('mates-comp-2','Raonament i connexions','RC','clay','Buscar patrons i connectar conceptes','No veu relacions ni justifica què fa','Descriu patrons i relacions evidents','Argumenta decisions i connecta amb altres àrees','Generalitza regles i fa raonaments complexos'),
-    comp('mates-comp-3','Comunicacio','CM','plum','Expressar processos matemàtics','No sap explicar com ha fet el càlcul','S\'explica de forma bàsica i usa algun dibuix','Explica amb claredat el procés i el representa','Comunica idees abstractes amb rigor i precisió'),
-    comp('mates-comp-4','Sentit matematic','SM','moss','Domini del càlcul, mesura i geometria','Moltes dificultats en operacions bàsiques','Domina el càlcul escrit i conceptes comuns','Àgil en càlcul mental, mesura i gràfics','Excel·lent flexibilitat numèrica i visualització')
+    comp('mates-comp-1','Resolucio de problemes','RP','sky',['Identifica les dades rellevants d\'un problema','Selecciona i aplica l\'operacio adequada','Comprova el resultat i el contextualitza'],'No sap identificar dades ni l\'operació','Identifica dades i l\'operació amb èxit','Resol provant diferents estratègies i comprova','Cerca diferents vies i formula nous problemes'),
+    comp('mates-comp-2','Raonament i connexions','RC','clay',['Detecta patrons numèrics i geomètrics','Justifica les decisions preses','Connecta els continguts amb altres àrees'],'No veu relacions ni justifica què fa','Descriu patrons i relacions evidents','Argumenta decisions i connecta amb altres àrees','Generalitza regles i fa raonaments complexos'),
+    comp('mates-comp-3','Comunicacio','CM','plum',['Explica el procés seguit amb claredat','Utilitza representacions (dibuixos, taules, gràfics)','Empra vocabulari matemàtic adequat'],'No sap explicar com ha fet el càlcul','S\'explica de forma bàsica i usa algun dibuix','Explica amb claredat el procés i el representa','Comunica idees abstractes amb rigor i precisió'),
+    comp('mates-comp-4','Sentit matematic','SM','moss',['Domina el càlcul mental i escrit','Aplica conceptes de mesura amb precisió','Reconeix i utilitza figures geomètriques'],'Moltes dificultats en operacions bàsiques','Domina el càlcul escrit i conceptes comuns','Àgil en càlcul mental, mesura i gràfics','Excel·lent flexibilitat numèrica i visualització')
   ],
   medi: [
-    comp('medi-comp-1','Indagacio i ciencia','IC','sky','Preguntes, experiments i conclusions','No té iniciativa per observar ni indagar','Segueix l\'experiment de classe i en descriu el resultat','Planteja hipòtesis, experimenta i treu conclusions','Dissenya recerques amb gran rigor científic'),
-    comp('medi-comp-2','Tecnologia i disseny','TD','clay','Crear prototips i ús d\'eines digitals','No sap utilitzar tecnologia ni crear objectes','Fa anar dispositius i participa en maquetes senzilles','Cerca a la xarxa i dissenya maquetes funcionals','Resol reptes tècnics o digitals de forma innovadora'),
-    comp('medi-comp-3','Ciutadania i historia','CH','plum','Fets històrics i convivència democràtica','No ubica fets en el temps ni respecta normes','Ubica canvis en la història i conviu amb respecte','Ordena etapes històriques i s\'implica a l\'aula','Analitza el passat de forma crítica i és ciutadà actiu'),
-    comp('medi-comp-4','Salut i sostenibilitat','SS','moss','Hàbits saludables i consum responsable','No té cura d\'ell mateix ni de l\'entorn','Aplica hàbits bàsics i directrius de reciclatge','Manté estils de vida sans i col·labora en el medi','Lidera i proposa campanyes de sostenibilitat')
+    comp('medi-comp-1','Indagacio i ciencia','IC','sky',['Formula preguntes investigables','Dissenya i realitza experiments senzills','Extreu conclusions a partir de les observacions'],'No té iniciativa per observar ni indagar','Segueix l\'experiment de classe i en descriu el resultat','Planteja hipòtesis, experimenta i treu conclusions','Dissenya recerques amb gran rigor científic'),
+    comp('medi-comp-2','Tecnologia i disseny','TD','clay',['Utilitza eines digitals amb autonomia','Dissenya i construeix prototips senzills','Resol problemes tècnics de forma creativa'],'No sap utilitzar tecnologia ni crear objectes','Fa anar dispositius i participa en maquetes senzilles','Cerca a la xarxa i dissenya maquetes funcionals','Resol reptes tècnics o digitals de forma innovadora'),
+    comp('medi-comp-3','Ciutadania i historia','CH','plum',['Ubica fets històrics en el temps','Reconeix canvis i continuïtats al llarg del temps','Participa de forma democràtica i respectuosa'],'No ubica fets en el temps ni respecta normes','Ubica canvis en la història i conviu amb respecte','Ordena etapes històriques i s\'implica a l\'aula','Analitza el passat de forma crítica i és ciutadà actiu'),
+    comp('medi-comp-4','Salut i sostenibilitat','SS','moss',['Aplica hàbits d\'higiene i alimentacio saludable','Adopta pràctiques de consum responsable','S\'implica en accions de cura del medi ambient'],'No té cura d\'ell mateix ni de l\'entorn','Aplica hàbits bàsics i directrius de reciclatge','Manté estils de vida sans i col·labora en el medi','Lidera i proposa campanyes de sostenibilitat')
   ],
   educacioFisica: [
-    comp('ef-comp-1','Resolucio motriu','RM','sky','Habilitats de moviment i tàctiques de joc','Dificultats de coordinació o desorientació','Controla habilitats bàsiques en jocs pautats','Adapta el cos a canvis de ritme, espai i tàctica','Domina i anticipa qualsevol moviment o joc tàctic'),
-    comp('ef-comp-2','Salut i seguretat','SS','clay','Benestar físic, escalfament i higiene','Mostra rebuig a l\'esforç i oblida la higiene','Participa en l\'escalfament i té cura de la higiene','Regula l\'esforç i entén els beneficis de l\'esport','Gestiona de forma autònoma la seva salut i seguretat'),
-    comp('ef-comp-3','Expressio corporal','EC','plum','Comunicació gestual i ritme musical','Inhibit en gestos i no segueix el ritme','Expressa coses bàsiques i fa danses pautades','Comunica sentiments i es mou a tempo','Crea moviments i coreografies amb gran originalitat'),
-    comp('ef-comp-4','Interaccio social','IS','moss','Joc net, respecte i cooperació en grup','Provoca disputes, no accepta regles ni ajuda','Respecta les regles i tolera el resultat del joc','Ajuda els companys i resol conflictes dialogant','Lidera el joc net (fair play) i fomenta la inclusió')
+    comp('ef-comp-1','Resolucio motriu','RM','sky',['Controla habilitats motrius bàsiques','Adapta els moviments a l\'espai i al ritme','Aplica estratègies tàctiques en jocs'],'Dificultats de coordinació o desorientació','Controla habilitats bàsiques en jocs pautats','Adapta el cos a canvis de ritme, espai i tàctica','Domina i anticipa qualsevol moviment o joc tàctic'),
+    comp('ef-comp-2','Salut i seguretat','SS','clay',['Realitza l\'escalfament de manera autònoma','Té cura de la seva higiene i seguretat','Regula l\'esforç segons l\'activitat'],'Mostra rebuig a l\'esforç i oblida la higiene','Participa en l\'escalfament i té cura de la higiene','Regula l\'esforç i entén els beneficis de l\'esport','Gestiona de forma autònoma la seva salut i seguretat'),
+    comp('ef-comp-3','Expressio corporal','EC','plum',['Expressa emocions i idees amb el cos','Segueix el ritme en activitats musicals','Crea moviments i petites coreografies'],'Inhibit en gestos i no segueix el ritme','Expressa coses bàsiques i fa danses pautades','Comunica sentiments i es mou a tempo','Crea moviments i coreografies amb gran originalitat'),
+    comp('ef-comp-4','Interaccio social','IS','moss',['Respecta les normes del joc','Coopera amb els companys per assolir objectius','Resol conflictes de manera dialogada'],'Provoca disputes, no accepta regles ni ajuda','Respecta les regles i tolera el resultat del joc','Ajuda els companys i resol conflictes dialogant','Lidera el joc net (fair play) i fomenta la inclusió')
   ],
   educacioArtistica: [
-    comp('art-comp-1','Recepcio i analisi','RA','sky','Observar i valorar elements de l\'art','Desinterès o incapaç de descriure una obra','Identifica colors o formes evidents en imatges','Analitza obres explicant l\'emoció que transmeten','Fa valoracions crítiques i documentades molt riques'),
-    comp('art-comp-2','Creacio i expressio','CE','clay','Ús de tècniques i creativitat pròpia','Poc acurat amb materials o deixa feines a mitges','Aplica la tècnica pautada amb prou destresa','Experimenta amb materials i mostra estil propi','Combina tècniques amb gran originalitat i plasticitat'),
-    comp('art-comp-3','Proces i col·laboracio','PC','plum','Planificació i treball cooperatiu','No planifica, no comparteix i no acaba el treball','Segueix els passos de l\'activitat i respecta l\'equip','Esbossa abans d\'actuar i col·labora activament','Executa projectes des de la idea fins a l\'exposició')
+    comp('art-comp-1','Recepcio i analisi','RA','sky',['Identifica elements bàsics d\'una obra (color, forma, textura)','Descriu les sensacions que li transmet una obra','Compara diferents obres i estils'],'Desinterès o incapaç de descriure una obra','Identifica colors o formes evidents en imatges','Analitza obres explicant l\'emoció que transmeten','Fa valoracions crítiques i documentades molt riques'),
+    comp('art-comp-2','Creacio i expressio','CE','clay',['Aplica tècniques plàstiques bàsiques','Mostra creativitat i iniciativa pròpia','Acaba les seves produccions amb cura'],'Poc acurat amb materials o deixa feines a mitges','Aplica la tècnica pautada amb prou destresa','Experimenta amb materials i mostra estil propi','Combina tècniques amb gran originalitat i plasticitat'),
+    comp('art-comp-3','Proces i col·laboracio','PC','plum',['Planifica les passes abans de crear','Col·labora activament en projectes de grup','Respecta i valora el treball dels altres'],'No planifica, no comparteix i no acaba el treball','Segueix els passos de l\'activitat i respecta l\'equip','Esbossa abans d\'actuar i col·labora activament','Executa projectes des de la idea fins a l\'exposició')
   ]
 };
 
@@ -552,6 +552,34 @@ function dbSembrarDemo(){
     return dbCrearCurs('4t B',['Catala','Matematiques']); // curs buit, sense alumnes ni notes
   });
 }
+// Igual que dbSembrarDemo, pero per a un curs que ja existeix i que resulta estar
+// buit (per exemple perque el sembrat automatic nomes es dispara la primera vegada,
+// amb el compte totalment buit de cursos). S'invoca sola des de anarAPasPostAuth,
+// sense cap boto ni accio manual — nomes actua si el curs no te cap alumne encara.
+function omplirCursSiBuit(mc){
+  var sb=window.__QUADERN_SUPABASE__;
+  if(!sb||!mc||!mc.id||!mc.assigns||!mc.assigns.length) return Promise.resolve();
+  return dbCarregarAlumnes(mc.id).then(function(existents){
+    if(existents.length){
+      // Ja te alumnes, pero pot ser que una execucio anterior s'hagues interromput
+      // abans de generar les activitats/notes. Comprovem si en te cap.
+      return sb.from('activitats').select('id').eq('curs_id',mc.id).limit(1).then(function(res){
+        if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+        if(res.data&&res.data.length) return; // ja te activitats, no toquem res
+        return generarNotesDemoPerCurs(mc, existents);
+      });
+    }
+    var noms=['Marc Roca Bosch','Sofia Vila Torrent','Laia Esteve Mas','Joan Puig Serra','Arnau Oms Ferrer','Marta Font Giro','Pol Llopis Camps','Neus Carbonell Costa','Jordi Badia Valls','Alba Trias Nadal','Roger Torres Vila','Irene Comas Prat'];
+    var missatgesArr=["Excel·lent actitud.","Cal reforçar l'expressió oral.","Necessita més suport.","Molt participatiu.","Pla de reforç actiu.","Alumna destacada.","Millora progressiva.","Bona actitud.","En millora.","Molt bona alumna.","Pot millorar.","Excel·lent en tot."];
+    var files=noms.map(function(nom,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:missatgesArr[i]||''}; });
+    return sb.from('alumnes').insert(files).select().then(function(res){
+      if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+      var dades=res.data.slice().sort(function(a,b){return a.ordre-b.ordre;});
+      var roster=dades.map(function(row,i){ return {dbId:row.id,id:'',ini:ini2(row.nom),nom:row.nom,color:colorIdx(i),comentari:row.comentari||''}; });
+      return generarNotesDemoPerCurs(mc, roster);
+    });
+  }).catch(function(err){ console.warn('[Arrel] Error omplint curs de mostra:',err.message); });
+}
 function anarAPasPostAuth(){
   document.getElementById('gate').classList.remove('hide');
   carregarPerfil();
@@ -577,7 +605,13 @@ function anarAPasPostAuth(){
     mesCursos=cursos;
     if(estat.cursIdx>=mesCursos.length) estat.cursIdx=0;
     if(estat.subjIdx>=(mesCursos[estat.cursIdx]?mesCursos[estat.cursIdx].assigns.length:0)) estat.subjIdx=0;
-    return carregarAlumnesDelCursActiu();
+    // Si el curs "3r A" existeix pero encara esta buit (per exemple perque el
+    // sembrat inicial nomes es dispara amb el compte totalment sense cursos),
+    // l'omplim ara amb alumnes i notes de mostra.
+    var curs3rA=mesCursos.find(function(mc){ return mc.curs==='3r A'; });
+    return (curs3rA?omplirCursSiBuit(curs3rA):Promise.resolve()).then(function(){
+      return carregarAlumnesDelCursActiu();
+    });
   }).then(function(){
     renderGateCursos();
     showGatePas('g-sel-cursos');
@@ -2155,7 +2189,7 @@ function infLlegirFitxers(files){
 }
 function infRenderFitxers(){
   var el=document.getElementById('inf-fitxers-list'); if(!el) return;
-  var btns=['inf-gen-btn','inf-doc-btn','inf-excel-btn'].map(function(id){return document.getElementById(id);});
+  var btns=['inf-gen-btn','inf-doc-btn','inf-pdf-btn'].map(function(id){return document.getElementById(id);});
   if(!infJSONs.length){el.innerHTML='';btns.forEach(function(b){if(b)b.disabled=true;});return;}
   el.innerHTML=infJSONs.map(function(j,i){
     var d=j.dades;
@@ -2180,7 +2214,10 @@ function qualificacioText(n){
 // en obrir l'informe en una pestanya nova, i s'imprimeix/exporta millor que un raster).
 function spiderSvg(labels, datasets, colors, W, H){
   var n=labels.length; if(!n) return '';
-  var cx=W/2, cy=H/2, R=Math.min(W,H)/2-26;
+  // Marge generos pels noms d'assignatura mes llargs (p.ex. "Educacio Fisica"),
+  // que sino queden tallats fora del viewBox quan cauen al costat de l'eix
+  // amb text-anchor "end" i s'estenen cap a fora en comptes de cap endins.
+  var cx=W/2, cy=H/2, R=Math.min(W,H)/2-38;
   var angleStep=2*Math.PI/n;
   var svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
   for(var g=2;g<=10;g+=2){
@@ -2192,9 +2229,18 @@ function spiderSvg(labels, datasets, colors, W, H){
     var a=angleStep*i-Math.PI/2;
     var x2=cx+R*Math.cos(a), y2=cy+R*Math.sin(a);
     svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="#00000022" stroke-width="1"/>';
-    var lx=cx+(R+13)*Math.cos(a), ly=cy+(R+13)*Math.sin(a);
+    var lx=cx+(R+12)*Math.cos(a), ly=cy+(R+12)*Math.sin(a);
     var anchor=Math.abs(Math.cos(a))<0.35?'middle':(Math.cos(a)>0?'start':'end');
-    svg+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="8" font-weight="700" fill="#6E665E" text-anchor="'+anchor+'" dominant-baseline="middle">'+escHtml(labels[i])+'</text>';
+    // Els noms de mes d'una paraula es parteixen en 2 linies perque ocupin la
+    // meitat d'ample — sino un nom llarg es surt del viewBox i queda invisible.
+    var words=String(labels[i]||'').split(' ');
+    var mid=Math.ceil(words.length/2);
+    var lines=words.length>1?[words.slice(0,mid).join(' '),words.slice(mid).join(' ')]:[words[0]||''];
+    svg+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="7.5" font-weight="700" fill="#6E665E" text-anchor="'+anchor+'">';
+    lines.forEach(function(line,li){
+      svg+='<tspan x="'+lx.toFixed(1)+'" dy="'+(li===0?(lines.length>1?-4:2.5):9)+'">'+escHtml(line)+'</tspan>';
+    });
+    svg+='</text>';
   }
   var palette=['#B5562F','#566B47','#3C6B82'];
   datasets.forEach(function(data,di){
@@ -2207,7 +2253,7 @@ function spiderSvg(labels, datasets, colors, W, H){
   return svg;
 }
 // Calcula totes les dades de l'informe conjunt (comuna a la vista, l'exportacio a
-// Word/Google Docs i l'exportacio a Excel), perque les tres surtin identiques.
+// Word/Google Docs i l'exportacio a PDF), perque totes surtin identiques.
 function prepararDadesInforme(){
   var trimFilt=document.getElementById('inf-trim-sel').value;
   var jsonsFilt=trimFilt?infJSONs.filter(function(j){return j.dades.trimestre===trimFilt;}):infJSONs;
@@ -2314,8 +2360,8 @@ function generarInformeHTML(d, renderChart){
   taulaClasse+='</tbody></table>';
   cont+=taulaClasse;
   cont+='<div style="text-align:center;min-width:220px;">'
-    +renderChart(d.totsSubjs, [d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;})], ['#B5562F'], 220,190)
-    +'<div style="font-size:10px;color:#888;">Gràfic d\'aranya — mitjana de classe per assignatura</div>'
+    +renderChart(d.totsSubjs, [d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;})], ['#B5562F'], 260,220)
+    +'<div style="font-size:10px;color:#888;">Mitjana de classe per assignatura</div>'
     +'</div></div>';
   cont+='<div style="margin-top:8px;font-size:12px;"><b>Nota mitjana global de la classe:</b> '+(d.mitjanaClasse!=null?d.mitjanaClasse:'—')+' <span style="color:#888;">('+qualificacioText(d.mitjanaClasse)+')</span></div>';
   cont+=COMENT_IA_HTML;
@@ -2326,7 +2372,7 @@ function generarInformeHTML(d, renderChart){
     var al=d.alumnesMap[uid];
     var alVals=d.totsSubjs.map(function(s){var a=al.assigns[s]; return a&&a.nota!=null?a.nota:0;});
     var classeVals=d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;});
-    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#B5562F','#566B47'],160,140);
+    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#B5562F','#566B47'],200,175);
     var g=d.globalsAlu[uid];
 
     var taulaNotes='<table style="font-size:10.5px;"><thead><tr><th style="text-align:left;">Assignatura</th><th>Nota global</th></tr></thead><tbody>';
@@ -2362,65 +2408,39 @@ function generarInforme(){
 }
 
 // Mateix gràfic d'aranya, pero renderitzat sobre un canvas i retornat com a <img> amb
-// una imatge PNG en base64 — cal per exportar a Word/Google Docs (el seu conversor
-// d'HTML no interpreta SVG incrustat, nomes imatges).
+// una imatge PNG en base64.
 function chartImgPng(labels, datasets, colors, W, H){
   var canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H;
   spiderCoreDraw(canvas.getContext('2d'), W, H, labels, datasets, colors);
   return '<img src="'+canvas.toDataURL('image/png')+'" width="'+W+'" height="'+H+'">';
 }
+// Exportacio en HTML pla (.html) — Google Docs sap importar i convertir fitxers HTML
+// de manera fiable (Drive → Obrir amb → Google Docs), i Word tambe els obre i els
+// converteix a document editable. Evitem trucs de disfressar HTML com a .doc o
+// empaquetar-lo com a .mht, que en la practica donen resultats inconsistents.
 function exportarInformeDoc(){
   var dades=prepararDadesInforme(); if(!dades) return;
   var cont=generarInformeHTML(dades, chartImgPng);
-  // Namespaces perque Word (i el conversor d'importacio de Google Docs) interpretin
-  // el fitxer .doc com un document real, no com una pagina web qualsevol.
-  cont=cont.replace('<html>','<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">');
-  var blob=new Blob([cont],{type:'application/msword'});
+  var blob=new Blob([cont],{type:'text/html'});
   var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.doc'; a.click();
+  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.html'; a.click();
   setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Document Word exportat ✓ — obre\'l amb Word o puja\'l a Google Drive i obre\'l amb Google Docs');
+  toast('Informe exportat en HTML ✓ — puja\'l a Google Drive i obre\'l amb Google Docs, o obre\'l amb Word');
 }
 
-function csvEscape(v){
-  v=(v===null||v===undefined)?'':String(v);
-  if(/[;"\n]/.test(v)) v='"'+v.replace(/"/g,'""')+'"';
-  return v;
-}
-function exportarInformeExcel(){
-  var d=prepararDadesInforme(); if(!d) return;
-  var rows=[];
-  rows.push(['Curs',d.curs]);
-  rows.push(['Any escolar',prof.any||'']);
-  rows.push(['Tutor/a',prof.nom||'']);
-  rows.push(['Etapa',d.etapaText]);
-  rows.push([]);
-  rows.push(['RESUM DE CLASSE']);
-  rows.push(['Assignatura','Competència','Mitjana de classe']);
-  d.totsSubjs.forEach(function(s){
-    var comps=d.subjCompClasseAvg[s]||[];
-    if(!comps.length){ rows.push([s,'',d.subjClasseAvg[s]!=null?d.subjClasseAvg[s]:'']); }
-    else{ comps.forEach(function(c){ rows.push([s,c.nom,c.mitjana!=null?c.mitjana:'']); }); }
-    rows.push(['Global '+s,'',d.subjClasseAvg[s]!=null?d.subjClasseAvg[s]:'']);
-  });
-  rows.push([]);
-  rows.push(['Nota mitjana global de la classe',d.mitjanaClasse!=null?d.mitjanaClasse:'']);
-  rows.push([]);
-  rows.push(['NOTES DELS ALUMNES']);
-  rows.push(['#','Alumne'].concat(d.totsSubjs).concat(['Global']));
-  d.ordres.forEach(function(uid){
-    var al=d.alumnesMap[uid];
-    var row=[al.ordre,al.nom];
-    d.totsSubjs.forEach(function(s){ var a=al.assigns[s]; row.push(a&&a.nota!=null?a.nota:''); });
-    row.push(d.globalsAlu[uid]!=null?d.globalsAlu[uid]:'');
-    rows.push(row);
-  });
-  var csv=rows.map(function(r){ return r.map(csvEscape).join(';'); }).join('\r\n');
-  var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'}); // BOM perque Excel llegeixi be els accents
+// Obre l'informe en una pestanya nova i llença directament el dialeg d'impressio
+// del navegador — des d'alli el professor tria "Desar com a PDF" com a destinacio.
+function exportarInformePdf(){
+  var dades=prepararDadesInforme(); if(!dades) return;
+  var cont=generarInformeHTML(dades, spiderSvg);
+  var blob=new Blob([cont],{type:'text/html'});
   var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(d)+'.csv'; a.click();
+  var win=window.open(url,'_blank');
+  if(win){
+    win.addEventListener('load',function(){ win.print(); });
+  }
   setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('CSV exportat ✓ — obre\'l amb Excel o importa\'l a Google Sheets');
+  toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
 }
 
 // ─── FUNCIONS QUE FALTAVEN ───
