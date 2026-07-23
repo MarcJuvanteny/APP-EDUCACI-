@@ -2334,12 +2334,19 @@ function infRenderFitxers(){
   var el=document.getElementById('inf-fitxers-list'); if(!el) return;
   var btns=['inf-gen-btn','inf-doc-btn','inf-pdf-btn'].map(function(id){return document.getElementById(id);});
   if(!infJSONs.length){el.innerHTML='';btns.forEach(function(b){if(b)b.disabled=true;});return;}
+  // Un fitxer que no sigui de la mateixa etapa seleccionada NO s'inclourà a l'informe
+  // (l'informe es filtra per trimestre) — cal avisar-ho aquí, no nomes descobrir-ho
+  // en veure l'informe generat sense aquella assignatura.
+  var trimSel=(document.getElementById('inf-trim-sel')||{}).value;
   el.innerHTML=infJSONs.map(function(j,i){
     var d=j.dades;
-    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);">'
+    var noCoincideix=trimSel && d.trimestre && d.trimestre!==trimSel;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);'+(noCoincideix?'opacity:.55;':'')+'">'
       +'<div style="flex:1;"><div style="font-size:12.5px;font-weight:600;">'+escHtml(d.assignatura||'?')
         +(j.propi?' <span class="pill p-moss" style="font-size:9px;margin-left:4px;">Propi</span>':'')+'</div>'
-        +'<div style="font-size:11px;color:var(--ink3);">'+escHtml(d.curs||'')+(d.trimestre?' · '+escHtml(d.trimestre):'')+' · '+escHtml(d.professor||'')+'</div></div>'
+        +'<div style="font-size:11px;color:var(--ink3);">'+escHtml(d.curs||'')+(d.trimestre?' · '+escHtml(d.trimestre):'')+' · '+escHtml(d.professor||'')+'</div>'
+        +(noCoincideix?'<div style="font-size:10.5px;color:var(--clay);font-weight:600;margin-top:2px;">⚠ No coincideix amb "'+escHtml(trimSel)+'" — no s\'inclourà a l\'informe</div>':'')
+      +'</div>'
       +'<button class="btn btn-sm btn-danger" onclick="infJSONs.splice('+i+',1);infRenderFitxers()">✕</button>'
     +'</div>';
   }).join('');
@@ -2401,6 +2408,10 @@ function prepararDadesInforme(){
   var trimFilt=document.getElementById('inf-trim-sel').value;
   var jsonsFilt=trimFilt?infJSONs.filter(function(j){return j.dades.trimestre===trimFilt;}):infJSONs;
   if(!jsonsFilt.length){toast('Cap fitxer');return null;}
+  var exclosos=trimFilt?infJSONs.filter(function(j){return j.dades.trimestre!==trimFilt;}):[];
+  if(exclosos.length){
+    toast(exclosos.length+' fitxer(s) no s\'han inclòs perquè no són de "'+trimFilt+'": '+exclosos.map(function(j){return j.dades.assignatura||j.nom;}).join(', '));
+  }
 
   // Tots els fitxers han de ser del mateix curs: l'emparellament d'alumnes es fa
   // per ordre d'entrada (posicio 1,2,3...) dins la llista, no per nom ni codi,
@@ -2496,6 +2507,7 @@ function generarComentarisIA(d){
         var numero=d.alumnesMap[uid].ordre;
         comentaris[uid]=(json.comentaris||{})[String(numero)]||'';
       });
+      if(json.errors){ toast(json.errors+' comentari(s) d\'alumne no s\'han pogut generar — completa\'ls a mà a l\'informe'); }
       return {comentariClasse:json.comentariClasse||'',comentaris:comentaris};
     })
     .catch(function(err){ console.warn('[Arrel] Error generant comentaris IA:',err.message); return null; });
@@ -2507,9 +2519,12 @@ function generarComentarisIA(d){
 // (el visor HTML de Word no interpreta SVG incrustat). comentarisIA (opcional) ve de
 // generarComentarisIA(): {comentariClasse, comentaris:{uid:text}}.
 function generarInformeHTML(d, renderChart, comentarisIA){
+  // contenteditable="true": el professor pot clicar i corregir el text abans
+  // d'imprimir/exportar — els canvis queden al PDF/HTML final. La vora discontínua
+  // (només visible en pantalla, no en imprimir) marca que és una zona editable.
   function comentIA(text){
-    if(text) return '<div style="border:1.5px dashed #B5562F;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#444;white-space:pre-line;"><b style="color:#B5562F;">🤖 Comentari IA</b><br>'+escHtml(text)+'</div>';
-    return '<div style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;">🤖 Comentari generat amb IA — <i>no disponible</i></div>';
+    if(text) return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #B5562F;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#444;white-space:pre-line;">'+escHtml(text)+'</div>';
+    return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;font-style:italic;">Escriu aquí el comentari…</div>';
   }
   var COMENT_IA_HTML=comentIA(comentarisIA&&comentarisIA.comentariClasse);
 
@@ -2520,10 +2535,17 @@ function generarInformeHTML(d, renderChart, comentarisIA){
     +'h1{font-size:17px;margin-bottom:2px;}h2{font-size:13px;margin:16px 0 6px;border-bottom:2px solid #B5562F;padding-bottom:3px;}'
     +'.meta{color:#666;font-size:11px;margin-bottom:14px;}.meta b{color:#222;}'
     +'.q{font-size:8.5px;color:#888;display:block;}'
-    +'.stu{border:1px solid #ddd;border-radius:6px;padding:8px 10px;margin-bottom:10px;page-break-inside:avoid;}'
-    +'@media print{body{padding:8px;}}'
+    +'.stu{border:1px solid #ddd;border-radius:6px;padding:8px 10px;margin-bottom:10px;page-break-inside:avoid;break-inside:avoid;}'
+    +'.pagebreak{page-break-before:always;break-before:page;}'
+    +'.stu + .stu{page-break-before:always;break-before:page;}'
+    +'.ia-comment{outline:none;}'
+    +'.edit-hint{background:#FBEAE0;color:#B5562F;font-size:10.5px;padding:6px 10px;border-radius:8px;margin-bottom:12px;}'
+    +'@media print{body{padding:8px;}.ia-comment{border:none !important;padding:0 !important;}.edit-hint{display:none;}}'
     +'</style></head><body>';
 
+  cont+='<div class="edit-hint">✏️ Pots clicar i editar el text dels comentaris IA (contorn discontinu) abans d\'imprimir o exportar. '
+    +'<button onclick="window.print()" style="margin-left:8px;border:none;background:#B5562F;color:#fff;border-radius:6px;padding:4px 10px;font-size:10.5px;cursor:pointer;">🖨️ Imprimir / Desar com a PDF</button>'
+    +' Aquest avís no sortirà al PDF.</div>';
   cont+='<h1>'+escHtml(d.titolInforme)+'</h1>';
   cont+='<div class="meta"><b>Curs:</b> '+escHtml(d.curs||'—')+' &nbsp;·&nbsp; <b>Any escolar:</b> '+escHtml(prof.any||'—')
     +' &nbsp;·&nbsp; <b>Tutor/a:</b> '+escHtml(prof.nom||'—')+' &nbsp;·&nbsp; <b>Etapa:</b> '+escHtml(d.etapaText)
@@ -2556,6 +2578,8 @@ function generarInformeHTML(d, renderChart, comentarisIA){
   cont+=COMENT_IA_HTML;
 
   // ── Notes dels alumnes ── nomes la nota global de cada assignatura + global de l'alumne
+  // Cada alumne comença en una pàgina nova (i el resum de classe és sempre la pàgina 1).
+  cont+='<div class="pagebreak"></div>';
   cont+='<h2>Notes dels alumnes</h2>';
   d.ordres.forEach(function(uid){
     var al=d.alumnesMap[uid];
@@ -2645,12 +2669,9 @@ function exportarInformePdf(){
       var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);
-      var win=window.open(url,'_blank');
-      if(win){
-        win.addEventListener('load',function(){ win.print(); });
-      }
+      window.open(url,'_blank');
       setTimeout(function(){URL.revokeObjectURL(url);},5000);
-      toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
+      toast('Informe obert ✓ — revisa/edita els comentaris IA i després clica "Imprimir / Desar com a PDF"');
     });
   });
 }

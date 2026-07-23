@@ -132,31 +132,47 @@ export async function POST(req) {
 
   const anthropic = client();
 
-  try {
-    const [comentariClasse, comentarisAlumnes] = await Promise.all([
-      classe
-        ? generarComentariClasse(anthropic, { etapa, curs, classe })
-        : Promise.resolve(""),
-      Promise.all(
-        alumnes.map((alumne) =>
-          generarComentariAlumne(anthropic, { etapa, curs, alumne }).then(
-            (text) => ({ numero: alumne.numero, text })
-          )
+  // Promise.allSettled: si un alumne falla (p. ex. un pic de trànsit a l'API),
+  // no s'ha de perdre el comentari de la resta de la classe — cadascú s'informa
+  // per separat i nomes queda buit el que realment ha fallat.
+  const [comentariClasseResult, comentarisAlumnesResults] = await Promise.all([
+    classe
+      ? generarComentariClasse(anthropic, { etapa, curs, classe }).then(
+          (text) => ({ status: "fulfilled", value: text }),
+          (err) => ({ status: "rejected", reason: err })
         )
-      ),
-    ]);
+      : Promise.resolve({ status: "fulfilled", value: "" }),
+    Promise.allSettled(
+      alumnes.map((alumne) =>
+        generarComentariAlumne(anthropic, { etapa, curs, alumne }).then(
+          (text) => ({ numero: alumne.numero, text })
+        )
+      )
+    ),
+  ]);
 
-    const comentaris = {};
-    comentarisAlumnes.forEach(({ numero, text }) => {
-      comentaris[numero] = text;
-    });
+  if (comentariClasseResult.status === "rejected") {
+    console.error("[generar-comentaris] Error en el comentari de classe:", comentariClasseResult.reason);
+  }
+  const comentariClasse = comentariClasseResult.status === "fulfilled" ? comentariClasseResult.value : "";
 
-    return Response.json({ comentariClasse, comentaris });
-  } catch (err) {
-    console.error("[generar-comentaris] Error cridant Claude:", err);
+  const comentaris = {};
+  let errors = 0;
+  comentarisAlumnesResults.forEach((r, i) => {
+    if (r.status === "fulfilled") {
+      comentaris[r.value.numero] = r.value.text;
+    } else {
+      errors++;
+      console.error("[generar-comentaris] Error amb l'alumne número " + alumnes[i].numero + ":", r.reason);
+    }
+  });
+
+  if (errors === alumnes.length && comentariClasseResult.status === "rejected") {
     return Response.json(
       { error: "Error generant els comentaris amb IA" },
       { status: 502 }
     );
   }
+
+  return Response.json({ comentariClasse, comentaris, errors });
 }
