@@ -1230,17 +1230,31 @@ function renderHome(){
     +'</div>';
   }).join('');
 
-  // Gràfic d'aranya classe
+  // Gràfic d'aranya classe (drawSpider ja abrevia i parteix les etiquetes llargues)
   var spiderVals=compAvgs.map(function(v){ return v||0; });
-  var spiderLabels=competencies.map(function(c){
-    var words=c.nom.split(' ');
-    // Partir en 2 línies màxim de ~10 chars
-    return words.length<=2?c.nom:(words[0]+' '+words[1]);
-  });
+  var spiderLabels=competencies.map(function(c){ return c.nom; });
   drawSpider('spider-home', spiderLabels, [spiderVals], ['var(--clay)'], 260, 220);
 }
 
 // ═══════════════ SPIDER CHART ═══════════════
+// Escurça un nom de dues (o mes) paraules a "Inicial. Resta" (ex: "Comprensio Oral" -> "C. Oral")
+// per guanyar espai als eixos del gràfic d'aranya.
+function abreviaLabelSpider(nom){
+  var words=nom.trim().split(' ').filter(function(w){return w.length>0;});
+  if(words.length<=1) return nom;
+  return words[0].charAt(0).toUpperCase()+'. '+words.slice(1).join(' ');
+}
+// Si l'etiqueta encara no cap en maxWidth, la parteix en com a molt 2 línies
+// (mai la retalla ni hi posa punts suspensius: sempre es pot llegir sencera).
+function partirLabelSpider(ctx, text, maxWidth){
+  if(ctx.measureText(text).width<=maxWidth) return [text];
+  var words=text.split(' ');
+  if(words.length<=1) return [text];
+  var mid=Math.ceil(words.length/2);
+  var linia1=words.slice(0,mid).join(' ');
+  var linia2=words.slice(mid).join(' ');
+  return linia2?[linia1,linia2]:[linia1];
+}
 function drawSpider(canvasId, labels, datasets, colors, W, H){
   var canvas=document.getElementById(canvasId); if(!canvas) return;
   var ctx=canvas.getContext('2d');
@@ -1268,10 +1282,16 @@ function spiderCoreDraw(ctx, W, H, labels, datasets, colors){
     var a=angleStep*i-Math.PI/2;
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
     ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=1; ctx.stroke();
-    // Label
+    // Label — s'abrevia (ex: "C. Oral") i, si encara no cap, es parteix en 2 línies
     var lx=cx+(R+18)*Math.cos(a); var ly=cy+(R+18)*Math.sin(a);
     ctx.fillStyle='#6E665E'; ctx.font='bold 11px Karla,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(labels[i],lx,ly);
+    var linies=partirLabelSpider(ctx, abreviaLabelSpider(labels[i]), 72);
+    if(linies.length===1){
+      ctx.fillText(linies[0],lx,ly);
+    } else {
+      ctx.fillText(linies[0],lx,ly-6);
+      ctx.fillText(linies[1],lx,ly+6);
+    }
   }
   // Datasets
   var VAR_HEX_MAP={'var(--clay)':'#B5562F','var(--moss)':'#566B47','var(--sky)':'#3C6B82','var(--honey)':'#B98627','var(--plum)':'#6B4A6E'};
@@ -1424,10 +1444,7 @@ function obrirAlumne(ini){
 
   // Dibuixar spider
   setTimeout(function(){
-    var spiderLbls=competencies.map(function(c){
-      var words=c.nom.split(' ');
-      return words.length<=2?c.nom:(words[0]+' '+words[1]);
-    });
+    var spiderLbls=competencies.map(function(c){ return c.nom; });
     drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--moss)','var(--clay)'], 240, 200);
   }, 30);
 }
@@ -1499,16 +1516,36 @@ function openComp(compId){
     }).join('')
     +'<th style="text-align:center;background:var(--paper);min-width:65px;font-size:10px;">Global</th>'
     +'</tr></thead>'
-    +'<tbody>'+alumnes.map(function(al){
-      var notes_al=acts.map(function(a){ return notaMitjana(a,comp,al.ini); });
-      var valids=notes_al.filter(function(n){return n!==null;});
-      var global=valids.length?Math.round(valids.reduce(function(a,b){return a+b;},0)/valids.length*10)/10:null;
-      return '<tr>'
-        +'<td class="sticky" style="padding:8px 12px;"><div style="display:flex;align-items:center;gap:7px;">'+ava(al,26,10)+'<span style="font-weight:600;font-size:13.5px;">'+escHtml(al.nom)+'</span></div></td>'
-        +notes_al.map(function(n){ return '<td style="text-align:center;padding:9px 8px;">'+renderNota(n)+'</td>'; }).join('')
-        +'<td style="text-align:center;padding:9px 8px;background:var(--paper);">'+renderNota(global,true)+'</td>'
-      +'</tr>';
-    }).join('')+'</tbody></table></div>';
+    +'<tbody>';
+
+  // Fila compacta de mitjana de classe per activitat + global de la competència
+  var notesPerAlumne=alumnes.map(function(al){
+    var notes_al=acts.map(function(a){ return notaMitjana(a,comp,al.ini); });
+    var valids=notes_al.filter(function(n){return n!==null;});
+    var global=valids.length?Math.round(valids.reduce(function(a,b){return a+b;},0)/valids.length*10)/10:null;
+    return {notes_al:notes_al,global:global};
+  });
+  var mitjanesClasseAct=acts.map(function(a,ai){
+    var vals=notesPerAlumne.map(function(n){return n.notes_al[ai];}).filter(function(n){return n!==null;});
+    return vals.length?Math.round(vals.reduce(function(x,y){return x+y;},0)/vals.length*10)/10:null;
+  });
+  var globalsVals=notesPerAlumne.map(function(n){return n.global;}).filter(function(n){return n!==null;});
+  var mitjanaClasseGlobal=globalsVals.length?Math.round(globalsVals.reduce(function(x,y){return x+y;},0)/globalsVals.length*10)/10:null;
+
+  html+='<tr style="background:var(--clay-l);">'
+    +'<td class="sticky" style="padding:6px 12px;background:var(--clay-l);font-size:11px;font-weight:700;color:var(--clay);text-transform:uppercase;letter-spacing:.02em;">Mitjana de classe</td>'
+    +mitjanesClasseAct.map(function(n){ return '<td style="text-align:center;padding:6px 8px;font-size:12px;font-weight:700;color:var(--clay);">'+(n!=null?n:'—')+'</td>'; }).join('')
+    +'<td style="text-align:center;padding:6px 8px;font-size:12px;font-weight:700;color:var(--clay);">'+(mitjanaClasseGlobal!=null?mitjanaClasseGlobal:'—')+'</td>'
+  +'</tr>';
+
+  html+=alumnes.map(function(al,ai){
+    var n=notesPerAlumne[ai];
+    return '<tr>'
+      +'<td class="sticky" style="padding:8px 12px;"><div style="display:flex;align-items:center;gap:7px;">'+ava(al,26,10)+'<span style="font-weight:600;font-size:13.5px;">'+escHtml(al.nom)+'</span></div></td>'
+      +n.notes_al.map(function(v){ return '<td style="text-align:center;padding:9px 8px;">'+renderNota(v)+'</td>'; }).join('')
+      +'<td style="text-align:center;padding:9px 8px;background:var(--paper);">'+renderNota(n.global,true)+'</td>'
+    +'</tr>';
+  }).join('')+'</tbody></table></div>';
   document.getElementById('cv-act-body').innerHTML=html;
 }
 
@@ -1657,12 +1694,21 @@ function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
   var horaIdx=0;
   if(hora){
     var hp=hora.split(':'); var minTotal=parseInt(hp[0],10)*60+parseInt(hp[1],10);
-    if(minTotal>=480 && minTotal<1020) horaIdx=Math.floor((minTotal-480)/60);
+    if(minTotal>=480 && minTotal<1020) horaIdx=Math.floor((minTotal-480)/30);
   }
-  sb.from('cal_events').insert({
-    professor_id:dbUid(), titol:nom, dia_setmana:dow, franja_hora:horaIdx,
-    data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
-  }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
+  // Maxim 2 activitats/esdeveniments per franja de mitja hora del mateix dia
+  // (compten tant els fixos de cada setmana com els d'aquest dia concret).
+  sb.from('cal_events').select('id',{count:'exact',head:true})
+    .eq('professor_id',dbUid()).eq('dia_setmana',dow).eq('franja_hora',horaIdx)
+    .or('data.is.null,data.eq.'+diaISO)
+    .then(function(cnt){
+      if(cnt.error){ console.warn('[Arrel]',cnt.error.message); return; }
+      if((cnt.count||0)>=2){ toast('Aquesta franja horària ja té 2 activitats/esdeveniments — no s\'ha afegit a Programació'); return; }
+      sb.from('cal_events').insert({
+        professor_id:dbUid(), titol:nom, dia_setmana:dow, franja_hora:horaIdx,
+        data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
+      }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
+    });
 }
 
 function tancarComentariAct(){var e=document.getElementById('pop-comentari-act');if(e)e.remove();}
@@ -2371,7 +2417,7 @@ function prepararDadesInforme(){
     (d.alumnes||[]).forEach(function(al,idx){
       var uid=idx; // ordre d'entrada dins la llista de classe, no nom ni codi
       if(!alumnesMap[uid]) alumnesMap[uid]={ordre:idx+1,nom:al.nom,assigns:{}};
-      alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre,competencies:al.competencies||{}};
+      alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre,competencies:al.competencies||{},comentariProf:al.comentari||''};
     });
   });
   var totsSubjs=[]; jsonsFilt.forEach(function(j){if(totsSubjs.indexOf(j.dades.assignatura)===-1)totsSubjs.push(j.dades.assignatura);});
@@ -2408,18 +2454,64 @@ function prepararDadesInforme(){
   });
 
   return {
-    titolInforme:titolInforme, etapaText:etapaText, curs:cursos[0]||'',
+    titolInforme:titolInforme, etapaText:etapaText, etapa:(trimFilt?'trimestre':'curs'), curs:cursos[0]||'',
     alumnesMap:alumnesMap, ordres:ordres, totsSubjs:totsSubjs,
     globalsAlu:globalsAlu, mitjanaClasse:mitjanaClasse,
     subjClasseAvg:subjClasseAvg, subjCompClasseAvg:subjCompClasseAvg
   };
 }
+// Crida /api/generar-comentaris amb les dades de prepararDadesInforme() i retorna
+// {comentariClasse, comentaris:{uid:text}}. Si l'API falla, retorna null (l'informe
+// es genera igualment, amb els blocs de comentari IA buits).
+//
+// PRIVACITAT: cap nom d'alumne surt mai de l'aplicació. A Anthropic només s'hi envia
+// el "numero" de llista (posicio 1,2,3... dins la classe) — mai al.nom. El mapeig
+// numero->nom real es fa nomes en local, en rebre la resposta.
+function generarComentarisIA(d){
+  var alumnesPayload=d.ordres.map(function(uid){
+    var al=d.alumnesMap[uid];
+    var assignatures=d.totsSubjs.map(function(s){
+      var a=al.assigns[s]; if(!a) return null;
+      var comps=Object.keys(a.competencies||{}).map(function(ck){ var c=a.competencies[ck]; return {nom:c.nom,mitjana:c.mitjana}; });
+      return {nom:s,mitjana:a.nota,comentariProfessor:a.comentariProf||'',competencies:comps};
+    }).filter(Boolean);
+    return {uid:uid,numero:al.ordre,global:d.globalsAlu[uid],assignatures:assignatures};
+  });
+
+  var payload={
+    etapa:d.etapa, curs:d.curs,
+    classe:{
+      mitjana:d.mitjanaClasse,
+      subjectes:d.totsSubjs.map(function(s){return {nom:s,mitjana:d.subjClasseAvg[s]};}),
+      alumnesResum:alumnesPayload.map(function(a){return {numero:a.numero,global:a.global};})
+    },
+    alumnes:alumnesPayload.map(function(a){return {numero:a.numero,global:a.global,assignatures:a.assignatures};})
+  };
+
+  return fetch('/api/generar-comentaris',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
+    .then(function(json){
+      var comentaris={};
+      d.ordres.forEach(function(uid){
+        var numero=d.alumnesMap[uid].ordre;
+        comentaris[uid]=(json.comentaris||{})[String(numero)]||'';
+      });
+      return {comentariClasse:json.comentariClasse||'',comentaris:comentaris};
+    })
+    .catch(function(err){ console.warn('[Arrel] Error generant comentaris IA:',err.message); return null; });
+}
+
 // Construeix l'HTML de l'informe a partir de les dades de prepararDadesInforme().
 // renderChart(labels,datasets,colors,W,H) genera el gràfic d'aranya — SVG per veure
 // l'informe al navegador, o una imatge PNG quan cal exportar a Word/Google Docs
-// (el visor HTML de Word no interpreta SVG incrustat).
-function generarInformeHTML(d, renderChart){
-  var COMENT_IA_HTML='<div style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;">🤖 Comentari generat amb IA — <i>disponible properament</i></div>';
+// (el visor HTML de Word no interpreta SVG incrustat). comentarisIA (opcional) ve de
+// generarComentarisIA(): {comentariClasse, comentaris:{uid:text}}.
+function generarInformeHTML(d, renderChart, comentarisIA){
+  function comentIA(text){
+    if(text) return '<div style="border:1.5px dashed #B5562F;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#444;white-space:pre-line;"><b style="color:#B5562F;">🤖 Comentari IA</b><br>'+escHtml(text)+'</div>';
+    return '<div style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;">🤖 Comentari generat amb IA — <i>no disponible</i></div>';
+  }
+  var COMENT_IA_HTML=comentIA(comentarisIA&&comentarisIA.comentariClasse);
 
   var cont='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+escHtml(d.titolInforme)+'</title><style>'
     +'body{font-family:Arial,sans-serif;padding:20px;font-size:11px;color:#222;}'
@@ -2485,7 +2577,7 @@ function generarInformeHTML(d, renderChart){
         +'<div style="flex-shrink:0;">'+chartAlu+'</div>'
         +'<div style="flex:1;min-width:200px;">'+taulaNotes+'</div>'
       +'</div>'
-      +COMENT_IA_HTML
+      +comentIA(comentarisIA&&comentarisIA.comentaris&&comentarisIA.comentaris[uid])
     +'</div>';
   });
 
@@ -2494,14 +2586,29 @@ function generarInformeHTML(d, renderChart){
 }
 function nomFitxerInforme(dades){ return (dades.titolInforme||'informe').replace(/[^a-zA-Z0-9_-]/g,'_'); }
 
+// Deshabilita el boto durant la crida a la IA i li canvia el text, restaurant-lo
+// despres. btnId es opcional (si el boto no existeix, nomes s'omet aquest pas).
+function ambBotoCarregant(btnId, textCarregant, fn){
+  var btn=btnId?document.getElementById(btnId):null;
+  var textOriginal=btn?btn.textContent:null;
+  if(btn){ btn.disabled=true; btn.textContent=textCarregant; }
+  return fn().finally(function(){
+    if(btn){ btn.disabled=false; btn.textContent=textOriginal; }
+  });
+}
+
 function generarInforme(){
   var dades=prepararDadesInforme(); if(!dades) return;
-  var cont=generarInformeHTML(dades, spiderSvg);
-  var blob=new Blob([cont],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe generat ✓');
+  ambBotoCarregant('inf-gen-btn','Generant comentaris IA…',function(){
+    return generarComentarisIA(dades).then(function(comentarisIA){
+      var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
+      var blob=new Blob([cont],{type:'text/html'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+      toast(comentarisIA?'Informe generat ✓':'Informe generat (sense comentaris IA) ✓');
+    });
+  });
 }
 
 // Mateix gràfic d'aranya, pero renderitzat sobre un canvas i retornat com a <img> amb
@@ -2517,27 +2624,35 @@ function chartImgPng(labels, datasets, colors, W, H){
 // empaquetar-lo com a .mht, que en la practica donen resultats inconsistents.
 function exportarInformeDoc(){
   var dades=prepararDadesInforme(); if(!dades) return;
-  var cont=generarInformeHTML(dades, chartImgPng);
-  var blob=new Blob([cont],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.html'; a.click();
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe exportat en HTML ✓ — puja\'l a Google Drive i obre\'l amb Google Docs, o obre\'l amb Word');
+  ambBotoCarregant('inf-doc-btn','Generant comentaris IA…',function(){
+    return generarComentarisIA(dades).then(function(comentarisIA){
+      var cont=generarInformeHTML(dades, chartImgPng, comentarisIA);
+      var blob=new Blob([cont],{type:'text/html'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.html'; a.click();
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+      toast('Informe exportat en HTML ✓ — puja\'l a Google Drive i obre\'l amb Google Docs, o obre\'l amb Word');
+    });
+  });
 }
 
 // Obre l'informe en una pestanya nova i llença directament el dialeg d'impressio
 // del navegador — des d'alli el professor tria "Desar com a PDF" com a destinacio.
 function exportarInformePdf(){
   var dades=prepararDadesInforme(); if(!dades) return;
-  var cont=generarInformeHTML(dades, spiderSvg);
-  var blob=new Blob([cont],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var win=window.open(url,'_blank');
-  if(win){
-    win.addEventListener('load',function(){ win.print(); });
-  }
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
+  ambBotoCarregant('inf-pdf-btn','Generant comentaris IA…',function(){
+    return generarComentarisIA(dades).then(function(comentarisIA){
+      var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
+      var blob=new Blob([cont],{type:'text/html'});
+      var url=URL.createObjectURL(blob);
+      var win=window.open(url,'_blank');
+      if(win){
+        win.addEventListener('load',function(){ win.print(); });
+      }
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+      toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
+    });
+  });
 }
 
 // ─── FUNCIONS QUE FALTAVEN ───

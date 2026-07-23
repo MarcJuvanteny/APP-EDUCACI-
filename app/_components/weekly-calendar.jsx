@@ -19,25 +19,63 @@ const MESOS = [
   "novembre",
   "desembre",
 ];
-const HORES = [
-  { label: "8:00", end: "9:00", idx: 0, min: 480 },
-  { label: "9:00", end: "10:00", idx: 1, min: 540 },
-  { label: "10:00", end: "11:00", idx: 2, min: 600 },
-  { label: "11:00", end: "12:00", idx: 3, min: 660 },
-  { label: "12:00", end: "13:00", idx: 4, min: 720 },
-  { label: "13:00", end: "14:00", idx: 5, min: 780 },
-  { label: "14:00", end: "15:00", idx: 6, min: 840 },
-  { label: "15:00", end: "16:00", idx: 7, min: 900 },
-  { label: "16:00", end: "17:00", idx: 8, min: 960 },
-];
+// Franges de mitja hora, de 8:00 a 17:00.
+function formatMin(min) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h + ":" + String(m).padStart(2, "0");
+}
+const HORES = Array.from({ length: (1020 - 480) / 30 }).map((_, idx) => {
+  const min = 480 + idx * 30;
+  return { label: formatMin(min), end: formatMin(min + 30), idx, min };
+});
 const COLORS = {
   clay: "#B5562F",
   moss: "#566B47",
   honey: "#B98627",
   sky: "#3C6B82",
   plum: "#6B4A6E",
-  gray: "#D6CCB9",
+  gray: "#8b8371",
 };
+// Variants pastel (mateixa paleta que quadern.css --*-l) per a les activitats creades.
+const COLORS_LIGHT = {
+  clay: "#FBEAE0",
+  moss: "#EAEFE3",
+  honey: "#FBF1DE",
+  sky: "#E6EFF2",
+  plum: "#F1E8F1",
+  gray: "#EDE7DB",
+};
+const PALETA_CURSOS = ["clay", "moss", "honey", "sky", "plum"];
+// Construeix el mapa curs->color a partir dels cursos que realment apareixen als
+// events carregats (ordenats alfabeticament perque l'assignacio sigui estable
+// entre recarregues), garantint que cada curs real te un color diferent mentre
+// no n'hi hagi mes de 5 alhora — "General" sempre es gris, fora de la paleta.
+function calcularCursColorMap(events) {
+  const cursos = Array.from(
+    new Set(events.map((ev) => ev.curs).filter((c) => c && c !== "General"))
+  ).sort();
+  const map = {};
+  cursos.forEach((c, i) => {
+    map[c] = PALETA_CURSOS[i % PALETA_CURSOS.length];
+  });
+  return map;
+}
+function corPerCurs(curs, cursColorMap) {
+  if (!curs || curs === "General") return "gray";
+  return (cursColorMap && cursColorMap[curs]) || "gray";
+}
+// Estil d'una targeta d'event: pastel per a activitats creades a Competències,
+// blanc amb vora i lletres del color del curs per als esdeveniments manuals.
+function estilEvent(ev, cursColorMap) {
+  const key = corPerCurs(ev.curs, cursColorMap);
+  const solid = COLORS[key];
+  const light = COLORS_LIGHT[key];
+  if (ev.creatPelProfessor) {
+    return { background: "#fff", color: solid, border: "1.5px solid " + solid };
+  }
+  return { background: light, color: solid, border: "1px solid " + solid + "55" };
+}
 
 const EVENTS_INICIALS = [
   {
@@ -304,14 +342,16 @@ export default function WeeklyCalendar() {
     return schoolData.mesos.findIndex((x) => x.m === m && x.y === y);
   }, [iniciSetmana, schoolData]);
 
+  const cursColorMap = useMemo(() => calcularCursColorMap(events), [events]);
+
   const rowHeights = useMemo(() => {
     return HORES.map((h) => {
       const maxEvents = DIES.reduce((mx, _, di) => {
         const cnt = events.filter((ev) => ev.dia === di && ev.hora === h.idx).length;
         return Math.max(mx, cnt);
       }, 0);
-      if (maxEvents < 3) return 58;
-      return 58 + (maxEvents - 2) * 22;
+      if (maxEvents < 2) return 38;
+      return 38 + (maxEvents - 1) * 20;
     });
   }, [events]);
 
@@ -323,14 +363,14 @@ export default function WeeklyCalendar() {
 
     const nowMin = now.getHours() * 60 + now.getMinutes();
     const first = HORES[0].min;
-    const last = HORES[HORES.length - 1].min + 60;
+    const last = HORES[HORES.length - 1].min + 30;
     if (nowMin < first || nowMin > last) return null;
 
     const headerH = 52;
-    const rowIdx = Math.max(0, Math.min(HORES.length - 1, Math.floor((nowMin - first) / 60)));
-    const pct = ((nowMin - first) % 60) / 60;
+    const rowIdx = Math.max(0, Math.min(HORES.length - 1, Math.floor((nowMin - first) / 30)));
+    const pct = ((nowMin - first) % 30) / 30;
     const pre = rowHeights.slice(0, rowIdx).reduce((acc, h) => acc + h, 0);
-    const hAct = rowHeights[rowIdx] || 58;
+    const hAct = rowHeights[rowIdx] || 38;
     return headerH + pre + pct * hAct;
   }, [offset, nowTick, rowHeights]);
 
@@ -404,6 +444,11 @@ export default function WeeklyCalendar() {
     }
     const dia = parseInt(String(nvDia), 10);
     const hora = parseInt(String(nvHora), 10);
+    const existents = events.filter((e) => e.dia === dia && e.hora === hora).length;
+    if (existents >= 2) {
+      showToast("Aquesta franja horària ja té 2 activitats/esdeveniments — tria una altra hora");
+      return;
+    }
     const nota = nvNota.trim();
     if (supabase && professorId) {
       supabase
@@ -445,7 +490,7 @@ export default function WeeklyCalendar() {
     setNextId((x) => x + 1);
     setShowNou(false);
     showToast('"' + titol + '" afegit al calendari');
-  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, nvTitol, showToast]);
+  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, nvTitol, showToast, events]);
 
   const obrirDet = useCallback((ev) => {
     setEvSel(ev);
@@ -541,7 +586,7 @@ export default function WeeklyCalendar() {
 
             {HORES.map((h) => (
               <div key={"row-" + h.idx} className="spg-row-contents">
-                <div className="tc" style={{ height: rowHeights[h.idx] || 58 }}>
+                <div className="tc" style={{ height: rowHeights[h.idx] || 38 }}>
                   {h.label}
                 </div>
                 {DIES.map((_, di2) => {
@@ -566,19 +611,20 @@ export default function WeeklyCalendar() {
                     <div
                       key={"cc-" + h.idx + "-" + di2}
                       className={"cc" + (esAvui2 ? " today" : "")}
-                      style={{ height: rowHeights[h.idx] || 58 }}
+                      style={{ height: rowHeights[h.idx] || 38 }}
                       onClick={() => obrirNou(di2, h.idx)}
                     >
                       {evs.map((ev) => (
                         <div
                           key={ev.id}
-                          className={"ev ev-" + ev.tipus + (ev.creatPelProfessor ? " ev-new" : "")}
+                          className="ev"
+                          style={estilEvent(ev, cursColorMap)}
                           onClick={(e) => {
                             e.stopPropagation();
                             obrirDet(ev);
                           }}
                         >
-                          <div className="ev-nom">{ev.titol}</div>
+                          <div className="ev-nom">{ev.nota ? ev.nota : ev.titol}</div>
                           <div className="ev-curs">{ev.curs}</div>
                         </div>
                       ))}
@@ -656,13 +702,18 @@ export default function WeeklyCalendar() {
       {showDet && evSel ? (
         <div className="overlay" id="pop-det" onClick={(e) => e.target === e.currentTarget && setShowDet(false)}>
           <div className="popup">
-            <div className="det-bar" id="det-bar" style={{ background: COLORS[evSel.tipus] || COLORS.clay }} />
+            <div className="det-bar" id="det-bar" style={{ background: COLORS[corPerCurs(evSel.curs, cursColorMap)] }} />
             <div className="det-curs" id="det-curs">
               {evSel.curs}
             </div>
             <div className="det-nom" id="det-nom">
               {evSel.titol}
             </div>
+            {evSel.nota ? (
+              <div className="det-nota" id="det-nota">
+                {evSel.nota}
+              </div>
+            ) : null}
             <div className="spg-actions">
               <button className="btn" onClick={eliminarEv}>
                 Eliminar
