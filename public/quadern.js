@@ -1122,6 +1122,33 @@ function guardarNovaAssignatura(ci){
 }
 
 
+function toggleSubjDropdown(e){
+  if(e) e.stopPropagation();
+  var dd=document.getElementById('nav-subj-dd'); if(!dd) return;
+  if(dd.classList.contains('open')){ dd.classList.remove('open'); return; }
+  var mc=mesCursos[estat.cursIdx];
+  if(!mc||!mc.assigns||mc.assigns.length<2){ abrirGateSeleccio(); return; }
+  dd.innerHTML=mc.assigns.map(function(s,si){
+    return '<div class="nav-subj-opt'+(si===estat.subjIdx?' on':'')+'" onclick="event.stopPropagation();canviarSubjNav('+si+')">'+escHtml(s)+'</div>';
+  }).join('')+'<div class="nav-subj-opt nav-subj-more" onclick="event.stopPropagation();document.getElementById(\'nav-subj-dd\').classList.remove(\'open\');abrirGateSeleccio();">Canviar de curs…</div>';
+  // S'ancora amb position:fixed i es mou al <body> perque nav (overflow-x:auto)
+  // no el retalli verticalment — l'overflow-x fa que l'overflow-y efectiu tambe sigui auto.
+  if(dd.parentNode!==document.body) document.body.appendChild(dd);
+  var anchor=(e&&e.currentTarget)||document.querySelector('.nav-ctx');
+  var r=anchor.getBoundingClientRect();
+  dd.style.top=(r.bottom+6)+'px';
+  dd.style.left=r.left+'px';
+  dd.classList.add('open');
+  setTimeout(function(){document.addEventListener('click',tancarSubjDropdown);},0);
+}
+function tancarSubjDropdown(){
+  var dd=document.getElementById('nav-subj-dd'); if(dd) dd.classList.remove('open');
+  document.removeEventListener('click',tancarSubjDropdown);
+}
+function canviarSubjNav(si){
+  var dd=document.getElementById('nav-subj-dd'); if(dd) dd.classList.remove('open');
+  selSubj(si);
+}
 function selSubj(si){
   estat.subjIdx=si;
   guardarPerfil();
@@ -2081,7 +2108,7 @@ function renderRubrica(){
       delBtn.className = 'btn btn-sm';
       delBtn.style.cssText = 'color:var(--clay);padding:3px 7px;';
       delBtn.textContent = '✕';
-      delBtn.onclick = (function(cid, idx){ return function(){ eliminarCriteri(cid, idx); }; })(comp.id, ci);
+      delBtn.onclick = (function(cid, idx){ return function(){ confirmarEliminarCriteri(cid, idx); }; })(comp.id, ci);
       tdDel.appendChild(delBtn);
       tr.appendChild(tdDel);
       tbody.appendChild(tr);
@@ -2117,7 +2144,27 @@ function afegirCriteri(compId){
   dbGuardarRubricaCustom(compId);
   renderRubrica(); toast('Criteri afegit ✓');
 }
+function tancarDelCriteri(){var e=document.getElementById('pop-del-criteri');if(e)e.remove();}
+function confirmarEliminarCriteri(compId,ci){
+  var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
+  if(comp.criteris.length<=1){toast('Cal tenir almenys un criteri');return;}
+  var nom=comp.criteris[ci];
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-criteri';
+  overlay.innerHTML='<div class="popup" style="width:380px;">'
+    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
+    +'<div class="popup-head" style="text-align:center;">Eliminar criteri</div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(nom)+'</b></div>'
+    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Un cop eliminat, aquest apartat de la rúbrica es perdrà per sempre i no es podrà recuperar.</div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarCriteri(\''+compId+'\','+ci+')">Sí, eliminar</button>'
+      +'<button class="btn" style="flex:1;" onclick="tancarDelCriteri()">Cancel·lar</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
 function eliminarCriteri(compId,ci){
+  var ov=document.getElementById('pop-del-criteri'); if(ov) ov.remove();
   var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
   if(comp.criteris.length<=1){toast('Cal tenir almenys un criteri');return;}
   comp.criteris.splice(ci,1);
@@ -2606,8 +2653,7 @@ function generarInformeHTML(d, renderChart, comentarisIA){
   d.ordres.forEach(function(uid){
     var al=d.alumnesMap[uid];
     var alVals=d.totsSubjs.map(function(s){var a=al.assigns[s]; return a&&a.nota!=null?a.nota:0;});
-    var classeVals=d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;});
-    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#566B47','#B5562F'],200,175);
+    var chartAlu=renderChart(d.totsSubjs,[alVals],['#566B47'],200,175);
     var g=d.globalsAlu[uid];
 
     var taulaNotes='<table style="font-size:10.5px;"><thead><tr><th style="text-align:left;">Assignatura</th><th>Nota global</th></tr></thead><tbody>';

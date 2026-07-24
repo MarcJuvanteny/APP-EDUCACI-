@@ -226,6 +226,12 @@ const EVENTS_INICIALS = [
 
 const CURSOS = ["3r A", "3r B", "4t A", "4t B", "5e A", "General"];
 
+function escHtmlPdf(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
 function rowToEvent(row) {
   return {
     id: row.id,
@@ -522,6 +528,86 @@ export default function WeeklyCalendar() {
     showToast("Event eliminat");
   }, [evSel, showToast, supabase]);
 
+  const exportarPdf = useCallback(() => {
+    const dies2Iso = diesSetmana.map(
+      (d) =>
+        d.getFullYear() +
+        "-" +
+        String(d.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(d.getDate()).padStart(2, "0")
+    );
+    let files = "";
+    HORES.forEach((h) => {
+      let cel·les = "";
+      DIES.forEach((_, di) => {
+        const evs = events.filter(
+          (ev) => ev.dia === di && ev.hora === h.idx && (!ev.data || ev.data === dies2Iso[di])
+        );
+        if (!evs.length) {
+          cel·les += "<td></td>";
+          return;
+        }
+        cel·les +=
+          "<td>" +
+          evs
+            .map(
+              (ev) =>
+                '<div class="pev"><b>' +
+                escHtmlPdf(ev.titol) +
+                "</b>" +
+                (ev.curs ? '<span class="pev-curs">' + escHtmlPdf(ev.curs) + "</span>" : "") +
+                (ev.nota ? '<div class="pev-nota">' + escHtmlPdf(ev.nota) + "</div>" : "") +
+                "</div>"
+            )
+            .join("") +
+          "</td>";
+      });
+      files += "<tr><td class=\"th-hora\">" + h.label + "</td>" + cel·les + "</tr>";
+    });
+
+    const capçaleres = diesSetmana
+      .map((d, di) => "<th>" + DIES[di] + "<br><span class=\"th-num\">" + d.getDate() + "</span></th>")
+      .join("");
+
+    const cont =
+      "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Programació — " +
+      escHtmlPdf(weekLabel) +
+      "</title><style>" +
+      "body{font-family:Arial,sans-serif;padding:20px;color:#222;}" +
+      "h1{font-size:17px;margin-bottom:2px;}" +
+      ".meta{color:#666;font-size:12px;margin-bottom:14px;}" +
+      "table{width:100%;border-collapse:collapse;table-layout:fixed;}" +
+      "th,td{border:1px solid #ddd;padding:4px 6px;vertical-align:top;font-size:10px;}" +
+      "th{background:#f0ece4;font-size:10.5px;text-align:center;}" +
+      ".th-num{color:#888;font-weight:400;}" +
+      ".th-hora{white-space:nowrap;font-weight:700;background:#fafafa;width:52px;font-size:9.5px;}" +
+      ".pev{margin-bottom:4px;}" +
+      ".pev-curs{color:#B5562F;font-size:9px;margin-left:4px;}" +
+      ".pev-nota{color:#666;font-size:9px;}" +
+      ".edit-hint{background:#FBEAE0;color:#B5562F;font-size:10.5px;padding:6px 10px;border-radius:8px;margin-bottom:12px;}" +
+      "@media print{body{padding:8px;}.edit-hint{display:none;}}" +
+      "</style></head><body>" +
+      "<div class=\"edit-hint\">🖨️ <button onclick=\"window.print()\" style=\"margin-left:4px;border:none;background:#B5562F;color:#fff;border-radius:6px;padding:4px 10px;font-size:10.5px;cursor:pointer;\">🖨️ Imprimir / Desar com a PDF</button> Aquest avís no sortirà al PDF.</div>" +
+      "<h1>Programació setmanal</h1>" +
+      "<div class=\"meta\">" +
+      escHtmlPdf(weekLabel) +
+      " · " +
+      escHtmlPdf(weekSub) +
+      "</div>" +
+      "<table><thead><tr><th></th>" +
+      capçaleres +
+      "</tr></thead><tbody>" +
+      files +
+      "</tbody></table>" +
+      "</body></html>";
+
+    const blob = new Blob([cont], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }, [diesSetmana, events, weekLabel, weekSub]);
+
   return (
     <div className="spg-root">
       <div id="sidebar" className="spg-sidebar">
@@ -564,6 +650,9 @@ export default function WeeklyCalendar() {
           </div>
           <button className="add-btn" onClick={() => obrirNou()}>
             + Nou esdeveniment
+          </button>
+          <button className="today-btn" onClick={exportarPdf}>
+            🖨️ Exportar PDF
           </button>
         </div>
 
