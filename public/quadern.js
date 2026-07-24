@@ -2423,12 +2423,19 @@ function prepararDadesInforme(){
   var etapaText=trimFilt||'Informe de tot el curs';
 
   var alumnesMap={};
+  // perTrimAssigns guarda cada trimestre per separat (a diferencia d'"assigns",
+  // que nomes queda amb l'ultim que arriba per assignatura) — cal per a la IA
+  // de l'informe final de curs, que ha de poder comparar l'evolucio 1r/2n/3r.
+  var perTrimAssigns={};
   jsonsFilt.forEach(function(j){
     var d=j.dades;
     (d.alumnes||[]).forEach(function(al,idx){
       var uid=idx; // ordre d'entrada dins la llista de classe, no nom ni codi
       if(!alumnesMap[uid]) alumnesMap[uid]={ordre:idx+1,nom:al.nom,assigns:{}};
       alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre,competencies:al.competencies||{},comentariProf:al.comentari||''};
+      if(!perTrimAssigns[uid]) perTrimAssigns[uid]={};
+      if(!perTrimAssigns[uid][d.assignatura]) perTrimAssigns[uid][d.assignatura]=[];
+      perTrimAssigns[uid][d.assignatura].push({trimestre:d.trimestre,nota:al.global,competencies:al.competencies||{},comentariProf:al.comentari||''});
     });
   });
   var totsSubjs=[]; jsonsFilt.forEach(function(j){if(totsSubjs.indexOf(j.dades.assignatura)===-1)totsSubjs.push(j.dades.assignatura);});
@@ -2466,7 +2473,7 @@ function prepararDadesInforme(){
 
   return {
     titolInforme:titolInforme, etapaText:etapaText, etapa:(trimFilt?'trimestre':'curs'), curs:cursos[0]||'',
-    alumnesMap:alumnesMap, ordres:ordres, totsSubjs:totsSubjs,
+    alumnesMap:alumnesMap, ordres:ordres, totsSubjs:totsSubjs, perTrimAssigns:perTrimAssigns,
     globalsAlu:globalsAlu, mitjanaClasse:mitjanaClasse,
     subjClasseAvg:subjClasseAvg, subjCompClasseAvg:subjCompClasseAvg
   };
@@ -2479,13 +2486,28 @@ function prepararDadesInforme(){
 // el "numero" de llista (posicio 1,2,3... dins la classe) — mai al.nom. El mapeig
 // numero->nom real es fa nomes en local, en rebre la resposta.
 function generarComentarisIA(d){
+  // Cada activitat pot tenir el seu propi comentari del professor (no nomes el
+  // comentari general de l'alumne) — es envia a la IA, es informacio valuosa
+  // que el professor ja ha escrit i que no s'ha de perdre.
+  function compsAmbObservacions(competencies){
+    return Object.keys(competencies||{}).map(function(ck){
+      var c=competencies[ck];
+      var comentarisAct=(c.activitats||[]).map(function(act){ return (act.comentari||'').trim(); }).filter(function(t){return t;});
+      return {nom:c.nom,mitjana:c.mitjana,comentarisActivitats:comentarisAct};
+    });
+  }
   var alumnesPayload=d.ordres.map(function(uid){
     var al=d.alumnesMap[uid];
-    var assignatures=d.totsSubjs.map(function(s){
-      var a=al.assigns[s]; if(!a) return null;
-      var comps=Object.keys(a.competencies||{}).map(function(ck){ var c=a.competencies[ck]; return {nom:c.nom,mitjana:c.mitjana}; });
-      return {nom:s,mitjana:a.nota,comentariProfessor:a.comentariProf||'',competencies:comps};
-    }).filter(Boolean);
+    // assignatures amb els trimestres per separat (1 sol element en un informe
+    // de trimestre, fins a 3 en un informe final de curs) perque la IA pugui
+    // comparar l'evolucio en lloc de rebre nomes un valor ja fusionat.
+    var perTrim=d.perTrimAssigns[uid]||{};
+    var assignatures=Object.keys(perTrim).map(function(subj){
+      var trimestres=perTrim[subj].map(function(entrada){
+        return {trimestre:entrada.trimestre,mitjana:entrada.nota,comentariProfessor:entrada.comentariProf||'',competencies:compsAmbObservacions(entrada.competencies)};
+      });
+      return {nom:subj,trimestres:trimestres};
+    });
     return {uid:uid,numero:al.ordre,global:d.globalsAlu[uid],assignatures:assignatures};
   });
 
