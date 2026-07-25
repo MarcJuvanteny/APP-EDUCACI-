@@ -1393,12 +1393,12 @@ function renderAlumnes(){
       +mitjaCell
       +'<td style="padding:8px 10px;max-width:180px;">'
         +'<span style="font-size:11.5px;color:var(--ink2);font-style:italic;">'+
-          (missatge?escHtml(missatge):'<span style="color:var(--ink3);">—</span>')+
+          (missatge?escHtml(missatge.length>60?missatge.slice(0,60)+'...':missatge):'<span style="color:var(--ink3);">—</span>')+
         '</span>'
       +'</td>'
       +'<td style="padding:8px 8px;">'
         +'<button class="btn btn-sm" data-nom="'+escHtml(al.nom)+'" onclick="event.stopPropagation();obrirMissatgeAluBtn(this)">'+
-          (missatge?'Editar':'+ Nota')+
+          (missatge?'Editar':'+ Comentari')+
         '</button>'
       +'</td>'
     +'</tr>';
@@ -1435,18 +1435,16 @@ function obrirAlumne(ini){
 
   document.getElementById('alumne-detail-body').innerHTML=
     '<div class="card" style="margin-bottom:12px;">'
-      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">'
+      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
         +ava(al,44,16)
         +'<div style="flex:1;">'
           +'<div style="font-size:17px;font-weight:700;">'+escHtml(al.nom)+'</div>'
           +'<div style="font-size:12px;color:var(--ink3);">'+escHtml(mc.curs)+' · '+trim+' · '+escHtml(subj)+'</div>'
         +'</div>'
-        +'<button class="btn btn-sm" data-nom="'+escHtml(al.nom)+'" onclick="obrirMissatgeAluBtn(this)">'+(missatge?'Editar comentari':'+ Comentari')+'</button>'
       +'</div>'
-      +(missatge?'<div style="font-size:13px;color:var(--ink2);background:var(--paper);border-radius:8px;padding:9px 12px;font-style:italic;margin-bottom:14px;">'+escHtml(missatge)+'</div>':'')
-      +'<div class="g2">'
+      +'<div class="alu-detail-grid">'
         +'<div>'
-          +'<div class="sec" style="margin-bottom:4px;">Gràfic d\'aranya <span style="color:var(--moss);font-weight:700;">'+escHtml(al.nom.split(' ')[0])+'</span> vs classe</div>'
+          +'<div class="sec" style="margin-bottom:4px;">Gràfic d\'aranya</div>'
           +'<div class="spider-wrap"><canvas id="'+canvasId+'" width="240" height="200"></canvas></div>'
           +'<div style="display:flex;gap:14px;justify-content:center;margin-top:6px;">'
             +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--moss);border-radius:2px;"></div>'+escHtml(al.nom.split(' ')[0])+'</div>'
@@ -1457,14 +1455,18 @@ function obrirAlumne(ini){
           +'<div class="sec">Notes per competència</div>'
           +competencies.map(function(comp,ci){
             var v=alumneVals[ci]; var col=v?getColor(v):'ink3';
-            return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">'
+            return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
               +'<span style="font-size:10px;font-weight:600;color:var(--ink2);width:80px;flex-shrink:0;line-height:1.3;">'+comp.nom+'</span>'
-              +'<div style="flex:1;height:7px;background:var(--line);border-radius:4px;overflow:hidden;">'
+              +'<div style="flex:1;height:4.5px;background:var(--line);border-radius:4px;overflow:hidden;">'
                 +'<div style="height:100%;width:'+(v?v*10:0)+'%;background:var(--'+col+');border-radius:4px;"></div>'
               +'</div>'
               +'<span style="font-size:12px;font-weight:700;width:24px;">'+renderNota(v||null,false)+'</span>'
             +'</div>';
           }).join('')
+        +'</div>'
+        +'<div>'
+          +'<div class="sec" style="margin-bottom:4px;">Comentari</div>'
+          +'<textarea id="inline-comment-'+al.ini+'" class="inline-comment" data-nom="'+escHtml(al.nom)+'" placeholder="Escriu un comentari…" rows="1" oninput="autoResizeTextarea(this)" onblur="guardarComentariInline(this)">'+escHtml(missatge)+'</textarea>'
         +'</div>'
       +'</div>'
     +'</div>';
@@ -1473,9 +1475,28 @@ function obrirAlumne(ini){
   setTimeout(function(){
     var spiderLbls=competencies.map(function(c){ return c.nom; });
     drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--moss)','var(--clay)'], 240, 200);
+    var ta=document.getElementById('inline-comment-'+ini); if(ta) autoResizeTextarea(ta);
   }, 30);
 }
 
+function autoResizeTextarea(ta){
+  ta.style.height='auto';
+  ta.style.height=ta.scrollHeight+'px';
+}
+function guardarComentariInline(ta){
+  var nom=ta.dataset.nom;
+  var text=ta.value.trim();
+  if((missatgesAlumnes[nom]||'')===text) return;
+  missatgesAlumnes[nom]=text;
+  var al=alumnes.find(function(a){return a.nom===nom;});
+  if(al) al.comentari=text;
+  guardarDades();
+  toast('Comentari guardat ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&al&&al.dbId){
+    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+  }
+}
 function obrirMissatgeAluBtn(btn){ obrirMissatgeAlu(btn.dataset.nom); }
 function obrirMissatgeAlu(nom){
   document.getElementById('pop-miss-nom').textContent=nom;
@@ -2515,7 +2536,7 @@ function prepararDadesInforme(){
         if(c.mitjana!=null){ acc[ck].sum+=c.mitjana; acc[ck].count++; }
       });
     });
-    subjCompClasseAvg[d.assignatura]=Object.keys(acc).map(function(ck){ var a=acc[ck]; return {nom:a.nom,mitjana:a.count?Math.round(a.sum/a.count*10)/10:null}; });
+    subjCompClasseAvg[d.assignatura]=Object.keys(acc).map(function(ck){ var a=acc[ck]; return {nom:a.nom,mitjana:a.count?Math.round(a.sum/a.count*10)/10:null}; }).filter(function(c){ return c.mitjana!=null; });
   });
 
   return {
@@ -2541,7 +2562,7 @@ function generarComentarisIA(d){
       var c=competencies[ck];
       var comentarisAct=(c.activitats||[]).map(function(act){ return (act.comentari||'').trim(); }).filter(function(t){return t;});
       return {nom:c.nom,mitjana:c.mitjana,comentarisActivitats:comentarisAct};
-    });
+    }).filter(function(c){ return c.mitjana!=null; }); // exclou competències sense cap nota introduïda
   }
   var alumnesPayload=d.ordres.map(function(uid){
     var al=d.alumnesMap[uid];

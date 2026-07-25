@@ -13,6 +13,7 @@ function client() {
 const PRIVACITAT = `IMPORTANT — PROTECCIÓ DE DADES:
 No rebràs el nom de l'alumne. Rebràs únicament un identificador numèric.
 Escriu sempre en tercera persona usant "l'alumne/a".
+Sempre que sigui possible, omet el subjecte i reestructura la frase per evitar usar "l'alumne" o "l'alumna". Per exemple, en lloc de "L'alumne ho fa molt bé" escriu "Ho fa molt bé". Usa "l'alumne" o "l'alumna" només quan la frase no es pugui reestructurar sense.
 Mai facis referència a l'identificador numèric al text.`;
 
 const ESTIL = `TO I ESTIL (aplica sempre):

@@ -173,3 +173,8 @@ alter table cal_events alter column data drop not null;
 alter table cal_events add column if not exists dia_setmana integer;
 alter table cal_events add column if not exists franja_hora integer;
 alter table cal_events add column if not exists curs_nom text;
+
+-- El formulari de "Nou event" ja no te camp de titol (nomes "nota", el
+-- comentari) — la columna es manté per compatibilitat amb files antigues
+-- pero deixa de ser obligatoria perque l'app ja no l'omple.
+alter table cal_events alter column titol drop not null;

@@ -82,7 +82,6 @@ const EVENTS_INICIALS = [
     id: 1,
     dia: 0,
     hora: 0,
-    titol: "Comprensio Oral",
     curs: "3r A",
     tipus: "clay",
     nota: 'Activitat: conte "El Petit Princep". Preguntes orals.',
@@ -91,7 +90,6 @@ const EVENTS_INICIALS = [
     id: 2,
     dia: 0,
     hora: 1,
-    titol: "Expressio Escrita",
     curs: "4t B",
     tipus: "clay",
     nota: "Redaccio lliure. Minim 10 linies.",
@@ -100,7 +98,6 @@ const EVENTS_INICIALS = [
     id: 3,
     dia: 0,
     hora: 2,
-    titol: "Matematiques",
     curs: "3r B",
     tipus: "sky",
     nota: "P. 70-71. Fraccions.",
@@ -109,7 +106,6 @@ const EVENTS_INICIALS = [
     id: 4,
     dia: 0,
     hora: 6,
-    titol: "Reunio claustre",
     curs: "General",
     tipus: "honey",
     nota: "Sala de professors. Tema: avaluacio T2.",
@@ -118,7 +114,6 @@ const EVENTS_INICIALS = [
     id: 5,
     dia: 1,
     hora: 0,
-    titol: "Dictat setmana 12",
     curs: "4t A",
     tipus: "moss",
     nota: "Text preparat. Recordar portar el full.",
@@ -127,7 +122,6 @@ const EVENTS_INICIALS = [
     id: 6,
     dia: 1,
     hora: 1,
-    titol: "Lectura oral",
     curs: "3r A",
     tipus: "clay",
     nota: "Pagina 45. Torn de 3 alumnes.",
@@ -136,7 +130,6 @@ const EVENTS_INICIALS = [
     id: 7,
     dia: 1,
     hora: 2,
-    titol: "Educacio Literaria",
     curs: "5e A",
     tipus: "plum",
     nota: "Comentari poema Verdaguer.",
@@ -145,7 +138,6 @@ const EVENTS_INICIALS = [
     id: 8,
     dia: 2,
     hora: 0,
-    titol: "Expressio Oral",
     curs: "3r B",
     tipus: "clay",
     nota: 'Presentacio: "El meu animal preferit"',
@@ -154,7 +146,6 @@ const EVENTS_INICIALS = [
     id: 9,
     dia: 2,
     hora: 1,
-    titol: "Examen Catala T2",
     curs: "4t B",
     tipus: "moss",
     nota: "Recordar fotocopies! Pag. 66-80.",
@@ -163,16 +154,14 @@ const EVENTS_INICIALS = [
     id: 10,
     dia: 2,
     hora: 3,
-    titol: "Guardia pati",
     curs: "General",
     tipus: "gray",
-    nota: "",
+    nota: "Guardia pati",
   },
   {
     id: 11,
     dia: 3,
     hora: 0,
-    titol: "Comprensio Lectora",
     curs: "5e A",
     tipus: "clay",
     nota: 'Text "Viatge Inoblidable". P.149.',
@@ -181,7 +170,6 @@ const EVENTS_INICIALS = [
     id: 12,
     dia: 3,
     hora: 1,
-    titol: "Corregir redaccions",
     curs: "3r A",
     tipus: "honey",
     nota: "Fer retorn individual.",
@@ -190,7 +178,6 @@ const EVENTS_INICIALS = [
     id: 13,
     dia: 3,
     hora: 2,
-    titol: "Matematiques",
     curs: "4t A",
     tipus: "sky",
     nota: "Geometria plana.",
@@ -199,7 +186,6 @@ const EVENTS_INICIALS = [
     id: 14,
     dia: 4,
     hora: 0,
-    titol: "Poesia",
     curs: "3r B",
     tipus: "plum",
     nota: "Ultim dia per entregar poema.",
@@ -208,7 +194,6 @@ const EVENTS_INICIALS = [
     id: 15,
     dia: 4,
     hora: 1,
-    titol: "Dictat setmana 12",
     curs: "5e A",
     tipus: "moss",
     nota: "Idem 4t A del dimarts.",
@@ -217,10 +202,9 @@ const EVENTS_INICIALS = [
     id: 16,
     dia: 4,
     hora: 6,
-    titol: "Taller creativitat",
     curs: "4t B",
     tipus: "plum",
-    nota: "",
+    nota: "Taller creativitat",
   },
 ];
 
@@ -232,13 +216,17 @@ function escHtmlPdf(s) {
   });
 }
 
+function truncarComentari(text, max) {
+  const t = text || "";
+  return t.length > max ? t.slice(0, max) + "..." : t;
+}
+
 function rowToEvent(row) {
   return {
     id: row.id,
     dbId: row.id,
     dia: row.dia_setmana,
     hora: row.franja_hora,
-    titol: row.titol,
     curs: row.curs_nom || "",
     tipus: row.tipus || "clay",
     nota: row.nota || "",
@@ -273,7 +261,6 @@ export default function WeeklyCalendar() {
   const [toast, setToast] = useState("");
   const [nowTick, setNowTick] = useState(Date.now());
 
-  const [nvTitol, setNvTitol] = useState("");
   const [nvDia, setNvDia] = useState(0);
   const [nvHora, setNvHora] = useState(0);
   const [nvCurs, setNvCurs] = useState("3r A");
@@ -434,7 +421,6 @@ export default function WeeklyCalendar() {
   );
 
   const obrirNou = useCallback((dia = null, hora = null) => {
-    setNvTitol("");
     setNvNota("");
     setNvCurs("3r A");
     if (dia !== null) setNvDia(dia);
@@ -443,9 +429,9 @@ export default function WeeklyCalendar() {
   }, []);
 
   const guardarEv = useCallback(() => {
-    const titol = nvTitol.trim();
-    if (!titol) {
-      showToast("Escriu el titol");
+    const nota = nvNota.trim();
+    if (!nota) {
+      showToast("Escriu un comentari");
       return;
     }
     const dia = parseInt(String(nvDia), 10);
@@ -455,13 +441,11 @@ export default function WeeklyCalendar() {
       showToast("Aquesta franja horària ja té 2 activitats/esdeveniments — tria una altra hora");
       return;
     }
-    const nota = nvNota.trim();
     if (supabase && professorId) {
       supabase
         .from("cal_events")
         .insert({
           professor_id: professorId,
-          titol,
           dia_setmana: dia,
           franja_hora: hora,
           curs_nom: nvCurs,
@@ -478,7 +462,7 @@ export default function WeeklyCalendar() {
           }
           setEvents((prev) => [...prev, rowToEvent(data)]);
           setShowNou(false);
-          showToast('"' + titol + '" afegit al calendari');
+          showToast("Event afegit al calendari");
         });
       return;
     }
@@ -486,7 +470,6 @@ export default function WeeklyCalendar() {
       id: nextId,
       dia,
       hora,
-      titol,
       curs: nvCurs,
       tipus: "clay",
       creatPelProfessor: true,
@@ -495,8 +478,8 @@ export default function WeeklyCalendar() {
     setEvents((prev) => [...prev, nou]);
     setNextId((x) => x + 1);
     setShowNou(false);
-    showToast('"' + titol + '" afegit al calendari');
-  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, nvTitol, showToast, events]);
+    showToast("Event afegit al calendari");
+  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, showToast, events]);
 
   const obrirDet = useCallback((ev) => {
     setEvSel(ev);
@@ -554,10 +537,9 @@ export default function WeeklyCalendar() {
             .map(
               (ev) =>
                 '<div class="pev"><b>' +
-                escHtmlPdf(ev.titol) +
+                escHtmlPdf(ev.nota) +
                 "</b>" +
                 (ev.curs ? '<span class="pev-curs">' + escHtmlPdf(ev.curs) + "</span>" : "") +
-                (ev.nota ? '<div class="pev-nota">' + escHtmlPdf(ev.nota) + "</div>" : "") +
                 "</div>"
             )
             .join("") +
@@ -713,7 +695,7 @@ export default function WeeklyCalendar() {
                             obrirDet(ev);
                           }}
                         >
-                          <div className="ev-nom">{ev.nota ? ev.nota : ev.titol}</div>
+                          <div className="ev-nom">{truncarComentari(ev.nota, 40)}</div>
                           <div className="ev-curs">{ev.curs}</div>
                         </div>
                       ))}
@@ -736,10 +718,6 @@ export default function WeeklyCalendar() {
         <div className="overlay" id="pop-nou" onClick={(e) => e.target === e.currentTarget && setShowNou(false)}>
           <div className="popup">
             <div className="popup-title">Nou event</div>
-            <div className="fg">
-              <label className="flbl">Títol</label>
-              <input className="inp" value={nvTitol} onChange={(e) => setNvTitol(e.target.value)} placeholder="Dictat, Examen, Reunió..." />
-            </div>
             <div className="grid2 fg">
               <div>
                 <label className="flbl">Dia</label>
@@ -773,8 +751,8 @@ export default function WeeklyCalendar() {
               </div>
             </div>
             <div className="fg">
-              <label className="flbl">Nota (opcional)</label>
-              <textarea className="inp" rows={2} value={nvNota} onChange={(e) => setNvNota(e.target.value)} placeholder="Pàgina del llibre, material, instruccions..." />
+              <label className="flbl">Comentari</label>
+              <textarea className="inp" rows={2} value={nvNota} onChange={(e) => setNvNota(e.target.value)} placeholder="Dictat, examen, pàgina del llibre, instruccions..." />
             </div>
             <div className="spg-actions">
               <button className="btn btn-clay spg-grow" onClick={guardarEv}>
@@ -796,13 +774,8 @@ export default function WeeklyCalendar() {
               {evSel.curs}
             </div>
             <div className="det-nom" id="det-nom">
-              {evSel.titol}
+              {evSel.nota}
             </div>
-            {evSel.nota ? (
-              <div className="det-nota" id="det-nota">
-                {evSel.nota}
-              </div>
-            ) : null}
             <div className="spg-actions">
               <button className="btn" onClick={eliminarEv}>
                 Eliminar
