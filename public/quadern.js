@@ -543,25 +543,25 @@ function dbGuardarRubricaCustom(compId){
 }
 function dbCarregarCursosComplet(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve([]);
-  return sb.from('cursos').select('id,nom,assignatures(id,nom)').eq('professor_id',dbUid()).order('created_at').then(function(res){
+  return sb.from('cursos').select('id,nom,promocio,assignatures(id,nom)').eq('professor_id',dbUid()).order('created_at').then(function(res){
     if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
     return (res.data||[]).map(function(c){
       var assigs=c.assignatures||[];
-      return {id:c.id, curs:c.nom, assigns:assigs.map(function(a){return a.nom;}), assignsIds:assigs.map(function(a){return a.id;})};
+      return {id:c.id, curs:c.nom, promocio:c.promocio||null, assigns:assigs.map(function(a){return a.nom;}), assignsIds:assigs.map(function(a){return a.id;})};
     });
   });
 }
-function dbCrearCurs(nom,assigns){
+function dbCrearCurs(nom,assigns,promocio){
   var sb=window.__QUADERN_SUPABASE__;
-  return sb.from('cursos').insert({professor_id:dbUid(),nom:nom}).select().single().then(function(res){
+  return sb.from('cursos').insert({professor_id:dbUid(),nom:nom,promocio:promocio||null}).select().single().then(function(res){
     if(res.error) throw res.error;
     var cursId=res.data.id;
-    if(!assigns.length) return {id:cursId,curs:nom,assigns:[],assignsIds:[]};
+    if(!assigns.length) return {id:cursId,curs:nom,promocio:promocio||null,assigns:[],assignsIds:[]};
     var files=assigns.map(function(a){ return {curs_id:cursId,professor_id:dbUid(),nom:a}; });
     return sb.from('assignatures').insert(files).select().then(function(res2){
       if(res2.error) throw res2.error;
       var ids=assigns.map(function(a){ var row=res2.data.find(function(r){return r.nom===a;}); return row?row.id:null; });
-      return {id:cursId,curs:nom,assigns:assigns.slice(),assignsIds:ids};
+      return {id:cursId,curs:nom,promocio:promocio||null,assigns:assigns.slice(),assignsIds:ids};
     });
   });
 }
@@ -915,7 +915,7 @@ function renderGateCursos(){
     h+='<div style="display:flex;align-items:center;gap:14px;">';
     h+='<div style="width:44px;height:44px;border-radius:10px;background:'+icoBg+';color:'+icoCol+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;overflow:hidden;">'+escHtml(mc.curs.trim().substring(0,3).trim())+'</div>';
     h+='<div style="flex:1;min-width:0;">';
-    h+='<div style="font-size:15px;font-weight:700;">'+escHtml(mc.curs)+'</div>';
+    h+='<div style="font-size:15px;font-weight:700;">'+escHtml(mc.curs)+(mc.promocio?' <span style="font-size:11px;font-weight:600;color:var(--ink3);">· Promoció '+mc.promocio+'</span>':'')+'</div>';
     h+='<div style="font-size:11px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+mc.assigns.join(' · ')+'</div>';
     h+='</div>';
     h+='<div style="flex-shrink:0;" onclick="event.stopPropagation()">';
@@ -1178,6 +1178,7 @@ function selTrimNav(ti){
 }
 function obrirNouCurs(){
   document.getElementById('nc-nom').value='';
+  document.getElementById('nc-promocio').value='';
   document.getElementById('nc-subj-chips').innerHTML=assignaturesList.map(function(s){
     return '<button class="subj-chip" onclick="this.classList.toggle(\'sel\')">'+escHtml(s)+'</button>';
   }).join('');
@@ -1186,6 +1187,8 @@ function obrirNouCurs(){
 function crearNouCurs(){
   var nom=document.getElementById('nc-nom').value.trim();
   if(!nom){toast('Escriu el nom del curs');return;}
+  var promocioVal=document.getElementById('nc-promocio').value.trim();
+  var promocio=promocioVal?parseInt(promocioVal,10):null;
   var assigns=Array.from(document.querySelectorAll('#nc-subj-chips .subj-chip.sel')).map(function(el){return el.textContent;});
   if(!assigns.length){toast('Selecciona almenys una assignatura');return;}
   var sb=window.__QUADERN_SUPABASE__;
@@ -1200,9 +1203,9 @@ function crearNouCurs(){
     renderGateCursos();
   };
   if(sb){
-    dbCrearCurs(nom,assigns).then(acabar).catch(function(err){ toast('Error creant el curs: '+err.message); });
+    dbCrearCurs(nom,assigns,promocio).then(acabar).catch(function(err){ toast('Error creant el curs: '+err.message); });
   }else{
-    acabar({curs:nom,assigns:assigns});
+    acabar({curs:nom,assigns:assigns,promocio:promocio});
   }
 }
 

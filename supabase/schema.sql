@@ -186,3 +186,9 @@ alter table cal_events alter column titol drop not null;
 -- l'app ja no elimina alumnes: nomes els marca com a inactius, mantenint el
 -- seu lloc (i el dels que el segueixen) intacte.
 alter table alumnes add column if not exists actiu boolean not null default true;
+
+-- ─── Promoció (any de naixement del grup) ───
+-- Preparacio de cara a poder agrupar en un futur tots els cursos/anys d'una
+-- mateixa "promocio" (els alumnes nascuts el mateix any) — de moment nomes es
+-- guarda la dada, sense cap logica addicional que en depengui.
+alter table cursos add column if not exists promocio integer;
