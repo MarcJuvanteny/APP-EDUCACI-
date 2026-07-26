@@ -582,7 +582,7 @@ function dbCarregarAlumnes(cursId){
   return sb.from('alumnes').select('*').eq('curs_id',cursId).order('ordre').then(function(res){
     if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
     return (res.data||[]).map(function(a,i){
-      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentari:a.comentari||''};
+      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentari:a.comentari||'',actiu:a.actiu!==false};
     });
   });
 }
@@ -649,13 +649,17 @@ function dbAfegirAlumne(cursId,nom,ordre){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').insert({curs_id:cursId,professor_id:dbUid(),nom:nom,ordre:ordre}).select().single();
 }
-function dbEliminarAlumne(alumneDbId){
-  var sb=window.__QUADERN_SUPABASE__;
-  return sb.from('alumnes').delete().eq('id',alumneDbId);
-}
 function dbActualitzarComentariAlumne(alumneDbId,text){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').update({comentari:text}).eq('id',alumneDbId);
+}
+function dbActualitzarActiuAlumne(alumneDbId,actiu){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').update({actiu:actiu}).eq('id',alumneDbId);
+}
+function dbActualitzarNomAlumne(alumneDbId,nom){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').update({nom:nom}).eq('id',alumneDbId);
 }
 // Roster fictici compartit pel sembrat de demo, tant a la primera entrada (dbSembrarDemo)
 // com quan cal completar un curs que ja existeix pero encara esta buit (omplirCursSiBuit).
@@ -1349,7 +1353,8 @@ function renderAlumnes(){
   var subj=mc.assigns[estat.subjIdx]; var trim=trimestres[estat.trimIdx];
   var cercaEl=document.getElementById('cerca-alumnes');
   var cerca=cercaEl?cercaEl.value.toLowerCase().trim():'';
-  var alumnesFiltrats=cerca?alumnes.filter(function(al){return al.nom.toLowerCase().indexOf(cerca)!==-1;}):alumnes;
+  var alumnesActius=alumnes.filter(function(al){return al.actiu!==false;});
+  var alumnesFiltrats=cerca?alumnesActius.filter(function(al){return al.nom.toLowerCase().indexOf(cerca)!==-1;}):alumnesActius;
   document.getElementById('alumne-detail').style.display='none';
   document.getElementById('alumnes-table-wrap').style.display='block';
 
@@ -1899,12 +1904,15 @@ function renderCfgAlumnes(){
   var cnt=document.getElementById('alu-count'); if(cnt) cnt.textContent=alumnes.length;
   var el=document.getElementById('alu-list-cfg'); if(!el) return;
   el.innerHTML=alumnes.length?alumnes.map(function(al,i){
-    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);">'
+    var inactiu=al.actiu===false;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);'+(inactiu?'opacity:.5;':'')+'">'
       +'<span style="font-size:11px;color:var(--ink3);font-weight:700;width:18px;flex-shrink:0;text-align:right;">'+(i+1)+'</span>'
       +ava(al,26,10)
       +(al.id?'<span style="font-size:10px;font-weight:700;color:var(--clay);background:var(--clay-l);padding:2px 6px;border-radius:4px;flex-shrink:0;">'+al.id+'</span>':'')
-      +'<span style="flex:1;font-size:13px;font-weight:500;">'+escHtml(al.nom)+'</span>'
-      +'<button class="btn btn-sm btn-danger" onclick="confirmarEliminarAlumne('+i+')">Eliminar</button>'
+      +'<span style="flex:1;font-size:13px;font-weight:500;'+(inactiu?'text-decoration:line-through;':'')+'">'+escHtml(al.nom)+'</span>'
+      +(inactiu?'<span style="font-size:10px;font-weight:700;color:var(--ink3);background:var(--paper);padding:2px 6px;border-radius:4px;flex-shrink:0;">Inactiu</span>':'')
+      +'<button class="btn btn-sm" onclick="obrirEditarAlumne('+i+')">Editar</button>'
+      +'<button class="btn btn-sm'+(inactiu?'':' btn-danger')+'" onclick="toggleActiuAlumne('+i+')">'+(inactiu?'Reactivar':'Inactiu')+'</button>'
     +'</div>';
   }).join(''):'<div style="color:var(--ink3);font-size:13px;padding:14px 0;text-align:center;">Sense alumnes</div>';
 }
@@ -1928,34 +1936,52 @@ function addAlumneManual(){
     acabar(undefined);
   }
 }
-function tancarDelAlu(){var e=document.getElementById('pop-del-alu');if(e)e.remove();}
-function confirmarEliminarAlumne(idx){
-  var al=alumnes[idx];
-  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-alu';
+function tancarEditarAlu(){var e=document.getElementById('pop-edit-alu');if(e)e.remove();}
+function obrirEditarAlumne(idx){
+  var al=alumnes[idx]; if(!al) return;
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-edit-alu';
   overlay.innerHTML='<div class="popup" style="width:380px;">'
-    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
-    +'<div class="popup-head" style="text-align:center;">Eliminar alumne</div>'
-    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(al.nom)+'</b></div>'
-    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Un cop eliminat, les notes i activitats es perdran per sempre i no es podran recuperar.</div>'
+    +'<div class="popup-head">Editar alumne</div>'
+    +'<div class="fg"><label class="flbl">Nom i cognoms</label><input class="input" id="edit-alu-nom" value="'+escHtml(al.nom)+'" autocomplete="off"></div>'
     +'<div style="display:flex;gap:8px;">'
-      +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="delAlumne('+idx+')">Sí, eliminar</button>'
-      +'<button class="btn" style="flex:1;" onclick="tancarDelAlu()">Cancel·lar</button>'
+      +'<button class="btn btn-clay" style="flex:1;" onclick="guardarNomAlumne('+idx+')">Guardar</button>'
+      +'<button class="btn btn-ghost" style="flex:1;" onclick="tancarEditarAlu()">Cancel·lar</button>'
     +'</div>'
   +'</div>';
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
+  setTimeout(function(){var inp=document.getElementById('edit-alu-nom'); if(inp){inp.focus();inp.select();}},60);
 }
-function delAlumne(idx){
-  var ov=document.getElementById('pop-del-alu'); if(ov) ov.remove();
-  var al=alumnes[idx];
+function guardarNomAlumne(idx){
+  var al=alumnes[idx]; if(!al) return;
+  var nom=(document.getElementById('edit-alu-nom').value||'').trim();
+  if(!nom){toast('Escriu el nom');return;}
+  var nomAntic=al.nom;
+  al.nom=nom; al.ini=ini2(nom);
+  if(missatgesAlumnes[nomAntic]!=null){ missatgesAlumnes[nom]=missatgesAlumnes[nomAntic]; delete missatgesAlumnes[nomAntic]; }
+  guardarDades();
+  tancarEditarAlu();
+  renderCfgAlumnes();
+  toast('Alumne actualitzat ✓');
   var sb=window.__QUADERN_SUPABASE__;
-  var acabar=function(){
-    alumnes.splice(idx,1); guardarDades(); renderCfgAlumnes(); toast('Alumne eliminat');
-  };
-  if(sb&&al&&al.dbId){
-    dbEliminarAlumne(al.dbId).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
-  }else{
-    acabar();
+  if(sb&&al.dbId){
+    dbActualitzarNomAlumne(al.dbId,nom).catch(function(err){ toast('Error guardant: '+err.message); });
+  }
+}
+// Baixa logica: mai s'elimina un alumne de la llista (splice) perque desplaçaria
+// la posicio ("ordre") de tots els seguents, i aquesta posicio es el que fa
+// servir l'informe conjunt per aparellar alumnes entre fitxers de professors
+// diferents (veure comentari a dbCarregarAlumnes/schema.sql). Marcar-lo com a
+// inactiu manté el seu lloc intacte.
+function toggleActiuAlumne(idx){
+  var al=alumnes[idx]; if(!al) return;
+  al.actiu=al.actiu===false?true:false;
+  guardarDades();
+  renderCfgAlumnes();
+  toast(al.actiu?'Alumne reactivat ✓':'Alumne marcat com a inactiu ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&al.dbId){
+    dbActualitzarActiuAlumne(al.dbId,al.actiu).catch(function(err){ toast('Error guardant: '+err.message); });
   }
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
@@ -2361,7 +2387,7 @@ function infSeleccionarCurs(){
   var dzTitol=document.getElementById('inf-dropzone-titol'); if(dzTitol) dzTitol.textContent='Puja aquí els JSON de la resta de professors de '+mc.curs;
   body.style.display='block';
   document.getElementById('inf-propi-info').innerHTML='Carregant les teves dades de '+escHtml(mc.curs)+'...';
-  var genBtn=document.getElementById('inf-gen-btn'); if(genBtn) genBtn.disabled=true;
+  ['inf-gen-curt-btn','inf-gen-llarg-btn'].forEach(function(id){ var b=document.getElementById(id); if(b) b.disabled=true; });
 
   var peticio=++infPeticioActual; // evita que una crida antiga sobreescrigui una de mes nova (canvi rapid de curs/etapa)
   var tasks=[];
@@ -2400,7 +2426,7 @@ function infLlegirFitxers(files){
 }
 function infRenderFitxers(){
   var el=document.getElementById('inf-fitxers-list'); if(!el) return;
-  var btns=['inf-gen-btn','inf-doc-btn','inf-pdf-btn'].map(function(id){return document.getElementById(id);});
+  var btns=['inf-gen-curt-btn','inf-gen-llarg-btn'].map(function(id){return document.getElementById(id);});
   if(!infJSONs.length){el.innerHTML='';btns.forEach(function(b){if(b)b.disabled=true;});return;}
   // Un fitxer que no sigui de la mateixa etapa seleccionada NO s'inclourà a l'informe
   // (l'informe es filtra per trimestre) — cal avisar-ho aquí, no nomes descobrir-ho
@@ -2553,7 +2579,7 @@ function prepararDadesInforme(){
 // PRIVACITAT: cap nom d'alumne surt mai de l'aplicació. A Anthropic només s'hi envia
 // el "numero" de llista (posicio 1,2,3... dins la classe) — mai al.nom. El mapeig
 // numero->nom real es fa nomes en local, en rebre la resposta.
-function generarComentarisIA(d){
+function generarComentarisIA(d, mode){
   // Cada activitat pot tenir el seu propi comentari del professor (no nomes el
   // comentari general de l'alumne) — es envia a la IA, es informacio valuosa
   // que el professor ja ha escrit i que no s'ha de perdre.
@@ -2573,14 +2599,14 @@ function generarComentarisIA(d){
     var assignatures=Object.keys(perTrim).map(function(subj){
       var trimestres=perTrim[subj].map(function(entrada){
         return {trimestre:entrada.trimestre,mitjana:entrada.nota,comentariProfessor:entrada.comentariProf||'',competencies:compsAmbObservacions(entrada.competencies)};
-      });
-      return {nom:subj,trimestres:trimestres};
-    });
+      }).filter(function(t){ return t.mitjana!=null; }); // exclou l'assignatura del trimestre si l'alumne no hi te cap nota
+      return trimestres.length?{nom:subj,trimestres:trimestres}:null;
+    }).filter(function(a){ return a; }); // exclou l'assignatura sencera si no hi ha cap nota a cap trimestre
     return {uid:uid,numero:al.ordre,global:d.globalsAlu[uid],assignatures:assignatures};
   });
 
   var payload={
-    etapa:d.etapa, curs:d.curs,
+    etapa:d.etapa, curs:d.curs, mode:(mode==='llarg'?'llarg':'curt'),
     classe:{
       mitjana:d.mitjanaClasse,
       subjectes:d.totsSubjs.map(function(s){return {nom:s,mitjana:d.subjClasseAvg[s]};}),
@@ -2673,14 +2699,15 @@ function generarInformeHTML(d, renderChart, comentarisIA){
   cont+='<h2>Notes dels alumnes</h2>';
   d.ordres.forEach(function(uid){
     var al=d.alumnesMap[uid];
-    var alVals=d.totsSubjs.map(function(s){var a=al.assigns[s]; return a&&a.nota!=null?a.nota:0;});
-    var chartAlu=renderChart(d.totsSubjs,[alVals],['#566B47'],200,175);
+    var subjsAmbNota=d.totsSubjs.filter(function(s){var a=al.assigns[s]; return a&&a.nota!=null;});
+    var alVals=subjsAmbNota.map(function(s){return al.assigns[s].nota;});
+    var chartAlu=renderChart(subjsAmbNota,[alVals],['#566B47'],200,175);
     var g=d.globalsAlu[uid];
 
     var taulaNotes='<table style="font-size:10.5px;"><thead><tr><th style="text-align:left;">Assignatura</th><th>Nota global</th></tr></thead><tbody>';
-    d.totsSubjs.forEach(function(s){
-      var a=al.assigns[s]; var n=a?a.nota:null;
-      taulaNotes+='<tr><td style="text-align:left;">'+escHtml(s)+'</td><td style="text-align:center;">'+(n!=null?n:'—')+'<span class="q">'+qualificacioText(n)+'</span></td></tr>';
+    subjsAmbNota.forEach(function(s){
+      var n=al.assigns[s].nota;
+      taulaNotes+='<tr><td style="text-align:left;">'+escHtml(s)+'</td><td style="text-align:center;">'+n+'<span class="q">'+qualificacioText(n)+'</span></td></tr>';
     });
     taulaNotes+='<tr style="background:#f0ece4;"><td style="font-weight:700;">Global alumne</td><td style="text-align:center;font-weight:700;">'+(g!=null?g:'—')+'<span class="q">'+qualificacioText(g)+'</span></td></tr>';
     taulaNotes+='</tbody></table>';
@@ -2710,10 +2737,11 @@ function ambBotoCarregant(btnId, textCarregant, fn){
   });
 }
 
-function generarInforme(){
+function generarInforme(mode){
   var dades=prepararDadesInforme(); if(!dades) return;
-  ambBotoCarregant('inf-gen-btn','Generant comentaris IA…',function(){
-    return generarComentarisIA(dades).then(function(comentarisIA){
+  var btnId=mode==='llarg'?'inf-gen-llarg-btn':'inf-gen-curt-btn';
+  ambBotoCarregant(btnId,'Generant comentaris IA…',function(){
+    return generarComentarisIA(dades, mode).then(function(comentarisIA){
       var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);
@@ -2738,7 +2766,7 @@ function chartImgPng(labels, datasets, colors, W, H){
 function exportarInformeDoc(){
   var dades=prepararDadesInforme(); if(!dades) return;
   ambBotoCarregant('inf-doc-btn','Generant comentaris IA…',function(){
-    return generarComentarisIA(dades).then(function(comentarisIA){
+    return generarComentarisIA(dades,'curt').then(function(comentarisIA){
       var cont=generarInformeHTML(dades, chartImgPng, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);
@@ -2754,7 +2782,7 @@ function exportarInformeDoc(){
 function exportarInformePdf(){
   var dades=prepararDadesInforme(); if(!dades) return;
   ambBotoCarregant('inf-pdf-btn','Generant comentaris IA…',function(){
-    return generarComentarisIA(dades).then(function(comentarisIA){
+    return generarComentarisIA(dades,'curt').then(function(comentarisIA){
       var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);

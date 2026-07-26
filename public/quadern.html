@@ -110,6 +110,7 @@
     <div class="gate-eyebrow">Informes</div>
     <div class="gate-title">Generar informe</div>
     <div class="gate-sub">Selecciona primer el curs. Les teves assignatures d'aquell curs s'afegiran soles.</div>
+    <div style="font-size:11.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:8px 10px;margin-bottom:12px;line-height:1.5;">⚠️ Important: aquest informe aparella els alumnes entre els fitxers de cada professor per l'<b>ordre de la llista</b> (1r, 2n, 3r...), no pel nom. Perquè funcioni bé, la llista d'alumnes de <b>tots</b> els professors d'aquest curs ha de tenir el mateix nombre d'alumnes en el mateix ordre — si algú ha marxat, marca'l com a <b>inactiu</b> a Configuració en comptes d'eliminar-lo.</div>
     <div class="fg">
       <label class="flbl">Curs</label>
       <select class="input" id="inf-curs-sel" onchange="infSeleccionarCurs()">
@@ -140,7 +141,11 @@
         <div style="font-size:11px;color:var(--ink3);">Pots seleccionar múltiples fitxers · han de ser d'aquest mateix curs i etapa</div>
       </label>
       <div id="inf-fitxers-list" style="margin-bottom:12px;"></div>
-      <button class="btn btn-clay" style="width:100%;" onclick="generarInforme()" id="inf-gen-btn" disabled>Generar informe →</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-clay" style="flex:1;" onclick="generarInforme('curt')" id="inf-gen-curt-btn" disabled>Informe curt →</button>
+        <button class="btn btn-clay" style="flex:1;" onclick="generarInforme('llarg')" id="inf-gen-llarg-btn" disabled>Informe llarg →</button>
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:6px;">Curt: comentari breu per alumne (com fins ara). Llarg: comentari detallat d'unes 500 paraules per alumne — el comentari general de classe té sempre la mateixa llargada.</div>
       <div id="inf-resultat" style="margin-top:14px;"></div>
     </div>
   </div>
@@ -304,7 +309,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
           <div class="sec" style="margin-bottom:0;">Alumnes (<span id="alu-count">0</span>)</div>
         </div>
-        <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;">El número és l'ordre de la llista — s'utilitza per identificar l'alumne als informes conjunts. Els alumnes nous s'afegeixen sempre al final.</div>
+        <div style="font-size:11.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:8px 10px;margin-bottom:8px;line-height:1.5;">⚠️ El número és l'<b>ordre de la llista</b> — s'utilitza per identificar l'alumne quan es genera l'informe conjunt amb altres professors. Els alumnes nous s'afegeixen sempre al final. <b>No eliminis mai un alumne</b> (descol·locaria l'ordre de tots els següents): si ha marxat, marca'l com a <b>Inactiu</b>.</div>
         <div id="alu-list-cfg" style="max-height:300px;overflow-y:auto;"></div>
       </div>
     </div>

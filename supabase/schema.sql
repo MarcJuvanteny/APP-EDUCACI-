@@ -178,3 +178,11 @@ alter table cal_events add column if not exists curs_nom text;
 -- comentari) — la columna es manté per compatibilitat amb files antigues
 -- pero deixa de ser obligatoria perque l'app ja no l'omple.
 alter table cal_events alter column titol drop not null;
+
+-- ─── Baixa logica d'alumnes (en lloc d'eliminar-los) ───
+-- "ordre" identifica l'alumne entre fitxers de diferents professors als
+-- informes conjunts (veure comentari mes amunt) — eliminar un alumne desplaça
+-- la posicio de tots els seguents i desquadra aquest emparellament. Per aixo
+-- l'app ja no elimina alumnes: nomes els marca com a inactius, mantenint el
+-- seu lloc (i el dels que el segueixen) intacte.
+alter table alumnes add column if not exists actiu boolean not null default true;
