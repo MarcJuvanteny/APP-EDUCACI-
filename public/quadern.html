@@ -180,11 +180,11 @@
     <button class="ntab" data-s="config" onclick="navGo(this)">
       <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1 1M11.8 11.8l1 1M11.8 3.2l-1 1M3.2 11.8l1-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Configuració
     </button>
-    <button class="ntab" data-s="programacio" onclick="navGo(this)" style="background:var(--brun-l);color:var(--brun);border:1px solid #D4B99A;border-radius:var(--r);padding:5px 11px;font-size:12px;font-weight:600;margin-left:6px;">
-      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 1v2M11 1v2M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Programació
-    </button>
   </div>
   <div class="nav-right">
+    <button class="ntab" data-s="programacio" onclick="navGo(this)" style="background:var(--brun-l);color:var(--brun);border:1px solid #D4B99A;border-radius:var(--r);padding:5px 11px;font-size:12px;font-weight:600;margin-right:6px;">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 1v2M11 1v2M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Programació
+    </button>
     <div class="trim-nav-group">
       <button class="trim-nav-btn" id="tnb-0" onclick="selTrimNav(0)">1T</button>
       <button class="trim-nav-btn" id="tnb-1" onclick="selTrimNav(1)">2T</button>
@@ -260,6 +260,25 @@
     </div>
     <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;">Clica el nom del criteri per veure la rúbrica. Tab/Enter per navegar entre cel·les.</div>
     <div class="tbl-wrap" style="border:1px solid var(--line);border-radius:var(--rl);"><table class="tbl" id="cv-table"></table></div>
+  </div>
+  <div id="cv-proves" style="display:none;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <button class="btn btn-sm" onclick="showCV('cv-llista','cv-proves')" style="padding:7px 14px;font-size:13.5px;">← Tornar</button>
+      <div class="h2" id="cv-proves-title" style="margin-bottom:0;"></div>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;" id="cv-proves-hint"></div>
+    <div id="cv-proves-body"></div>
+  </div>
+  <div id="cv-prova-graella" style="display:none;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="btn btn-sm" onclick="showCV('cv-proves','cv-prova-graella');renderProvesList();" style="padding:7px 14px;font-size:13.5px;">← Tornar</button>
+      <div class="h2" id="cv-pg-title" style="margin-bottom:0;flex:1;"></div>
+      <span style="font-size:11px;color:var(--ink3);" id="cv-pg-data"></span>
+      <button class="btn btn-sm" id="cv-pg-add-comp" onclick="obrirAfegirCompProva()"></button>
+      <button class="btn btn-sm btn-danger" id="cv-pg-del-btn" onclick="confirmarEliminarProva()"></button>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;" id="cv-pg-hint"></div>
+    <div class="tbl-wrap" style="border:1px solid var(--line);border-radius:var(--rl);"><table class="tbl" id="cv-pg-table"></table></div>
   </div>
 </div>
 
