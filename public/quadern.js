@@ -1,7 +1,7 @@
 // ═══════════════ DADES ═══════════════
 var prof = {nom:'Anna Garcia', centre:'Escola Montserrat', any:'2025-2026'};
 var cursosList = ['1r A','1r B','2n A','2n B','3r A','3r B','4t A','4t B','5e A','5e B','6e A','6e B'];
-var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts'];
+var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts','Valors'];
 var trimestres = ['1r Trimestre','2n Trimestre','3r Trimestre'];
 
 var mesCursos = [
@@ -32,47 +32,166 @@ var authState = { isLogged: false, user: null };
 function normTxt(s){
   return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 }
-function comp(id, nom, ico, color, criteris, na, as, an, ae){
+// Un criteri d'avaluacio te el seu propi text i la seva propia rubrica de 4 nivells
+// (a diferencia d'una rubrica unica compartida per tots els criteris d'una competencia).
+function crit(text,na,as,an,ae){
+  return {text:text,na:na,as:as,an:an,ae:ae};
+}
+function comp(id, nom, ico, color, criteris){
   return {
     id:id,
     nom:nom,
     ico:ico,
     color:color,
-    criteris:criteris,
-    rubrica:{'1-4':na,'5-6':as,'7-8':an,'9-10':ae}
+    criteris:criteris.map(function(c){return c.text;}),
+    rubriques:criteris.map(function(c){return {'1-4':c.na,'5-6':c.as,'7-8':c.an,'9-10':c.ae};})
   };
 }
 
+// Competencies, criteris d'avaluacio i rubriques per defecte — Decret 175/2022
+// (Currículum de Catalunya, Primària). Font: app/docs/Competencies.md
 var competenciesByArea = {
   llengues: [
-    comp('lleng-comp-1','Comprensio Oral','CO','sky',['Identifica el sentit global de textos orals','Reconeix informacio rellevant en missatges orals','Mostra atencio i respecte durant l\'escolta'],'No ho entén o demana molta repetició','Entén les idees clau i dades directes','Entén detalls i el sentit global','Interpreta intencions i fa inferències'),
-    comp('lleng-comp-2','Comprensio Escrita','CE','clay',['Llegeix amb fluïdesa textos adequats al nivell','Identifica informacio explicita en el text','Fa inferències senzilles sobre el contingut'],'Li costa descodificar o no s\'aclareix','Llegeix amb fluïdesa i troba dades directes','Fa inferències i comprèn l\'estructura','Llegeix amb esperit crític i total autonomia'),
-    comp('lleng-comp-3','Expressio Oral','EO','plum',['Produeix intervencions orals ordenades','Utilitza un vocabulari adequat i variat','Participa en interaccions orals amb respecte'],'Discurs incomprensible o molt limitat','S\'expressa de forma senzilla i entenedora','Parla amb fluïdesa, ordre i bon lèxic','Discurs ric, estructurat i interactua molt bé'),
-    comp('lleng-comp-4','Expressio Escrita','EE','moss',['Escriu textos organitzats amb estructura clara','Aplica correctament ortografia i puntuacio','Utilitza connectors per enllaçar idees'],'Idees desordenades i molts errors','Text senzill i coherent amb errors bàsics','Text ben estructurat, connectors i ortografia bona','Text molt creatiu, ric i ortografia impecable'),
-    comp('lleng-comp-5','Plurilinguisme','PL','honey',['Compara paraules i estructures entre llengües','Utilitza terminologia gramatical bàsica','Valora la diversitat lingüística de l\'aula'],'No connecta llengües ni mostra interès','Detecta paraules similars entre llengües','Transfereix estratègies i valora la diversitat','Fa de mediador i compara llengües de forma innata')
+    comp('lleng-ce1','Diversitat lingüística','DL','sky',[
+      crit('Reconèixer i respectar la diversitat lingüística.','Mostra rebuig o indiferència cap a altres llengües i cultures.','Reconeix les llengües de l\'aula i les respecta si se li recorda.','Mostra interès actiu i respecte cap a les diferents llengües.','Promou i valora activament la diversitat com una riquesa col·lectiva.'),
+      crit('Identificar prejudicis lingüístics i cohesió.','Reprodueix prejudicis lingüístics sense qüestionar-los.','Identifica alguns prejudicis quan l\'adult el guia.','Detecta prejudicis de forma autònoma i hi argumenta en contra.','Analitza de forma crítica els usos i proposa alternatives inclusives.')
+    ]),
+    comp('lleng-ce2','Comprensió oral','CO','clay',[
+      crit('Comprendre idees principals de textos orals.','No capta la idea global del text oral ni amb suport.','Identifica la idea principal si rep preguntes o guiatge directament.','Extreu les idees principals i secundàries de forma autònoma.','Sintetitza el discurs amb precisió, captant detalls subtils i relacions.'),
+      crit('Valorar la intenció del discurs oral.','Es queda en la literalitat i confon la intenció de l\'emissor.','Reconeix la intenció bàsica (informar, convèncer) amb pautes.','Detecta la intenció de l\'emissor i en fa una valoració raonada.','Analitza de forma crítica la intenció, detectant biaixos o ironies.')
+    ]),
+    comp('lleng-ce3','Expressió oral','EO','plum',[
+      crit('Produir textos orals coherents i estructurats.','Expressa idees de forma desordenada, incomprensible o molt pobre.','S\'expressa de forma entenedora, tot i que amb dubtes o repeticions.','Exposa idees amb ordre, fluïdesa i un vocabulari variat i adequat.','Construeix un discurs estructurat, ric, fluid i adaptat a l\'audiència.'),
+      crit('Participar en converses i debats respectant normes.','Interromp sistemàticament, no escolta o es nega a participar.','Participa en la conversa i manté el torn si se li recorda.','Intervé activament, escolta els altres i manté un diàleg fluid.','Lidera el diàleg de forma empàtica, integrant les aportacions d\'altres.')
+    ]),
+    comp('lleng-ce4','Comprensió lectora','CL','moss',[
+      crit('Extreure informació directa i implícita de textos.','No extreu la informació bàsica del text encara que tingui suport.','Troba la informació literal directa, però li costa fer deduccions.','Extreu informació explícita i implícita de manera autònoma.','Interpreta el sentit profund, establint relacions complexes i crítiques.'),
+      crit('Aplicar estratègies de lectura per la comprensió.','Abandona la lectura en trobar un bloqueig o paraula desconeguda.','Utilitza el context o rellegeix si l\'adult el guia en el procés.','Aplica trucs i estratègies autònomament quan no entén alguna cosa.','Selecciona i combina estratègies segons la complexitat del text.')
+    ]),
+    comp('lleng-ce5','Expressió escrita','EE','honey',[
+      crit('Escriure textos estructurats segons la tipologia.','Redacta textos incoherents que no mantenen l\'estructura.','Escriu textos entenedors que mantenen l\'estructura bàsica.','Redacta de forma coherent, organitzada i ajustada a la tipologia.','Organitza el text amb una estructura impecable, estil fluid i creatiu.'),
+      crit('Aplicar el procés d\'escriptura (planificar, revisar).','Escriu directament sense planificar i no revisa mai el text.','Planifica amb ajuts visuals i corregeix errors ortogràfics evidents.','Planifica el text i en revisa l\'ortografia i gramàtica autònomament.','Mostra un procés d\'auto-revisió rigorós, polint el text per millorar-lo.')
+    ]),
+    comp('lleng-ce6','Cerca d\'informació','CI','sky',[
+      crit('Cercar informació en fonts analògiques i digitals.','Es perd en la cerca i no troba informació rellevant o útil.','Localitza informació si se li donen fonts i pautes molt concretes.','Cerca i selecciona informació rellevant en fonts fiables autònomament.','Contrasta diferents fonts, n\'avalua la fiabilitat i selecciona el millor contingut.'),
+      crit('Processar i sintetitzar la informació (no plagiar).','Copia i enganxa literalment fragments del text sense processar.','Reescriu la informació canviant només algunes paraules soltes.','Redacta la informació amb les seves pròpies paraules organitzant idees.','Sintetitza i personalitza la informació elaborant un discurs propi.')
+    ]),
+    comp('lleng-ce7','Educació literària','EL','clay',[
+      crit('Llegir de manera autònoma obres literàries.','Rebutja la lectura de forma sistemàtica.','Llegeix els llibres proposats a classe, però no en tria per iniciativa.','Mostra hàbit lector, triant obres segons els seus gustos i interessos.','Té un hàbit lector consolidat i comparteix recomanacions.'),
+      crit('Reconèixer elements bàsics del relat.','No sap identificar els personatges ni el context de la història.','Identifica els personatges principals i el lloc si són evidents.','Reconeix clarament personatges, espai, temps i el gènere.','Analitza l\'evolució dels personatges, el narrador i recursos expressius.')
+    ]),
+    comp('lleng-ce8','Plurilingüisme','PL','plum',[
+      crit('Transferir estratègies d\'una llengua a una altra.','Bloqueja l\'aprenentatge sense relacionar-ho amb el que coneix.','Reconeix semblances lingüístiques simples quan se li fan notar.','Transfereix estructures, vocabulari i estratègies entre llengües.','Utilitza el repertori multilingüe de manera estratègica per resoldre reptes.'),
+      crit('Actitud oberta cap a diferents llengües.','Rebutja aprendre o escoltar llengües diferents a la pròpia.','Tolera diferents llengües a l\'aula sense mostrar iniciativa activa.','Manifesta interès i curiositat per aprendre paraules noves.','Es mostra entusiasta i actua com a pont lingüístic a l\'aula.')
+    ]),
+    comp('lleng-ce9','Reflexió lingüística','RL','moss',[
+      crit('Formular hipòtesis i usar terminologia gramatical.','No reconeix les categories gramaticals ni la funció de paraules.','Identifica elements gramaticals bàsics amb suport de la pauta.','Utilitza els termes gramaticals bàsics per explicar la llengua.','Aplica la reflexió metalingüística de forma precisa per argumentar la tria.'),
+      crit('Revisar i auto-corregir les produccions.','No detecta els seus propis errors ni quan se li assenyalen.','Corregeix errors quan el docent li indica exactament on són.','Revisa el text autònomament i detecta i corregeix errades.','Autocorregeix i millora la cohesió, la precisió i la sintaxi amb criteri.')
+    ])
   ],
   matematiques: [
-    comp('mates-comp-1','Resolucio de problemes','RP','sky',['Identifica les dades rellevants d\'un problema','Selecciona i aplica l\'operacio adequada','Comprova el resultat i el contextualitza'],'No sap identificar dades ni l\'operació','Identifica dades i l\'operació amb èxit','Resol provant diferents estratègies i comprova','Cerca diferents vies i formula nous problemes'),
-    comp('mates-comp-2','Raonament i connexions','RC','clay',['Detecta patrons numèrics i geomètrics','Justifica les decisions preses','Connecta els continguts amb altres àrees'],'No veu relacions ni justifica què fa','Descriu patrons i relacions evidents','Argumenta decisions i connecta amb altres àrees','Generalitza regles i fa raonaments complexos'),
-    comp('mates-comp-3','Comunicacio','CM','plum',['Explica el procés seguit amb claredat','Utilitza representacions (dibuixos, taules, gràfics)','Empra vocabulari matemàtic adequat'],'No sap explicar com ha fet el càlcul','S\'explica de forma bàsica i usa algun dibuix','Explica amb claredat el procés i el representa','Comunica idees abstractes amb rigor i precisió'),
-    comp('mates-comp-4','Sentit matematic','SM','moss',['Domina el càlcul mental i escrit','Aplica conceptes de mesura amb precisió','Reconeix i utilitza figures geomètriques'],'Moltes dificultats en operacions bàsiques','Domina el càlcul escrit i conceptes comuns','Àgil en càlcul mental, mesura i gràfics','Excel·lent flexibilitat numèrica i visualització')
+    comp('mates-ce1','Resolució de problemes','RP','sky',[
+      crit('Comprendre enunciats i identificar dades.','Es bloqueja davant l\'enunciat i no sap quines dades calen.','Identifica les dades principals del problema amb lectura guiada.','Extreu i organitza les dades rellevants de l\'enunciat autònomament.','Interpreta enunciats complexos, extreu dades implícites i descarta no rellevants.'),
+      crit('Aplicar estratègies i operacions.','Aplica operacions a l\'atzar sense cap lògica ni sentit.','Tria l\'operació correcta quan rep orientació en l\'estratègia.','Selecciona l\'estratègia adequada i resol operacions amb precisió.','Descobreix i utilitza diferents camins de resolució eficients.'),
+      crit('Comprovar la validesa de la solució.','Dóna una xifra com a resposta sense comprovar si té sentit.','Verifica el resultat si el docent li demana explícitament.','Revisa si la solució té sentit respecte a la pregunta plantejada.','Comprova la validesa del resultat i argumenta la solidesa.')
+    ]),
+    comp('mates-ce2','Raonament','RA','clay',[
+      crit('Identificar patrons i relacions lògiques.','No identifica relacions ni continuïtat en sèries.','Detecta la continuació d\'un patró senzill si se li donen pistes.','Reconeix i descriu patrons i relacions lògiques autònomament.','Generalitza patrons complexos i crea noves estructures lògiques.'),
+      crit('Justificar resultats amb arguments lògics.','Realitza els procediments mecànicament sense explicar-los.','Explica els passos del seu càlcul si se li fan preguntes directes.','Argumenta i justifica de manera lògica la decisió en el càlcul.','Ofereix demostracions estructurades i avalua raonaments d\'altres.')
+    ]),
+    comp('mates-ce3','Connexions','CN','plum',[
+      crit('Relacionar diferents conceptes matemàtics.','Veu les matemàtiques com a blocs aïllats sense connexió.','Reconeix connexions evidents entre blocs quan se li posen exemples.','Connecta idees de diferents blocs de forma espontània.','Aplica conceptes d\'un bloc per resoldre problemes d\'un altre.'),
+      crit('Aplicar matemàtiques a la vida quotidiana.','No sap utilitzar les matemàtiques fora de la matèria.','Aplica la mesura o càlcul en altres àrees si se li indica pas a pas.','Utilitza les eines matemàtiques com a recurs natural en la vida diària.','Modela i resol situacions complexes de la vida real amb matemàtiques.')
+    ]),
+    comp('mates-ce4','Representació','RE','moss',[
+      crit('Representar situacions (dibuixos, gràfics).','Incapaç de passar una dada numèrica a suport visual.','Dibuixa o fa un esquema senzill si se li demana explícitament.','Tradueix el problema a una taula, gràfic o model simbòlic.','Dissenya representacions visuals molt clares de dades complexes.'),
+      crit('Canviar entre formats de representació.','Es bloqueja en demanar-li un format no habitual.','Passa d\'un format a un altre seguint un model molt fix.','Canvia de format de representació amb fluïdesa i autonomia.','Selecciona i combina el format de representació més eficient.')
+    ]),
+    comp('mates-ce5','Comunicació','CM','honey',[
+      crit('Explicar processos amb vocabulari adequat.','Utilitza un llenguatge ambigu o no matemàtic.','Utilitza termes matemàtics bàsics barrejats amb informal.','Empra el vocabulari propi de l\'àrea amb precisió.','Comunica idees amb claredat, rigor i precisió tècnica.'),
+      crit('Comprendre raonaments dels companys.','No segueix ni entén les explicacions dels companys.','Entén el procés d\'un company només si és molt lent i senzill.','Comprèn els raonaments exposats pels companys a l\'aula.','Identifica encerts, errors o camins alternatius en els companys.')
+    ]),
+    comp('mates-ce6','Socioafectiva','SA','sky',[
+      crit('Mostrar perseverança i aprendre de l\'error.','S\'abandona davant la dificultat i es frustra amb l\'error.','Persisteix en la tasca si rep suport o ànims continus.','Afronta els reptes amb actitud positiva i accepta l\'error.','Mostra alta resiliència i reconstrueix la seva estratègia des de l\'error.'),
+      crit('Treballar cooperativament en equip.','Imposa idees, no escolta o es nega a treballar en equip.','Participa en el grup, tot i que li costa coordinar-se amb els ritmes.','Treballa de manera cooperativa, respectant opinions i ritmes.','Fomenta un treball en equip inclusiu i potencia el grup.')
+    ])
   ],
   medi: [
-    comp('medi-comp-1','Indagacio i ciencia','IC','sky',['Formula preguntes investigables','Dissenya i realitza experiments senzills','Extreu conclusions a partir de les observacions'],'No té iniciativa per observar ni indagar','Segueix l\'experiment de classe i en descriu el resultat','Planteja hipòtesis, experimenta i treu conclusions','Dissenya recerques amb gran rigor científic'),
-    comp('medi-comp-2','Tecnologia i disseny','TD','clay',['Utilitza eines digitals amb autonomia','Dissenya i construeix prototips senzills','Resol problemes tècnics de forma creativa'],'No sap utilitzar tecnologia ni crear objectes','Fa anar dispositius i participa en maquetes senzilles','Cerca a la xarxa i dissenya maquetes funcionals','Resol reptes tècnics o digitals de forma innovadora'),
-    comp('medi-comp-3','Ciutadania i historia','CH','plum',['Ubica fets històrics en el temps','Reconeix canvis i continuïtats al llarg del temps','Participa de forma democràtica i respectuosa'],'No ubica fets en el temps ni respecta normes','Ubica canvis en la història i conviu amb respecte','Ordena etapes històriques i s\'implica a l\'aula','Analitza el passat de forma crítica i és ciutadà actiu'),
-    comp('medi-comp-4','Salut i sostenibilitat','SS','moss',['Aplica hàbits d\'higiene i alimentacio saludable','Adopta pràctiques de consum responsable','S\'implica en accions de cura del medi ambient'],'No té cura d\'ell mateix ni de l\'entorn','Aplica hàbits bàsics i directrius de reciclatge','Manté estils de vida sans i col·labora en el medi','Lidera i proposa campanyes de sostenibilitat')
+    comp('medi-ce1','Mètode científic','MC','sky',[
+      crit('Formular preguntes i hipòtesis.','No fa preguntes ni és capaç de predir què passarà.','Formula preguntes molt guiades i hipòtesis de "sí/no".','Planteja preguntes investigables i hipòtesis lògiques.','Formula hipòtesis ben fonamentades amb pensament científic.'),
+      crit('Realitzar experiments o investigacions.','No segueix les instruccions ni manipula el material bé.','Realitza l\'experiment seguint una pauta pas a pas dirigida.','Aplica els passos del mètode experimental amb ordre i seguretat.','Proposa o ajusta el disseny experimental introduint variables.'),
+      crit('Recollir dades i extreure conclusions.','No anota dades o ho fa de forma caòtica sense conclusions.','Anota les dades en una taula donada i diu conclusions amb ajut.','Organitza les dades en suports adequats i redacta conclusions.','Analitza dades críticament i redacta conclusions científiques.')
+    ]),
+    comp('medi-ce2','Tecnologia','TE','clay',[
+      crit('Dissenyar i construir prototips.','Incapaç de planificar o construir un objecte per a un repte.','Construeix un prototip bàsic si se li dóna un model a copiar.','Dissenya i construeix un prototip funcional que respon al repte.','Crea solucions tecnològiques innovadores i ben executades.'),
+      crit('Avaluar el disseny i millorar-lo.','No avalua si el seu objecte funciona ni com millorar-lo.','Identifica si funciona, però li costa trobar la causa de l\'error.','Posa a prova el prototip, detecta fallades i proposa canvis.','Realitza proves sistemàtiques i redissenya optimitzant el resultat.')
+    ]),
+    comp('medi-ce3','Salut i benestar','SB','plum',[
+      crit('Aplicar hàbits de vida saludable.','Manté hàbits poc saludables sense adonar-se dels riscos.','Reconeix hàbits saludables en la teoria, però li costa aplicar-los.','Aplica hàbits d\'higiene, alimentació, descans i activitat diària.','Argumenta els beneficis de la salut i en promou la pràctica.'),
+      crit('Gestionar emocions pel benestar.','No identifica el que sent ni com afecta la seva salut.','Identifica emocions bàsiques i demana ajut quan no està bé.','Relaciona l\'estat emocional amb el benestar i s\'autoregula.','Gestiona emocions i accions promovent el benestar de tots.')
+    ]),
+    comp('medi-ce4','Ecosocial','EC','moss',[
+      crit('Identificar relacions als ecosistemes.','No distingeix els éssers vius principals ni les relacions.','Identifica éssers vius i en reconeix la funció bàsica si se\'l guia.','Classifica els éssers vius i explica les relacions a l\'ecosistema.','Analitza l\'equilibri dels ecosistemes i la biodiversitat.'),
+      crit('Consum responsable i estalvi de recursos.','Mostra conductes de malbaratament i no recicla.','Recicla i estalvia recursos només quan se li recorda.','Actua conscientment reciclant i reduint el consum de recursos.','Promou iniciatives sostenibles i raona la transició ecològica.'),
+      crit('Accions locals per al medi ambient.','Es mostra indiferent davant els problemes mediambientals.','Reconeix problemes de contaminació si se li mostren imatges.','Proposa accions concretes i realistes per millorar el medi.','Dissenya i lidera accions de sensibilització ambiental a l\'escola.')
+    ]),
+    comp('medi-ce5','Història','HI','honey',[
+      crit('Ordenar fets i etapes històriques.','Incapaç de situar-se en el temps o confon passat i present.','Ordena fets cronològics evidents de la seva vida o etapes.','Situa correctament esdeveniments en les grans etapes.','Relaciona causes i conseqüències entre diferents etapes.'),
+      crit('Valorar el patrimoni històric i cultural.','Desconeix o menysprea el patrimoni i les tradicions.','Identifica els monuments o festes més populars de la localitat.','Valora i explica l\'origen i importància dels elements culturals.','Investiga sobre el patrimoni, en defensa la conservació i en difon el valor.'),
+      crit('Analitzar causes i conseqüències històriques.','Veu els fets històrics com a esdeveniments aïllats.','Identifica una causa senzilla d\'un fet històric quan se li explica.','Explica causes i conseqüències dels fets treballats.','Analitza múltiples factors (socials, econòmics) de la història.')
+    ]),
+    comp('medi-ce6','Geografia','GE','sky',[
+      crit('Utilitzar eines d\'orientació i mapes.','No s\'orienta en l\'espai ni interpreta un plànol bàsic.','Se situa en un plànol o mapa senzill amb la guia de l\'adult.','Utilitza mapes, plànols, llegendes i coordenades autònomament.','Interpreta mapes complexos, en creua informació i fa plànols.'),
+      crit('Relació paisatge, clima i activitat humana.','No relaciona l\'entorn natural amb les formes de vida.','Explica relacions senzilles (ex: fa fred, ens cobrim).','Relaciona clima i relleu amb l\'activitat econòmica i paisatge.','Analitza com l\'acció humana transforma el paisatge i proposa millores.')
+    ]),
+    comp('medi-ce7','Ciutadania','CI','clay',[
+      crit('Normes de convivència i diàleg.','Incompleix normes i respon amb agressivitat o bloqueig.','Respecta normes la major part del temps i accepta el diàleg.','Segueix les normes i utilitza el diàleg per resoldre desacords.','Actua com a mediador natural afavorint un clima democràtic.'),
+      crit('Respectar Drets de la Infància i diversitat.','Ignora els drets dels altres i manté actituds d\'exclusió.','Reconeix els drets bàsics de la infància i tolera la diferència.','Respecta els Drets de la Infància i conviu amb empatia.','Defensa activament els drets de tothom i enriqueix el grup.')
+    ])
   ],
   educacioFisica: [
-    comp('ef-comp-1','Resolucio motriu','RM','sky',['Controla habilitats motrius bàsiques','Adapta els moviments a l\'espai i al ritme','Aplica estratègies tàctiques en jocs'],'Dificultats de coordinació o desorientació','Controla habilitats bàsiques en jocs pautats','Adapta el cos a canvis de ritme, espai i tàctica','Domina i anticipa qualsevol moviment o joc tàctic'),
-    comp('ef-comp-2','Salut i seguretat','SS','clay',['Realitza l\'escalfament de manera autònoma','Té cura de la seva higiene i seguretat','Regula l\'esforç segons l\'activitat'],'Mostra rebuig a l\'esforç i oblida la higiene','Participa en l\'escalfament i té cura de la higiene','Regula l\'esforç i entén els beneficis de l\'esport','Gestiona de forma autònoma la seva salut i seguretat'),
-    comp('ef-comp-3','Expressio corporal','EC','plum',['Expressa emocions i idees amb el cos','Segueix el ritme en activitats musicals','Crea moviments i petites coreografies'],'Inhibit en gestos i no segueix el ritme','Expressa coses bàsiques i fa danses pautades','Comunica sentiments i es mou a tempo','Crea moviments i coreografies amb gran originalitat'),
-    comp('ef-comp-4','Interaccio social','IS','moss',['Respecta les normes del joc','Coopera amb els companys per assolir objectius','Resol conflictes de manera dialogada'],'Provoca disputes, no accepta regles ni ajuda','Respecta les regles i tolera el resultat del joc','Ajuda els companys i resol conflictes dialogant','Lidera el joc net (fair play) i fomenta la inclusió')
+    comp('ef-ce1','Motricitat','MO','sky',[
+      crit('Controlar el cos (coordinació i equilibri).','Té dificultats de coordinació i perd l\'equilibri fàcilment.','Executa moviments de forma acceptable, tot i mostrar rigidesa.','Executa habilitats motrius (carreres, salts, girs) de forma fluida.','Demostra un domini corporal excel·lent amb moviments molt precisos.'),
+      crit('Adaptar moviments a entorns canviants.','Es mostra molt insegur i es bloqueja quan canvia l\'espai.','S\'adapta a espais nous anant amb molta precaució i pautes.','Ajusta els seus moviments de forma ràpida a l\'entorn.','Respon amb gran habilitat i seguretat davant qualsevol obstacle.')
+    ]),
+    comp('ef-ce2','Hàbits saludables','HS','clay',[
+      crit('Reconèixer els beneficis de l\'activitat.','No mostra interès per l\'exercici i busca estar inactiu.','Participa en les sessions reconeixent que és bo per la salut.','Valora l\'exercici i manté una actitud activa tota la sessió.','Promou l\'activitat física com un estil de vida essencial.'),
+      crit('Aplicar escalfament, seguretat i higiene.','Oblida la roba d\'esport, no fa escalfament o actua amb risc.','Fa escalfament i segueix normes si el docent ho indica.','Realitza l\'escalfament de forma responsable i té cura de la higiene.','Gestiona l\'escalfament autònomament i preveu riscos.')
+    ]),
+    comp('ef-ce3','Interacció','IN','plum',[
+      crit('Cooperar en jocs acceptant regles i resultat.','S\'enfada si perd, fa trampes o exclou companys.','Juga en equip respectant les regles, tot i costar-li la derrota.','Coopera activament, demostra esportivitat i accepta el resultat.','Destaca pel joc net, anima els companys i afavoreix la inclusió.'),
+      crit('Aplicar estratègies i pautes tàctiques.','Es desplaça pel camp sense cap sentit tàctic.','Manté la seva posició bàsica si se li recorda constantment.','Aplica trucs i estratègies d\'equip per assolir l\'objectiu.','Modifica la tàctica individual i col·lectiva en temps real.')
+    ]),
+    comp('ef-ce4','Expressió corporal','EC','moss',[
+      crit('Crear i executar seqüències de moviment.','Es nega a moure\'s al ritme de la música o a la dansa.','Repeteix una seqüència de passos dissenyada per l\'adult/grup.','Aporta passos i idees per muntar una coreografia en grup.','Dissenya coreografies riques, originals i amb molt de ritme.'),
+      crit('Emprar el cos com a mitjà d\'expressió.','Mostra una rigidesa o vergonya que impedeix l\'expressió.','Utilitza el gest i el cos per fer mímica o dramatització guiada.','Comunica històries i emocions a través del cos amb claredat.','Transmet estats d\'ànim complexos amb gran riquesa gestual.')
+    ])
   ],
   educacioArtistica: [
-    comp('art-comp-1','Recepcio i analisi','RA','sky',['Identifica elements bàsics d\'una obra (color, forma, textura)','Descriu les sensacions que li transmet una obra','Compara diferents obres i estils'],'Desinterès o incapaç de descriure una obra','Identifica colors o formes evidents en imatges','Analitza obres explicant l\'emoció que transmeten','Fa valoracions crítiques i documentades molt riques'),
-    comp('art-comp-2','Creacio i expressio','CE','clay',['Aplica tècniques plàstiques bàsiques','Mostra creativitat i iniciativa pròpia','Acaba les seves produccions amb cura'],'Poc acurat amb materials o deixa feines a mitges','Aplica la tècnica pautada amb prou destresa','Experimenta amb materials i mostra estil propi','Combina tècniques amb gran originalitat i plasticitat'),
-    comp('art-comp-3','Proces i col·laboracio','PC','plum',['Planifica les passes abans de crear','Col·labora activament en projectes de grup','Respecta i valora el treball dels altres'],'No planifica, no comparteix i no acaba el treball','Segueix els passos de l\'activitat i respecta l\'equip','Esbossa abans d\'actuar i col·labora activament','Executa projectes des de la idea fins a l\'exposició')
+    comp('art-ce1','Recepció','RC','sky',[
+      crit('Escoltar i observar manifestacions artístiques.','No manté l\'atenció ni el silenci durant les obres.','Escolta o observa les obres durant un temps breu si se\'l dirigeix.','Mostra atenció, concentració i interès actiu davant l\'art.','Analitza detalls tècnics, d\'estil i d\'expressió de forma madura.'),
+      crit('Expressar sensacions amb vocabulari adequat.','No sap expressar què li transmet l\'obra o desqualifica.','Diu si una obra li agrada o no amb termes molt bàsics.','Expressa emocions i opinions sobre l\'obra emprant vocabulari adequat.','Elabora comentaris crítics argumentats respectant la diversitat.')
+    ]),
+    comp('art-ce2','Exploració','EX','clay',[
+      crit('Experimentar amb eines i mitjans digitals.','Es nega a manipular materials o en fa un ús destructiu.','Utilitza eines i tècniques plàstiques seguint el model donat.','Experimenta amb diferents materials, tècniques i eines digitals.','Domina i combina tècniques plàstiques i digitals de forma innovadora.'),
+      crit('Utilitzar la veu, el cos i els instruments.','Es mostra descompassat, no canta ni segueix la música.','Canta o toca mantenint el ritme quan va acompanyat pel grup.','Ajusta la veu, l\'afinació, el ritme i el moviment autònomament.','Demostra gran precisió rítmica, oïda i expressivitat.')
+    ]),
+    comp('art-ce3','Creació','CR','plum',[
+      crit('Crear obres visuals o musicals originals.','Copia el treball dels companys sense aportar res propi.','Realitza produccions senzilles que compleixen el mínim de la tasca.','Elabora produccions originals aportant idees pròpies i creatives.','Destaca per la seva gran creativitat, estil propi i cura en detalls.'),
+      crit('Participar en projectes artístics col·lectius.','Es desentén del grup, destorba o es nega a participar.','Participa en la creació col·lectiva fent el paper bàsic assignat.','S\'implica en el projecte comú, coopera en assajos i aporta idees.','Lidera la producció col·lectiva ajudant a coordinar el grup.'),
+      crit('Presentar creacions artístiques.','Es nega a mostrar el seu treball als altres per vergonya.','Mostra la seva creació si se li demana i rep suport directe.','Presenta la seva producció explicant el procés amb claredat.','Exposa i comunica el significat de la seva obra amb seguretat i orgull.')
+    ])
+  ],
+  valorsCivics: [
+    comp('valors-ce1','Autoconeixement','AC','sky',[
+      crit('Expressar opinions i emocions assertivament.','Reacciona amb crits o es tanca en banda quan opina.','Diu el que pensa o sent, tot i que de vegades ho fa de forma impulsiva.','Expressa opinions i emocions de forma calmada, clara i educada.','Demostra gran intel·ligència emocional en idees complexes.'),
+      crit('Reflexionar sobre dilemes morals.','No veu cap dimensió ètica en els conflictes ("m\'és igual").','Distingeix el que està bé o malament si l\'adult li analitza el cas.','Reflexiona i aporta raons lògiques sobre el que és just.','Demostra pensament crític profund cercant el bé comú.')
+    ]),
+    comp('valors-ce2','Compromís ètic','CE','clay',[
+      crit('Mostrar empatia i respecte a la igualtat.','Fa comentaris intolerants, masclistes o no es posa a l\'altre lloc.','Respecta els companys, tot i costar-li empatitzar amb el diferent.','Se situa al lloc dels altres i respecta tothom sense distinció.','Actua com a motor d\'inclusió defensant els qui ho necessiten.'),
+      crit('Resoldre conflictes amb el diàleg.','Recorre a la força, l\'insult o la fugida per solucionar problemes.','S\'asseu a parlar del conflicte quan el docent l\'obliga.','Escolta la versió de l\'altre i busca un pacte negociat parlant.','Aplica tècniques de mediació espontània per calmar tensions.'),
+      crit('Valorar normes democràtiques i drets.','Ignora les normes de convivència i els drets bàsics.','Comprèn la necessitat de les normes si se li expliquen.','Valora i respecta les normes col·lectives i els drets humans.','Promou el funcionament democràtic i proposa millores.')
+    ])
   ]
 };
 
@@ -83,11 +202,21 @@ function areaForSubject(subj){
   if(['medi','medinatural','medisocial'].indexOf(n)!==-1) return 'medi';
   if(['educaciofisica','edfisica','edfisi','edfisica','edfísica'].indexOf(n)!==-1) return 'educacioFisica';
   if(['educacioartistica','artsplastiques','music','musica','visualiplastica','arts'].indexOf(n)!==-1) return 'educacioArtistica';
+  if(['valors','valorscivics','educacioenvalors','valorsciviciseticscritics'].indexOf(n)!==-1) return 'valorsCivics';
   return 'llengues';
 }
 
 function getCompetenciesForSubject(subj){
   return competenciesByArea[areaForSubject(subj)] || competenciesByArea.llengues;
+}
+// Tots els id de competencia vigents al curriculum actual — serveix per detectar
+// activitats "orfes" que apunten a competencies d'una versio anterior del curriculum.
+function totesLesCompetenciesIds(){
+  var ids=[];
+  Object.keys(competenciesByArea).forEach(function(area){
+    competenciesByArea[area].forEach(function(c){ ids.push(c.id); });
+  });
+  return ids;
 }
 
 function getCurrentSubject(){
@@ -102,9 +231,7 @@ var rubrica = {};
 var escales = [{rang:'1-4',label:'No Assolit',color:'clay'},{rang:'5-6',label:'Assol. suficient',color:'honey'},{rang:'7-8',label:'Assol. notable',color:'sky'},{rang:'9-10',label:'Assol. excellent',color:'moss'}];
 Object.keys(competenciesByArea).forEach(function(area){
   competenciesByArea[area].forEach(function(comp){
-    rubrica[comp.id] = comp.criteris.map(function(){
-      return {'1-4':comp.rubrica['1-4'],'5-6':comp.rubrica['5-6'],'7-8':comp.rubrica['7-8'],'9-10':comp.rubrica['9-10']};
-    });
+    rubrica[comp.id] = comp.rubriques;
   });
 });
 
@@ -351,11 +478,18 @@ function carregarDades(){
   if(saved.activitats) activitats=saved.activitats;
   if(saved.calEvents) calEvents=saved.calEvents;
   if(saved.missatgesAlumnes) missatgesAlumnes=saved.missatgesAlumnes;
-  if(saved.rubrica) rubrica=saved.rubrica;
-  if(saved.competenciesByArea){
-    Object.keys(saved.competenciesByArea).forEach(function(area){
-      if(competenciesByArea[area]) competenciesByArea[area]=saved.competenciesByArea[area];
-    });
+  // La rubrica i les competencies per defecte nomes es restauren del localStorage en
+  // mode sense base de dades. Amb Supabase connectat, els valors per defecte vius al
+  // codi son l'unica font de veritat, i les personalitzacions del professor arriben
+  // despres via dbCarregarRubricaCustom() — sino, una copia antiga desada al navegador
+  // tornaria a tapar qualsevol actualitzacio del currículum per defecte.
+  if(!window.__QUADERN_SUPABASE__){
+    if(saved.rubrica) rubrica=saved.rubrica;
+    if(saved.competenciesByArea){
+      Object.keys(saved.competenciesByArea).forEach(function(area){
+        if(competenciesByArea[area]) competenciesByArea[area]=saved.competenciesByArea[area];
+      });
+    }
   }
   return true;
 }
@@ -409,25 +543,25 @@ function dbGuardarRubricaCustom(compId){
 }
 function dbCarregarCursosComplet(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve([]);
-  return sb.from('cursos').select('id,nom,assignatures(id,nom)').eq('professor_id',dbUid()).order('created_at').then(function(res){
+  return sb.from('cursos').select('id,nom,promocio,assignatures(id,nom)').eq('professor_id',dbUid()).order('created_at').then(function(res){
     if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
     return (res.data||[]).map(function(c){
       var assigs=c.assignatures||[];
-      return {id:c.id, curs:c.nom, assigns:assigs.map(function(a){return a.nom;}), assignsIds:assigs.map(function(a){return a.id;})};
+      return {id:c.id, curs:c.nom, promocio:c.promocio||null, assigns:assigs.map(function(a){return a.nom;}), assignsIds:assigs.map(function(a){return a.id;})};
     });
   });
 }
-function dbCrearCurs(nom,assigns){
+function dbCrearCurs(nom,assigns,promocio){
   var sb=window.__QUADERN_SUPABASE__;
-  return sb.from('cursos').insert({professor_id:dbUid(),nom:nom}).select().single().then(function(res){
+  return sb.from('cursos').insert({professor_id:dbUid(),nom:nom,promocio:promocio||null}).select().single().then(function(res){
     if(res.error) throw res.error;
     var cursId=res.data.id;
-    if(!assigns.length) return {id:cursId,curs:nom,assigns:[],assignsIds:[]};
+    if(!assigns.length) return {id:cursId,curs:nom,promocio:promocio||null,assigns:[],assignsIds:[]};
     var files=assigns.map(function(a){ return {curs_id:cursId,professor_id:dbUid(),nom:a}; });
     return sb.from('assignatures').insert(files).select().then(function(res2){
       if(res2.error) throw res2.error;
       var ids=assigns.map(function(a){ var row=res2.data.find(function(r){return r.nom===a;}); return row?row.id:null; });
-      return {id:cursId,curs:nom,assigns:assigns.slice(),assignsIds:ids};
+      return {id:cursId,curs:nom,promocio:promocio||null,assigns:assigns.slice(),assignsIds:ids};
     });
   });
 }
@@ -448,7 +582,7 @@ function dbCarregarAlumnes(cursId){
   return sb.from('alumnes').select('*').eq('curs_id',cursId).order('ordre').then(function(res){
     if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
     return (res.data||[]).map(function(a,i){
-      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentari:a.comentari||''};
+      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentari:a.comentari||'',actiu:a.actiu!==false};
     });
   });
 }
@@ -515,13 +649,17 @@ function dbAfegirAlumne(cursId,nom,ordre){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').insert({curs_id:cursId,professor_id:dbUid(),nom:nom,ordre:ordre}).select().single();
 }
-function dbEliminarAlumne(alumneDbId){
-  var sb=window.__QUADERN_SUPABASE__;
-  return sb.from('alumnes').delete().eq('id',alumneDbId);
-}
 function dbActualitzarComentariAlumne(alumneDbId,text){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').update({comentari:text}).eq('id',alumneDbId);
+}
+function dbActualitzarActiuAlumne(alumneDbId,actiu){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').update({actiu:actiu}).eq('id',alumneDbId);
+}
+function dbActualitzarNomAlumne(alumneDbId,nom){
+  var sb=window.__QUADERN_SUPABASE__;
+  return sb.from('alumnes').update({nom:nom}).eq('id',alumneDbId);
 }
 // Roster fictici compartit pel sembrat de demo, tant a la primera entrada (dbSembrarDemo)
 // com quan cal completar un curs que ja existeix pero encara esta buit (omplirCursSiBuit).
@@ -554,12 +692,18 @@ function omplirCursSiBuit(mc){
   if(!sb||!mc||!mc.id||!mc.assigns||!mc.assigns.length) return Promise.resolve();
   return dbCarregarAlumnes(mc.id).then(function(existents){
     if(existents.length){
-      // Ja te alumnes, pero pot ser que una execucio anterior s'hagues interromput
-      // abans de generar les activitats/notes. Comprovem si en te cap.
-      return sb.from('activitats').select('id').eq('curs_id',mc.id).limit(1).then(function(res){
+      // Ja te alumnes. Comprovem les activitats que ja te: poden ser inexistents
+      // (execucio anterior interrompuda) o "orfes" — apuntant a ids de competencia
+      // d'una versio anterior del curriculum, que ja no existeixen al codi actual.
+      var idsValids=totesLesCompetenciesIds();
+      return sb.from('activitats').select('id,competencia_id').eq('curs_id',mc.id).then(function(res){
         if(res.error){ console.warn('[Arrel]',res.error.message); return; }
-        if(res.data&&res.data.length) return; // ja te activitats, no toquem res
-        return generarNotesDemoPerCurs(mc, existents);
+        var files=res.data||[];
+        var orfes=files.filter(function(f){ return idsValids.indexOf(f.competencia_id)===-1; });
+        var vigents=files.filter(function(f){ return idsValids.indexOf(f.competencia_id)!==-1; });
+        if(vigents.length) return; // ja te activitats amb competencies actuals, no toquem res
+        var neteja=orfes.length?sb.from('activitats').delete().in('id',orfes.map(function(f){return f.id;})):Promise.resolve();
+        return neteja.then(function(){ return generarNotesDemoPerCurs(mc, existents); });
       });
     }
     var files=DEMO_ALUMNES_NOMS.map(function(nom,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''}; });
@@ -771,7 +915,7 @@ function renderGateCursos(){
     h+='<div style="display:flex;align-items:center;gap:14px;">';
     h+='<div style="width:44px;height:44px;border-radius:10px;background:'+icoBg+';color:'+icoCol+';display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;overflow:hidden;">'+escHtml(mc.curs.trim().substring(0,3).trim())+'</div>';
     h+='<div style="flex:1;min-width:0;">';
-    h+='<div style="font-size:15px;font-weight:700;">'+escHtml(mc.curs)+'</div>';
+    h+='<div style="font-size:15px;font-weight:700;">'+escHtml(mc.curs)+(mc.promocio?' <span style="font-size:11px;font-weight:600;color:var(--ink3);">· Promoció '+mc.promocio+'</span>':'')+'</div>';
     h+='<div style="font-size:11px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+mc.assigns.join(' · ')+'</div>';
     h+='</div>';
     h+='<div style="flex-shrink:0;" onclick="event.stopPropagation()">';
@@ -982,6 +1126,33 @@ function guardarNovaAssignatura(ci){
 }
 
 
+function toggleSubjDropdown(e){
+  if(e) e.stopPropagation();
+  var dd=document.getElementById('nav-subj-dd'); if(!dd) return;
+  if(dd.classList.contains('open')){ dd.classList.remove('open'); return; }
+  var mc=mesCursos[estat.cursIdx];
+  if(!mc||!mc.assigns||mc.assigns.length<2){ abrirGateSeleccio(); return; }
+  dd.innerHTML=mc.assigns.map(function(s,si){
+    return '<div class="nav-subj-opt'+(si===estat.subjIdx?' on':'')+'" onclick="event.stopPropagation();canviarSubjNav('+si+')">'+escHtml(s)+'</div>';
+  }).join('')+'<div class="nav-subj-opt nav-subj-more" onclick="event.stopPropagation();document.getElementById(\'nav-subj-dd\').classList.remove(\'open\');abrirGateSeleccio();">Canviar de curs…</div>';
+  // S'ancora amb position:fixed i es mou al <body> perque nav (overflow-x:auto)
+  // no el retalli verticalment — l'overflow-x fa que l'overflow-y efectiu tambe sigui auto.
+  if(dd.parentNode!==document.body) document.body.appendChild(dd);
+  var anchor=(e&&e.currentTarget)||document.querySelector('.nav-ctx');
+  var r=anchor.getBoundingClientRect();
+  dd.style.top=(r.bottom+6)+'px';
+  dd.style.left=r.left+'px';
+  dd.classList.add('open');
+  setTimeout(function(){document.addEventListener('click',tancarSubjDropdown);},0);
+}
+function tancarSubjDropdown(){
+  var dd=document.getElementById('nav-subj-dd'); if(dd) dd.classList.remove('open');
+  document.removeEventListener('click',tancarSubjDropdown);
+}
+function canviarSubjNav(si){
+  var dd=document.getElementById('nav-subj-dd'); if(dd) dd.classList.remove('open');
+  selSubj(si);
+}
 function selSubj(si){
   estat.subjIdx=si;
   guardarPerfil();
@@ -1007,6 +1178,7 @@ function selTrimNav(ti){
 }
 function obrirNouCurs(){
   document.getElementById('nc-nom').value='';
+  document.getElementById('nc-promocio').value='';
   document.getElementById('nc-subj-chips').innerHTML=assignaturesList.map(function(s){
     return '<button class="subj-chip" onclick="this.classList.toggle(\'sel\')">'+escHtml(s)+'</button>';
   }).join('');
@@ -1015,6 +1187,8 @@ function obrirNouCurs(){
 function crearNouCurs(){
   var nom=document.getElementById('nc-nom').value.trim();
   if(!nom){toast('Escriu el nom del curs');return;}
+  var promocioVal=document.getElementById('nc-promocio').value.trim();
+  var promocio=promocioVal?parseInt(promocioVal,10):null;
   var assigns=Array.from(document.querySelectorAll('#nc-subj-chips .subj-chip.sel')).map(function(el){return el.textContent;});
   if(!assigns.length){toast('Selecciona almenys una assignatura');return;}
   var sb=window.__QUADERN_SUPABASE__;
@@ -1029,9 +1203,9 @@ function crearNouCurs(){
     renderGateCursos();
   };
   if(sb){
-    dbCrearCurs(nom,assigns).then(acabar).catch(function(err){ toast('Error creant el curs: '+err.message); });
+    dbCrearCurs(nom,assigns,promocio).then(acabar).catch(function(err){ toast('Error creant el curs: '+err.message); });
   }else{
-    acabar({curs:nom,assigns:assigns});
+    acabar({curs:nom,assigns:assigns,promocio:promocio});
   }
 }
 
@@ -1090,17 +1264,31 @@ function renderHome(){
     +'</div>';
   }).join('');
 
-  // Gràfic d'aranya classe
+  // Gràfic d'aranya classe (drawSpider ja abrevia i parteix les etiquetes llargues)
   var spiderVals=compAvgs.map(function(v){ return v||0; });
-  var spiderLabels=competencies.map(function(c){
-    var words=c.nom.split(' ');
-    // Partir en 2 línies màxim de ~10 chars
-    return words.length<=2?c.nom:(words[0]+' '+words[1]);
-  });
+  var spiderLabels=competencies.map(function(c){ return c.nom; });
   drawSpider('spider-home', spiderLabels, [spiderVals], ['var(--clay)'], 260, 220);
 }
 
 // ═══════════════ SPIDER CHART ═══════════════
+// Escurça un nom de dues (o mes) paraules a "Inicial. Resta" (ex: "Comprensio Oral" -> "C. Oral")
+// per guanyar espai als eixos del gràfic d'aranya.
+function abreviaLabelSpider(nom){
+  var words=nom.trim().split(' ').filter(function(w){return w.length>0;});
+  if(words.length<=1) return nom;
+  return words[0].charAt(0).toUpperCase()+'. '+words.slice(1).join(' ');
+}
+// Si l'etiqueta encara no cap en maxWidth, la parteix en com a molt 2 línies
+// (mai la retalla ni hi posa punts suspensius: sempre es pot llegir sencera).
+function partirLabelSpider(ctx, text, maxWidth){
+  if(ctx.measureText(text).width<=maxWidth) return [text];
+  var words=text.split(' ');
+  if(words.length<=1) return [text];
+  var mid=Math.ceil(words.length/2);
+  var linia1=words.slice(0,mid).join(' ');
+  var linia2=words.slice(mid).join(' ');
+  return linia2?[linia1,linia2]:[linia1];
+}
 function drawSpider(canvasId, labels, datasets, colors, W, H){
   var canvas=document.getElementById(canvasId); if(!canvas) return;
   var ctx=canvas.getContext('2d');
@@ -1128,15 +1316,22 @@ function spiderCoreDraw(ctx, W, H, labels, datasets, colors){
     var a=angleStep*i-Math.PI/2;
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
     ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=1; ctx.stroke();
-    // Label
+    // Label — s'abrevia (ex: "C. Oral") i, si encara no cap, es parteix en 2 línies
     var lx=cx+(R+18)*Math.cos(a); var ly=cy+(R+18)*Math.sin(a);
     ctx.fillStyle='#6E665E'; ctx.font='bold 11px Karla,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(labels[i],lx,ly);
+    var linies=partirLabelSpider(ctx, abreviaLabelSpider(labels[i]), 72);
+    if(linies.length===1){
+      ctx.fillText(linies[0],lx,ly);
+    } else {
+      ctx.fillText(linies[0],lx,ly-6);
+      ctx.fillText(linies[1],lx,ly+6);
+    }
   }
   // Datasets
+  var VAR_HEX_MAP={'var(--clay)':'#B5562F','var(--moss)':'#566B47','var(--sky)':'#3C6B82','var(--honey)':'#B98627','var(--plum)':'#6B4A6E'};
   datasets.forEach(function(data,di){
     var col=colors[di]||'var(--clay)';
-    var hex=col.startsWith('var(')? (di===0?'#B5562F':'#566B47') : col;
+    var hex=VAR_HEX_MAP[col]||(col.startsWith('var(')?'#B5562F':col);
     ctx.beginPath();
     data.forEach(function(v,i){
       var a=angleStep*i-Math.PI/2; var r=R*(Math.min(10,Math.max(0,v))/10);
@@ -1161,8 +1356,10 @@ function renderAlumnes(){
   var subj=mc.assigns[estat.subjIdx]; var trim=trimestres[estat.trimIdx];
   var cercaEl=document.getElementById('cerca-alumnes');
   var cerca=cercaEl?cercaEl.value.toLowerCase().trim():'';
-  var alumnesFiltrats=cerca?alumnes.filter(function(al){return al.nom.toLowerCase().indexOf(cerca)!==-1;}):alumnes;
+  var alumnesActius=alumnes.filter(function(al){return al.actiu!==false;});
+  var alumnesFiltrats=cerca?alumnesActius.filter(function(al){return al.nom.toLowerCase().indexOf(cerca)!==-1;}):alumnesActius;
   document.getElementById('alumne-detail').style.display='none';
+  document.getElementById('alumnes-table-wrap').style.display='block';
 
   var compCols=competencies.map(function(comp){
     var shortNom=comp.nom.split(' ').slice(0,2).join(' ');
@@ -1204,12 +1401,12 @@ function renderAlumnes(){
       +mitjaCell
       +'<td style="padding:8px 10px;max-width:180px;">'
         +'<span style="font-size:11.5px;color:var(--ink2);font-style:italic;">'+
-          (missatge?escHtml(missatge):'<span style="color:var(--ink3);">—</span>')+
+          (missatge?escHtml(missatge.length>60?missatge.slice(0,60)+'...':missatge):'<span style="color:var(--ink3);">—</span>')+
         '</span>'
       +'</td>'
       +'<td style="padding:8px 8px;">'
         +'<button class="btn btn-sm" data-nom="'+escHtml(al.nom)+'" onclick="event.stopPropagation();obrirMissatgeAluBtn(this)">'+
-          (missatge?'Editar':'+ Nota')+
+          (missatge?'Editar':'+ Comentari')+
         '</button>'
       +'</td>'
     +'</tr>';
@@ -1246,50 +1443,68 @@ function obrirAlumne(ini){
 
   document.getElementById('alumne-detail-body').innerHTML=
     '<div class="card" style="margin-bottom:12px;">'
-      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">'
+      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
         +ava(al,44,16)
         +'<div style="flex:1;">'
           +'<div style="font-size:17px;font-weight:700;">'+escHtml(al.nom)+'</div>'
           +'<div style="font-size:12px;color:var(--ink3);">'+escHtml(mc.curs)+' · '+trim+' · '+escHtml(subj)+'</div>'
         +'</div>'
-        +'<button class="btn btn-sm" data-nom="'+escHtml(al.nom)+'" onclick="obrirMissatgeAluBtn(this)">'+(missatge?'Editar comentari':'+ Comentari')+'</button>'
       +'</div>'
-      +(missatge?'<div style="font-size:13px;color:var(--ink2);background:var(--paper);border-radius:8px;padding:9px 12px;font-style:italic;margin-bottom:14px;">'+escHtml(missatge)+'</div>':'')
-      +'<div class="g2">'
+      +'<div class="alu-detail-grid">'
         +'<div>'
-          +'<div class="sec" style="margin-bottom:4px;">Gràfic d\'aranya <span style="color:var(--clay);font-weight:700;">'+escHtml(al.nom.split(' ')[0])+'</span> vs classe</div>'
+          +'<div class="sec" style="margin-bottom:4px;">Gràfic d\'aranya</div>'
           +'<div class="spider-wrap"><canvas id="'+canvasId+'" width="240" height="200"></canvas></div>'
           +'<div style="display:flex;gap:14px;justify-content:center;margin-top:6px;">'
-            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--clay);border-radius:2px;"></div>'+escHtml(al.nom.split(' ')[0])+'</div>'
-            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--moss);border-radius:2px;"></div>Classe</div>'
+            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--moss);border-radius:2px;"></div>'+escHtml(al.nom.split(' ')[0])+'</div>'
+            +'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2);"><div style="width:12px;height:3px;background:var(--clay);border-radius:2px;"></div>Classe</div>'
           +'</div>'
         +'</div>'
         +'<div>'
           +'<div class="sec">Notes per competència</div>'
           +competencies.map(function(comp,ci){
             var v=alumneVals[ci]; var col=v?getColor(v):'ink3';
-            return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">'
+            return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
               +'<span style="font-size:10px;font-weight:600;color:var(--ink2);width:80px;flex-shrink:0;line-height:1.3;">'+comp.nom+'</span>'
-              +'<div style="flex:1;height:7px;background:var(--line);border-radius:4px;overflow:hidden;">'
+              +'<div style="flex:1;height:4.5px;background:var(--line);border-radius:4px;overflow:hidden;">'
                 +'<div style="height:100%;width:'+(v?v*10:0)+'%;background:var(--'+col+');border-radius:4px;"></div>'
               +'</div>'
               +'<span style="font-size:12px;font-weight:700;width:24px;">'+renderNota(v||null,false)+'</span>'
             +'</div>';
           }).join('')
         +'</div>'
+        +'<div>'
+          +'<div class="sec" style="margin-bottom:4px;">Comentari</div>'
+          +'<textarea id="inline-comment-'+al.ini+'" class="inline-comment" data-nom="'+escHtml(al.nom)+'" placeholder="Escriu un comentari…" rows="1" oninput="autoResizeTextarea(this)" onblur="guardarComentariInline(this)">'+escHtml(missatge)+'</textarea>'
+        +'</div>'
       +'</div>'
     +'</div>';
 
   // Dibuixar spider
   setTimeout(function(){
-    var spiderLbls=competencies.map(function(c){
-      var words=c.nom.split(' ');
-      return words.length<=2?c.nom:(words[0]+' '+words[1]);
-    });
-    drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--clay)','var(--moss)'], 240, 200);
+    var spiderLbls=competencies.map(function(c){ return c.nom; });
+    drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--moss)','var(--clay)'], 240, 200);
+    var ta=document.getElementById('inline-comment-'+ini); if(ta) autoResizeTextarea(ta);
   }, 30);
 }
 
+function autoResizeTextarea(ta){
+  ta.style.height='auto';
+  ta.style.height=ta.scrollHeight+'px';
+}
+function guardarComentariInline(ta){
+  var nom=ta.dataset.nom;
+  var text=ta.value.trim();
+  if((missatgesAlumnes[nom]||'')===text) return;
+  missatgesAlumnes[nom]=text;
+  var al=alumnes.find(function(a){return a.nom===nom;});
+  if(al) al.comentari=text;
+  guardarDades();
+  toast('Comentari guardat ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&al&&al.dbId){
+    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+  }
+}
 function obrirMissatgeAluBtn(btn){ obrirMissatgeAlu(btn.dataset.nom); }
 function obrirMissatgeAlu(nom){
   document.getElementById('pop-miss-nom').textContent=nom;
@@ -1357,16 +1572,36 @@ function openComp(compId){
     }).join('')
     +'<th style="text-align:center;background:var(--paper);min-width:65px;font-size:10px;">Global</th>'
     +'</tr></thead>'
-    +'<tbody>'+alumnes.map(function(al){
-      var notes_al=acts.map(function(a){ return notaMitjana(a,comp,al.ini); });
-      var valids=notes_al.filter(function(n){return n!==null;});
-      var global=valids.length?Math.round(valids.reduce(function(a,b){return a+b;},0)/valids.length*10)/10:null;
-      return '<tr>'
-        +'<td class="sticky" style="padding:8px 12px;"><div style="display:flex;align-items:center;gap:7px;">'+ava(al,26,10)+'<span style="font-weight:600;font-size:13.5px;">'+escHtml(al.nom)+'</span></div></td>'
-        +notes_al.map(function(n){ return '<td style="text-align:center;padding:9px 8px;">'+renderNota(n)+'</td>'; }).join('')
-        +'<td style="text-align:center;padding:9px 8px;background:var(--paper);">'+renderNota(global,true)+'</td>'
-      +'</tr>';
-    }).join('')+'</tbody></table></div>';
+    +'<tbody>';
+
+  // Fila compacta de mitjana de classe per activitat + global de la competència
+  var notesPerAlumne=alumnes.map(function(al){
+    var notes_al=acts.map(function(a){ return notaMitjana(a,comp,al.ini); });
+    var valids=notes_al.filter(function(n){return n!==null;});
+    var global=valids.length?Math.round(valids.reduce(function(a,b){return a+b;},0)/valids.length*10)/10:null;
+    return {notes_al:notes_al,global:global};
+  });
+  var mitjanesClasseAct=acts.map(function(a,ai){
+    var vals=notesPerAlumne.map(function(n){return n.notes_al[ai];}).filter(function(n){return n!==null;});
+    return vals.length?Math.round(vals.reduce(function(x,y){return x+y;},0)/vals.length*10)/10:null;
+  });
+  var globalsVals=notesPerAlumne.map(function(n){return n.global;}).filter(function(n){return n!==null;});
+  var mitjanaClasseGlobal=globalsVals.length?Math.round(globalsVals.reduce(function(x,y){return x+y;},0)/globalsVals.length*10)/10:null;
+
+  html+='<tr style="background:var(--clay-l);">'
+    +'<td class="sticky" style="padding:6px 12px;background:var(--clay-l);font-size:11px;font-weight:700;color:var(--clay);text-transform:uppercase;letter-spacing:.02em;">Mitjana de classe</td>'
+    +mitjanesClasseAct.map(function(n){ return '<td style="text-align:center;padding:6px 8px;font-size:12px;font-weight:700;color:var(--clay);">'+(n!=null?n:'—')+'</td>'; }).join('')
+    +'<td style="text-align:center;padding:6px 8px;font-size:12px;font-weight:700;color:var(--clay);">'+(mitjanaClasseGlobal!=null?mitjanaClasseGlobal:'—')+'</td>'
+  +'</tr>';
+
+  html+=alumnes.map(function(al,ai){
+    var n=notesPerAlumne[ai];
+    return '<tr>'
+      +'<td class="sticky" style="padding:8px 12px;"><div style="display:flex;align-items:center;gap:7px;">'+ava(al,26,10)+'<span style="font-weight:600;font-size:13.5px;">'+escHtml(al.nom)+'</span></div></td>'
+      +n.notes_al.map(function(v){ return '<td style="text-align:center;padding:9px 8px;">'+renderNota(v)+'</td>'; }).join('')
+      +'<td style="text-align:center;padding:9px 8px;background:var(--paper);">'+renderNota(n.global,true)+'</td>'
+    +'</tr>';
+  }).join('')+'</tbody></table></div>';
   document.getElementById('cv-act-body').innerHTML=html;
 }
 
@@ -1515,12 +1750,21 @@ function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
   var horaIdx=0;
   if(hora){
     var hp=hora.split(':'); var minTotal=parseInt(hp[0],10)*60+parseInt(hp[1],10);
-    if(minTotal>=480 && minTotal<1020) horaIdx=Math.floor((minTotal-480)/60);
+    if(minTotal>=480 && minTotal<1020) horaIdx=Math.floor((minTotal-480)/30);
   }
-  sb.from('cal_events').insert({
-    professor_id:dbUid(), titol:nom, dia_setmana:dow, franja_hora:horaIdx,
-    data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
-  }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
+  // Maxim 2 activitats/esdeveniments per franja de mitja hora del mateix dia
+  // (compten tant els fixos de cada setmana com els d'aquest dia concret).
+  sb.from('cal_events').select('id',{count:'exact',head:true})
+    .eq('professor_id',dbUid()).eq('dia_setmana',dow).eq('franja_hora',horaIdx)
+    .or('data.is.null,data.eq.'+diaISO)
+    .then(function(cnt){
+      if(cnt.error){ console.warn('[Arrel]',cnt.error.message); return; }
+      if((cnt.count||0)>=2){ toast('Aquesta franja horària ja té 2 activitats/esdeveniments — no s\'ha afegit a Programació'); return; }
+      sb.from('cal_events').insert({
+        professor_id:dbUid(), titol:nom, dia_setmana:dow, franja_hora:horaIdx,
+        data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
+      }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
+    });
 }
 
 function tancarComentariAct(){var e=document.getElementById('pop-comentari-act');if(e)e.remove();}
@@ -1663,12 +1907,15 @@ function renderCfgAlumnes(){
   var cnt=document.getElementById('alu-count'); if(cnt) cnt.textContent=alumnes.length;
   var el=document.getElementById('alu-list-cfg'); if(!el) return;
   el.innerHTML=alumnes.length?alumnes.map(function(al,i){
-    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);">'
+    var inactiu=al.actiu===false;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);'+(inactiu?'opacity:.5;':'')+'">'
       +'<span style="font-size:11px;color:var(--ink3);font-weight:700;width:18px;flex-shrink:0;text-align:right;">'+(i+1)+'</span>'
       +ava(al,26,10)
       +(al.id?'<span style="font-size:10px;font-weight:700;color:var(--clay);background:var(--clay-l);padding:2px 6px;border-radius:4px;flex-shrink:0;">'+al.id+'</span>':'')
-      +'<span style="flex:1;font-size:13px;font-weight:500;">'+escHtml(al.nom)+'</span>'
-      +'<button class="btn btn-sm btn-danger" onclick="confirmarEliminarAlumne('+i+')">Eliminar</button>'
+      +'<span style="flex:1;font-size:13px;font-weight:500;'+(inactiu?'text-decoration:line-through;':'')+'">'+escHtml(al.nom)+'</span>'
+      +(inactiu?'<span style="font-size:10px;font-weight:700;color:var(--ink3);background:var(--paper);padding:2px 6px;border-radius:4px;flex-shrink:0;">Inactiu</span>':'')
+      +'<button class="btn btn-sm" onclick="obrirEditarAlumne('+i+')">Editar</button>'
+      +'<button class="btn btn-sm'+(inactiu?'':' btn-danger')+'" onclick="toggleActiuAlumne('+i+')">'+(inactiu?'Reactivar':'Inactiu')+'</button>'
     +'</div>';
   }).join(''):'<div style="color:var(--ink3);font-size:13px;padding:14px 0;text-align:center;">Sense alumnes</div>';
 }
@@ -1692,34 +1939,52 @@ function addAlumneManual(){
     acabar(undefined);
   }
 }
-function tancarDelAlu(){var e=document.getElementById('pop-del-alu');if(e)e.remove();}
-function confirmarEliminarAlumne(idx){
-  var al=alumnes[idx];
-  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-alu';
+function tancarEditarAlu(){var e=document.getElementById('pop-edit-alu');if(e)e.remove();}
+function obrirEditarAlumne(idx){
+  var al=alumnes[idx]; if(!al) return;
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-edit-alu';
   overlay.innerHTML='<div class="popup" style="width:380px;">'
-    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
-    +'<div class="popup-head" style="text-align:center;">Eliminar alumne</div>'
-    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(al.nom)+'</b></div>'
-    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Un cop eliminat, les notes i activitats es perdran per sempre i no es podran recuperar.</div>'
+    +'<div class="popup-head">Editar alumne</div>'
+    +'<div class="fg"><label class="flbl">Nom i cognoms</label><input class="input" id="edit-alu-nom" value="'+escHtml(al.nom)+'" autocomplete="off"></div>'
     +'<div style="display:flex;gap:8px;">'
-      +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="delAlumne('+idx+')">Sí, eliminar</button>'
-      +'<button class="btn" style="flex:1;" onclick="tancarDelAlu()">Cancel·lar</button>'
+      +'<button class="btn btn-clay" style="flex:1;" onclick="guardarNomAlumne('+idx+')">Guardar</button>'
+      +'<button class="btn btn-ghost" style="flex:1;" onclick="tancarEditarAlu()">Cancel·lar</button>'
     +'</div>'
   +'</div>';
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
   document.body.appendChild(overlay);
+  setTimeout(function(){var inp=document.getElementById('edit-alu-nom'); if(inp){inp.focus();inp.select();}},60);
 }
-function delAlumne(idx){
-  var ov=document.getElementById('pop-del-alu'); if(ov) ov.remove();
-  var al=alumnes[idx];
+function guardarNomAlumne(idx){
+  var al=alumnes[idx]; if(!al) return;
+  var nom=(document.getElementById('edit-alu-nom').value||'').trim();
+  if(!nom){toast('Escriu el nom');return;}
+  var nomAntic=al.nom;
+  al.nom=nom; al.ini=ini2(nom);
+  if(missatgesAlumnes[nomAntic]!=null){ missatgesAlumnes[nom]=missatgesAlumnes[nomAntic]; delete missatgesAlumnes[nomAntic]; }
+  guardarDades();
+  tancarEditarAlu();
+  renderCfgAlumnes();
+  toast('Alumne actualitzat ✓');
   var sb=window.__QUADERN_SUPABASE__;
-  var acabar=function(){
-    alumnes.splice(idx,1); guardarDades(); renderCfgAlumnes(); toast('Alumne eliminat');
-  };
-  if(sb&&al&&al.dbId){
-    dbEliminarAlumne(al.dbId).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
-  }else{
-    acabar();
+  if(sb&&al.dbId){
+    dbActualitzarNomAlumne(al.dbId,nom).catch(function(err){ toast('Error guardant: '+err.message); });
+  }
+}
+// Baixa logica: mai s'elimina un alumne de la llista (splice) perque desplaçaria
+// la posicio ("ordre") de tots els seguents, i aquesta posicio es el que fa
+// servir l'informe conjunt per aparellar alumnes entre fitxers de professors
+// diferents (veure comentari a dbCarregarAlumnes/schema.sql). Marcar-lo com a
+// inactiu manté el seu lloc intacte.
+function toggleActiuAlumne(idx){
+  var al=alumnes[idx]; if(!al) return;
+  al.actiu=al.actiu===false?true:false;
+  guardarDades();
+  renderCfgAlumnes();
+  toast(al.actiu?'Alumne reactivat ✓':'Alumne marcat com a inactiu ✓');
+  var sb=window.__QUADERN_SUPABASE__;
+  if(sb&&al.dbId){
+    dbActualitzarActiuAlumne(al.dbId,al.actiu).catch(function(err){ toast('Error guardant: '+err.message); });
   }
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
@@ -1893,7 +2158,7 @@ function renderRubrica(){
       delBtn.className = 'btn btn-sm';
       delBtn.style.cssText = 'color:var(--clay);padding:3px 7px;';
       delBtn.textContent = '✕';
-      delBtn.onclick = (function(cid, idx){ return function(){ eliminarCriteri(cid, idx); }; })(comp.id, ci);
+      delBtn.onclick = (function(cid, idx){ return function(){ confirmarEliminarCriteri(cid, idx); }; })(comp.id, ci);
       tdDel.appendChild(delBtn);
       tr.appendChild(tdDel);
       tbody.appendChild(tr);
@@ -1929,7 +2194,27 @@ function afegirCriteri(compId){
   dbGuardarRubricaCustom(compId);
   renderRubrica(); toast('Criteri afegit ✓');
 }
+function tancarDelCriteri(){var e=document.getElementById('pop-del-criteri');if(e)e.remove();}
+function confirmarEliminarCriteri(compId,ci){
+  var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
+  if(comp.criteris.length<=1){toast('Cal tenir almenys un criteri');return;}
+  var nom=comp.criteris[ci];
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-criteri';
+  overlay.innerHTML='<div class="popup" style="width:380px;">'
+    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
+    +'<div class="popup-head" style="text-align:center;">Eliminar criteri</div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(nom)+'</b></div>'
+    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Un cop eliminat, aquest apartat de la rúbrica es perdrà per sempre i no es podrà recuperar.</div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarCriteri(\''+compId+'\','+ci+')">Sí, eliminar</button>'
+      +'<button class="btn" style="flex:1;" onclick="tancarDelCriteri()">Cancel·lar</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
 function eliminarCriteri(compId,ci){
+  var ov=document.getElementById('pop-del-criteri'); if(ov) ov.remove();
   var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
   if(comp.criteris.length<=1){toast('Cal tenir almenys un criteri');return;}
   comp.criteris.splice(ci,1);
@@ -2022,9 +2307,12 @@ function exportarPDF(){
   cont+='</body></html>';
   var blob=new Blob([cont],{type:'text/html'});
   var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
+  var win=window.open(url,'_blank');
+  if(win){
+    win.addEventListener('load',function(){ win.print(); });
+  }
   setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('PDF obert en nova pestanya — usa Ctrl+P per imprimir');
+  toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
 }
 
 // Informe JSON
@@ -2102,7 +2390,7 @@ function infSeleccionarCurs(){
   var dzTitol=document.getElementById('inf-dropzone-titol'); if(dzTitol) dzTitol.textContent='Puja aquí els JSON de la resta de professors de '+mc.curs;
   body.style.display='block';
   document.getElementById('inf-propi-info').innerHTML='Carregant les teves dades de '+escHtml(mc.curs)+'...';
-  var genBtn=document.getElementById('inf-gen-btn'); if(genBtn) genBtn.disabled=true;
+  ['inf-gen-curt-btn','inf-gen-llarg-btn'].forEach(function(id){ var b=document.getElementById(id); if(b) b.disabled=true; });
 
   var peticio=++infPeticioActual; // evita que una crida antiga sobreescrigui una de mes nova (canvi rapid de curs/etapa)
   var tasks=[];
@@ -2141,14 +2429,21 @@ function infLlegirFitxers(files){
 }
 function infRenderFitxers(){
   var el=document.getElementById('inf-fitxers-list'); if(!el) return;
-  var btns=['inf-gen-btn','inf-doc-btn','inf-pdf-btn'].map(function(id){return document.getElementById(id);});
+  var btns=['inf-gen-curt-btn','inf-gen-llarg-btn'].map(function(id){return document.getElementById(id);});
   if(!infJSONs.length){el.innerHTML='';btns.forEach(function(b){if(b)b.disabled=true;});return;}
+  // Un fitxer que no sigui de la mateixa etapa seleccionada NO s'inclourà a l'informe
+  // (l'informe es filtra per trimestre) — cal avisar-ho aquí, no nomes descobrir-ho
+  // en veure l'informe generat sense aquella assignatura.
+  var trimSel=(document.getElementById('inf-trim-sel')||{}).value;
   el.innerHTML=infJSONs.map(function(j,i){
     var d=j.dades;
-    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);">'
+    var noCoincideix=trimSel && d.trimestre && d.trimestre!==trimSel;
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);'+(noCoincideix?'opacity:.55;':'')+'">'
       +'<div style="flex:1;"><div style="font-size:12.5px;font-weight:600;">'+escHtml(d.assignatura||'?')
         +(j.propi?' <span class="pill p-moss" style="font-size:9px;margin-left:4px;">Propi</span>':'')+'</div>'
-        +'<div style="font-size:11px;color:var(--ink3);">'+escHtml(d.curs||'')+(d.trimestre?' · '+escHtml(d.trimestre):'')+' · '+escHtml(d.professor||'')+'</div></div>'
+        +'<div style="font-size:11px;color:var(--ink3);">'+escHtml(d.curs||'')+(d.trimestre?' · '+escHtml(d.trimestre):'')+' · '+escHtml(d.professor||'')+'</div>'
+        +(noCoincideix?'<div style="font-size:10.5px;color:var(--clay);font-weight:600;margin-top:2px;">⚠ No coincideix amb "'+escHtml(trimSel)+'" — no s\'inclourà a l\'informe</div>':'')
+      +'</div>'
       +'<button class="btn btn-sm btn-danger" onclick="infJSONs.splice('+i+',1);infRenderFitxers()">✕</button>'
     +'</div>';
   }).join('');
@@ -2210,6 +2505,10 @@ function prepararDadesInforme(){
   var trimFilt=document.getElementById('inf-trim-sel').value;
   var jsonsFilt=trimFilt?infJSONs.filter(function(j){return j.dades.trimestre===trimFilt;}):infJSONs;
   if(!jsonsFilt.length){toast('Cap fitxer');return null;}
+  var exclosos=trimFilt?infJSONs.filter(function(j){return j.dades.trimestre!==trimFilt;}):[];
+  if(exclosos.length){
+    toast(exclosos.length+' fitxer(s) no s\'han inclòs perquè no són de "'+trimFilt+'": '+exclosos.map(function(j){return j.dades.assignatura||j.nom;}).join(', '));
+  }
 
   // Tots els fitxers han de ser del mateix curs: l'emparellament d'alumnes es fa
   // per ordre d'entrada (posicio 1,2,3...) dins la llista, no per nom ni codi,
@@ -2221,12 +2520,19 @@ function prepararDadesInforme(){
   var etapaText=trimFilt||'Informe de tot el curs';
 
   var alumnesMap={};
+  // perTrimAssigns guarda cada trimestre per separat (a diferencia d'"assigns",
+  // que nomes queda amb l'ultim que arriba per assignatura) — cal per a la IA
+  // de l'informe final de curs, que ha de poder comparar l'evolucio 1r/2n/3r.
+  var perTrimAssigns={};
   jsonsFilt.forEach(function(j){
     var d=j.dades;
     (d.alumnes||[]).forEach(function(al,idx){
       var uid=idx; // ordre d'entrada dins la llista de classe, no nom ni codi
       if(!alumnesMap[uid]) alumnesMap[uid]={ordre:idx+1,nom:al.nom,assigns:{}};
-      alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre,competencies:al.competencies||{}};
+      alumnesMap[uid].assigns[d.assignatura]={nota:al.global,trim:d.trimestre,competencies:al.competencies||{},comentariProf:al.comentari||''};
+      if(!perTrimAssigns[uid]) perTrimAssigns[uid]={};
+      if(!perTrimAssigns[uid][d.assignatura]) perTrimAssigns[uid][d.assignatura]=[];
+      perTrimAssigns[uid][d.assignatura].push({trimestre:d.trimestre,nota:al.global,competencies:al.competencies||{},comentariProf:al.comentari||''});
     });
   });
   var totsSubjs=[]; jsonsFilt.forEach(function(j){if(totsSubjs.indexOf(j.dades.assignatura)===-1)totsSubjs.push(j.dades.assignatura);});
@@ -2259,22 +2565,87 @@ function prepararDadesInforme(){
         if(c.mitjana!=null){ acc[ck].sum+=c.mitjana; acc[ck].count++; }
       });
     });
-    subjCompClasseAvg[d.assignatura]=Object.keys(acc).map(function(ck){ var a=acc[ck]; return {nom:a.nom,mitjana:a.count?Math.round(a.sum/a.count*10)/10:null}; });
+    subjCompClasseAvg[d.assignatura]=Object.keys(acc).map(function(ck){ var a=acc[ck]; return {nom:a.nom,mitjana:a.count?Math.round(a.sum/a.count*10)/10:null}; }).filter(function(c){ return c.mitjana!=null; });
   });
 
   return {
-    titolInforme:titolInforme, etapaText:etapaText, curs:cursos[0]||'',
-    alumnesMap:alumnesMap, ordres:ordres, totsSubjs:totsSubjs,
+    titolInforme:titolInforme, etapaText:etapaText, etapa:(trimFilt?'trimestre':'curs'), curs:cursos[0]||'',
+    alumnesMap:alumnesMap, ordres:ordres, totsSubjs:totsSubjs, perTrimAssigns:perTrimAssigns,
     globalsAlu:globalsAlu, mitjanaClasse:mitjanaClasse,
     subjClasseAvg:subjClasseAvg, subjCompClasseAvg:subjCompClasseAvg
   };
 }
+// Crida /api/generar-comentaris amb les dades de prepararDadesInforme() i retorna
+// {comentariClasse, comentaris:{uid:text}}. Si l'API falla, retorna null (l'informe
+// es genera igualment, amb els blocs de comentari IA buits).
+//
+// PRIVACITAT: cap nom d'alumne surt mai de l'aplicació. A Anthropic només s'hi envia
+// el "numero" de llista (posicio 1,2,3... dins la classe) — mai al.nom. El mapeig
+// numero->nom real es fa nomes en local, en rebre la resposta.
+function generarComentarisIA(d, mode){
+  // Cada activitat pot tenir el seu propi comentari del professor (no nomes el
+  // comentari general de l'alumne) — es envia a la IA, es informacio valuosa
+  // que el professor ja ha escrit i que no s'ha de perdre.
+  function compsAmbObservacions(competencies){
+    return Object.keys(competencies||{}).map(function(ck){
+      var c=competencies[ck];
+      var comentarisAct=(c.activitats||[]).map(function(act){ return (act.comentari||'').trim(); }).filter(function(t){return t;});
+      return {nom:c.nom,mitjana:c.mitjana,comentarisActivitats:comentarisAct};
+    }).filter(function(c){ return c.mitjana!=null; }); // exclou competències sense cap nota introduïda
+  }
+  var alumnesPayload=d.ordres.map(function(uid){
+    var al=d.alumnesMap[uid];
+    // assignatures amb els trimestres per separat (1 sol element en un informe
+    // de trimestre, fins a 3 en un informe final de curs) perque la IA pugui
+    // comparar l'evolucio en lloc de rebre nomes un valor ja fusionat.
+    var perTrim=d.perTrimAssigns[uid]||{};
+    var assignatures=Object.keys(perTrim).map(function(subj){
+      var trimestres=perTrim[subj].map(function(entrada){
+        return {trimestre:entrada.trimestre,mitjana:entrada.nota,comentariProfessor:entrada.comentariProf||'',competencies:compsAmbObservacions(entrada.competencies)};
+      }).filter(function(t){ return t.mitjana!=null; }); // exclou l'assignatura del trimestre si l'alumne no hi te cap nota
+      return trimestres.length?{nom:subj,trimestres:trimestres}:null;
+    }).filter(function(a){ return a; }); // exclou l'assignatura sencera si no hi ha cap nota a cap trimestre
+    return {uid:uid,numero:al.ordre,global:d.globalsAlu[uid],assignatures:assignatures};
+  });
+
+  var payload={
+    etapa:d.etapa, curs:d.curs, mode:(mode==='llarg'?'llarg':'curt'),
+    classe:{
+      mitjana:d.mitjanaClasse,
+      subjectes:d.totsSubjs.map(function(s){return {nom:s,mitjana:d.subjClasseAvg[s]};}),
+      alumnesResum:alumnesPayload.map(function(a){return {numero:a.numero,global:a.global};})
+    },
+    alumnes:alumnesPayload.map(function(a){return {numero:a.numero,global:a.global,assignatures:a.assignatures};})
+  };
+
+  return fetch('/api/generar-comentaris',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
+    .then(function(json){
+      var comentaris={};
+      d.ordres.forEach(function(uid){
+        var numero=d.alumnesMap[uid].ordre;
+        comentaris[uid]=(json.comentaris||{})[String(numero)]||'';
+      });
+      if(json.errors){ toast(json.errors+' comentari(s) d\'alumne no s\'han pogut generar — completa\'ls a mà a l\'informe'); }
+      return {comentariClasse:json.comentariClasse||'',comentaris:comentaris};
+    })
+    .catch(function(err){ console.warn('[Arrel] Error generant comentaris IA:',err.message); return null; });
+}
+
 // Construeix l'HTML de l'informe a partir de les dades de prepararDadesInforme().
 // renderChart(labels,datasets,colors,W,H) genera el gràfic d'aranya — SVG per veure
 // l'informe al navegador, o una imatge PNG quan cal exportar a Word/Google Docs
-// (el visor HTML de Word no interpreta SVG incrustat).
-function generarInformeHTML(d, renderChart){
-  var COMENT_IA_HTML='<div style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;">🤖 Comentari generat amb IA — <i>disponible properament</i></div>';
+// (el visor HTML de Word no interpreta SVG incrustat). comentarisIA (opcional) ve de
+// generarComentarisIA(): {comentariClasse, comentaris:{uid:text}}.
+function generarInformeHTML(d, renderChart, comentarisIA){
+  // contenteditable="true": el professor pot clicar i corregir el text abans
+  // d'imprimir/exportar — els canvis queden al PDF/HTML final. La vora discontínua
+  // (només visible en pantalla, no en imprimir) marca que és una zona editable.
+  function comentIA(text){
+    if(text) return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #B5562F;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#444;white-space:pre-line;">'+escHtml(text)+'</div>';
+    return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;font-style:italic;">Escriu aquí el comentari…</div>';
+  }
+  var COMENT_IA_HTML=comentIA(comentarisIA&&comentarisIA.comentariClasse);
 
   var cont='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+escHtml(d.titolInforme)+'</title><style>'
     +'body{font-family:Arial,sans-serif;padding:20px;font-size:11px;color:#222;}'
@@ -2283,10 +2654,17 @@ function generarInformeHTML(d, renderChart){
     +'h1{font-size:17px;margin-bottom:2px;}h2{font-size:13px;margin:16px 0 6px;border-bottom:2px solid #B5562F;padding-bottom:3px;}'
     +'.meta{color:#666;font-size:11px;margin-bottom:14px;}.meta b{color:#222;}'
     +'.q{font-size:8.5px;color:#888;display:block;}'
-    +'.stu{border:1px solid #ddd;border-radius:6px;padding:8px 10px;margin-bottom:10px;page-break-inside:avoid;}'
-    +'@media print{body{padding:8px;}}'
+    +'.stu{border:1px solid #ddd;border-radius:6px;padding:8px 10px;margin-bottom:10px;page-break-inside:avoid;break-inside:avoid;}'
+    +'.pagebreak{page-break-before:always;break-before:page;}'
+    +'.stu + .stu{page-break-before:always;break-before:page;}'
+    +'.ia-comment{outline:none;}'
+    +'.edit-hint{background:#FBEAE0;color:#B5562F;font-size:10.5px;padding:6px 10px;border-radius:8px;margin-bottom:12px;}'
+    +'@media print{body{padding:8px;}.ia-comment{border:none !important;padding:0 !important;}.edit-hint{display:none;}}'
     +'</style></head><body>';
 
+  cont+='<div class="edit-hint">✏️ Pots clicar i editar el text dels comentaris IA (contorn discontinu) abans d\'imprimir o exportar. '
+    +'<button onclick="window.print()" style="margin-left:8px;border:none;background:#B5562F;color:#fff;border-radius:6px;padding:4px 10px;font-size:10.5px;cursor:pointer;">🖨️ Imprimir / Desar com a PDF</button>'
+    +' Aquest avís no sortirà al PDF.</div>';
   cont+='<h1>'+escHtml(d.titolInforme)+'</h1>';
   cont+='<div class="meta"><b>Curs:</b> '+escHtml(d.curs||'—')+' &nbsp;·&nbsp; <b>Any escolar:</b> '+escHtml(prof.any||'—')
     +' &nbsp;·&nbsp; <b>Tutor/a:</b> '+escHtml(prof.nom||'—')+' &nbsp;·&nbsp; <b>Etapa:</b> '+escHtml(d.etapaText)
@@ -2319,18 +2697,20 @@ function generarInformeHTML(d, renderChart){
   cont+=COMENT_IA_HTML;
 
   // ── Notes dels alumnes ── nomes la nota global de cada assignatura + global de l'alumne
+  // Cada alumne comença en una pàgina nova (i el resum de classe és sempre la pàgina 1).
+  cont+='<div class="pagebreak"></div>';
   cont+='<h2>Notes dels alumnes</h2>';
   d.ordres.forEach(function(uid){
     var al=d.alumnesMap[uid];
-    var alVals=d.totsSubjs.map(function(s){var a=al.assigns[s]; return a&&a.nota!=null?a.nota:0;});
-    var classeVals=d.totsSubjs.map(function(s){return d.subjClasseAvg[s]||0;});
-    var chartAlu=renderChart(d.totsSubjs,[alVals,classeVals],['#B5562F','#566B47'],200,175);
+    var subjsAmbNota=d.totsSubjs.filter(function(s){var a=al.assigns[s]; return a&&a.nota!=null;});
+    var alVals=subjsAmbNota.map(function(s){return al.assigns[s].nota;});
+    var chartAlu=renderChart(subjsAmbNota,[alVals],['#566B47'],200,175);
     var g=d.globalsAlu[uid];
 
     var taulaNotes='<table style="font-size:10.5px;"><thead><tr><th style="text-align:left;">Assignatura</th><th>Nota global</th></tr></thead><tbody>';
-    d.totsSubjs.forEach(function(s){
-      var a=al.assigns[s]; var n=a?a.nota:null;
-      taulaNotes+='<tr><td style="text-align:left;">'+escHtml(s)+'</td><td style="text-align:center;">'+(n!=null?n:'—')+'<span class="q">'+qualificacioText(n)+'</span></td></tr>';
+    subjsAmbNota.forEach(function(s){
+      var n=al.assigns[s].nota;
+      taulaNotes+='<tr><td style="text-align:left;">'+escHtml(s)+'</td><td style="text-align:center;">'+n+'<span class="q">'+qualificacioText(n)+'</span></td></tr>';
     });
     taulaNotes+='<tr style="background:#f0ece4;"><td style="font-weight:700;">Global alumne</td><td style="text-align:center;font-weight:700;">'+(g!=null?g:'—')+'<span class="q">'+qualificacioText(g)+'</span></td></tr>';
     taulaNotes+='</tbody></table>';
@@ -2340,7 +2720,7 @@ function generarInformeHTML(d, renderChart){
         +'<div style="flex-shrink:0;">'+chartAlu+'</div>'
         +'<div style="flex:1;min-width:200px;">'+taulaNotes+'</div>'
       +'</div>'
-      +COMENT_IA_HTML
+      +comentIA(comentarisIA&&comentarisIA.comentaris&&comentarisIA.comentaris[uid])
     +'</div>';
   });
 
@@ -2349,14 +2729,30 @@ function generarInformeHTML(d, renderChart){
 }
 function nomFitxerInforme(dades){ return (dades.titolInforme||'informe').replace(/[^a-zA-Z0-9_-]/g,'_'); }
 
-function generarInforme(){
+// Deshabilita el boto durant la crida a la IA i li canvia el text, restaurant-lo
+// despres. btnId es opcional (si el boto no existeix, nomes s'omet aquest pas).
+function ambBotoCarregant(btnId, textCarregant, fn){
+  var btn=btnId?document.getElementById(btnId):null;
+  var textOriginal=btn?btn.textContent:null;
+  if(btn){ btn.disabled=true; btn.textContent=textCarregant; }
+  return fn().finally(function(){
+    if(btn){ btn.disabled=false; btn.textContent=textOriginal; }
+  });
+}
+
+function generarInforme(mode){
   var dades=prepararDadesInforme(); if(!dades) return;
-  var cont=generarInformeHTML(dades, spiderSvg);
-  var blob=new Blob([cont],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe generat ✓');
+  var btnId=mode==='llarg'?'inf-gen-llarg-btn':'inf-gen-curt-btn';
+  ambBotoCarregant(btnId,'Generant comentaris IA…',function(){
+    return generarComentarisIA(dades, mode).then(function(comentarisIA){
+      var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
+      var blob=new Blob([cont],{type:'text/html'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.target='_blank'; a.click();
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+      toast(comentarisIA?'Informe generat ✓':'Informe generat (sense comentaris IA) ✓');
+    });
+  });
 }
 
 // Mateix gràfic d'aranya, pero renderitzat sobre un canvas i retornat com a <img> amb
@@ -2372,27 +2768,32 @@ function chartImgPng(labels, datasets, colors, W, H){
 // empaquetar-lo com a .mht, que en la practica donen resultats inconsistents.
 function exportarInformeDoc(){
   var dades=prepararDadesInforme(); if(!dades) return;
-  var cont=generarInformeHTML(dades, chartImgPng);
-  var blob=new Blob([cont],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.html'; a.click();
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe exportat en HTML ✓ — puja\'l a Google Drive i obre\'l amb Google Docs, o obre\'l amb Word');
+  ambBotoCarregant('inf-doc-btn','Generant comentaris IA…',function(){
+    return generarComentarisIA(dades,'curt').then(function(comentarisIA){
+      var cont=generarInformeHTML(dades, chartImgPng, comentarisIA);
+      var blob=new Blob([cont],{type:'text/html'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download=nomFitxerInforme(dades)+'.html'; a.click();
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+      toast('Informe exportat en HTML ✓ — puja\'l a Google Drive i obre\'l amb Google Docs, o obre\'l amb Word');
+    });
+  });
 }
 
 // Obre l'informe en una pestanya nova i llença directament el dialeg d'impressio
 // del navegador — des d'alli el professor tria "Desar com a PDF" com a destinacio.
 function exportarInformePdf(){
   var dades=prepararDadesInforme(); if(!dades) return;
-  var cont=generarInformeHTML(dades, spiderSvg);
-  var blob=new Blob([cont],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var win=window.open(url,'_blank');
-  if(win){
-    win.addEventListener('load',function(){ win.print(); });
-  }
-  setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
+  ambBotoCarregant('inf-pdf-btn','Generant comentaris IA…',function(){
+    return generarComentarisIA(dades,'curt').then(function(comentarisIA){
+      var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
+      var blob=new Blob([cont],{type:'text/html'});
+      var url=URL.createObjectURL(blob);
+      window.open(url,'_blank');
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+      toast('Informe obert ✓ — revisa/edita els comentaris IA i després clica "Imprimir / Desar com a PDF"');
+    });
+  });
 }
 
 // ─── FUNCIONS QUE FALTAVEN ───

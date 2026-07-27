@@ -27,6 +27,10 @@ yarn-error.log*
 .env*.local
 .env
 
+# còpies de seguretat de la base de dades — contenen dades reals d'alumnes,
+# mai s'han de pujar a git
+/backups
+
 # vercel
 .vercel
 

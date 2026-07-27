@@ -19,32 +19,69 @@ const MESOS = [
   "novembre",
   "desembre",
 ];
-const HORES = [
-  { label: "8:00", end: "9:00", idx: 0, min: 480 },
-  { label: "9:00", end: "10:00", idx: 1, min: 540 },
-  { label: "10:00", end: "11:00", idx: 2, min: 600 },
-  { label: "11:00", end: "12:00", idx: 3, min: 660 },
-  { label: "12:00", end: "13:00", idx: 4, min: 720 },
-  { label: "13:00", end: "14:00", idx: 5, min: 780 },
-  { label: "14:00", end: "15:00", idx: 6, min: 840 },
-  { label: "15:00", end: "16:00", idx: 7, min: 900 },
-  { label: "16:00", end: "17:00", idx: 8, min: 960 },
-];
+// Franges de mitja hora, de 8:00 a 17:00.
+function formatMin(min) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h + ":" + String(m).padStart(2, "0");
+}
+const HORES = Array.from({ length: (1020 - 480) / 30 }).map((_, idx) => {
+  const min = 480 + idx * 30;
+  return { label: formatMin(min), end: formatMin(min + 30), idx, min };
+});
 const COLORS = {
   clay: "#B5562F",
   moss: "#566B47",
   honey: "#B98627",
   sky: "#3C6B82",
   plum: "#6B4A6E",
-  gray: "#D6CCB9",
+  gray: "#8b8371",
 };
+// Variants pastel (mateixa paleta que quadern.css --*-l) per a les activitats creades.
+const COLORS_LIGHT = {
+  clay: "#FBEAE0",
+  moss: "#EAEFE3",
+  honey: "#FBF1DE",
+  sky: "#E6EFF2",
+  plum: "#F1E8F1",
+  gray: "#EDE7DB",
+};
+const PALETA_CURSOS = ["clay", "moss", "honey", "sky", "plum"];
+// Construeix el mapa curs->color a partir dels cursos que realment apareixen als
+// events carregats (ordenats alfabeticament perque l'assignacio sigui estable
+// entre recarregues), garantint que cada curs real te un color diferent mentre
+// no n'hi hagi mes de 5 alhora — "General" sempre es gris, fora de la paleta.
+function calcularCursColorMap(events) {
+  const cursos = Array.from(
+    new Set(events.map((ev) => ev.curs).filter((c) => c && c !== "General"))
+  ).sort();
+  const map = {};
+  cursos.forEach((c, i) => {
+    map[c] = PALETA_CURSOS[i % PALETA_CURSOS.length];
+  });
+  return map;
+}
+function corPerCurs(curs, cursColorMap) {
+  if (!curs || curs === "General") return "gray";
+  return (cursColorMap && cursColorMap[curs]) || "gray";
+}
+// Estil d'una targeta d'event: pastel per a activitats creades a Competències,
+// blanc amb vora i lletres del color del curs per als esdeveniments manuals.
+function estilEvent(ev, cursColorMap) {
+  const key = corPerCurs(ev.curs, cursColorMap);
+  const solid = COLORS[key];
+  const light = COLORS_LIGHT[key];
+  if (ev.creatPelProfessor) {
+    return { background: "#fff", color: solid, border: "1.5px solid " + solid };
+  }
+  return { background: light, color: solid, border: "1px solid " + solid + "55" };
+}
 
 const EVENTS_INICIALS = [
   {
     id: 1,
     dia: 0,
     hora: 0,
-    titol: "Comprensio Oral",
     curs: "3r A",
     tipus: "clay",
     nota: 'Activitat: conte "El Petit Princep". Preguntes orals.',
@@ -53,7 +90,6 @@ const EVENTS_INICIALS = [
     id: 2,
     dia: 0,
     hora: 1,
-    titol: "Expressio Escrita",
     curs: "4t B",
     tipus: "clay",
     nota: "Redaccio lliure. Minim 10 linies.",
@@ -62,7 +98,6 @@ const EVENTS_INICIALS = [
     id: 3,
     dia: 0,
     hora: 2,
-    titol: "Matematiques",
     curs: "3r B",
     tipus: "sky",
     nota: "P. 70-71. Fraccions.",
@@ -71,7 +106,6 @@ const EVENTS_INICIALS = [
     id: 4,
     dia: 0,
     hora: 6,
-    titol: "Reunio claustre",
     curs: "General",
     tipus: "honey",
     nota: "Sala de professors. Tema: avaluacio T2.",
@@ -80,7 +114,6 @@ const EVENTS_INICIALS = [
     id: 5,
     dia: 1,
     hora: 0,
-    titol: "Dictat setmana 12",
     curs: "4t A",
     tipus: "moss",
     nota: "Text preparat. Recordar portar el full.",
@@ -89,7 +122,6 @@ const EVENTS_INICIALS = [
     id: 6,
     dia: 1,
     hora: 1,
-    titol: "Lectura oral",
     curs: "3r A",
     tipus: "clay",
     nota: "Pagina 45. Torn de 3 alumnes.",
@@ -98,7 +130,6 @@ const EVENTS_INICIALS = [
     id: 7,
     dia: 1,
     hora: 2,
-    titol: "Educacio Literaria",
     curs: "5e A",
     tipus: "plum",
     nota: "Comentari poema Verdaguer.",
@@ -107,7 +138,6 @@ const EVENTS_INICIALS = [
     id: 8,
     dia: 2,
     hora: 0,
-    titol: "Expressio Oral",
     curs: "3r B",
     tipus: "clay",
     nota: 'Presentacio: "El meu animal preferit"',
@@ -116,7 +146,6 @@ const EVENTS_INICIALS = [
     id: 9,
     dia: 2,
     hora: 1,
-    titol: "Examen Catala T2",
     curs: "4t B",
     tipus: "moss",
     nota: "Recordar fotocopies! Pag. 66-80.",
@@ -125,16 +154,14 @@ const EVENTS_INICIALS = [
     id: 10,
     dia: 2,
     hora: 3,
-    titol: "Guardia pati",
     curs: "General",
     tipus: "gray",
-    nota: "",
+    nota: "Guardia pati",
   },
   {
     id: 11,
     dia: 3,
     hora: 0,
-    titol: "Comprensio Lectora",
     curs: "5e A",
     tipus: "clay",
     nota: 'Text "Viatge Inoblidable". P.149.',
@@ -143,7 +170,6 @@ const EVENTS_INICIALS = [
     id: 12,
     dia: 3,
     hora: 1,
-    titol: "Corregir redaccions",
     curs: "3r A",
     tipus: "honey",
     nota: "Fer retorn individual.",
@@ -152,7 +178,6 @@ const EVENTS_INICIALS = [
     id: 13,
     dia: 3,
     hora: 2,
-    titol: "Matematiques",
     curs: "4t A",
     tipus: "sky",
     nota: "Geometria plana.",
@@ -161,7 +186,6 @@ const EVENTS_INICIALS = [
     id: 14,
     dia: 4,
     hora: 0,
-    titol: "Poesia",
     curs: "3r B",
     tipus: "plum",
     nota: "Ultim dia per entregar poema.",
@@ -170,7 +194,6 @@ const EVENTS_INICIALS = [
     id: 15,
     dia: 4,
     hora: 1,
-    titol: "Dictat setmana 12",
     curs: "5e A",
     tipus: "moss",
     nota: "Idem 4t A del dimarts.",
@@ -179,14 +202,24 @@ const EVENTS_INICIALS = [
     id: 16,
     dia: 4,
     hora: 6,
-    titol: "Taller creativitat",
     curs: "4t B",
     tipus: "plum",
-    nota: "",
+    nota: "Taller creativitat",
   },
 ];
 
 const CURSOS = ["3r A", "3r B", "4t A", "4t B", "5e A", "General"];
+
+function escHtmlPdf(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+function truncarComentari(text, max) {
+  const t = text || "";
+  return t.length > max ? t.slice(0, max) + "..." : t;
+}
 
 function rowToEvent(row) {
   return {
@@ -194,7 +227,6 @@ function rowToEvent(row) {
     dbId: row.id,
     dia: row.dia_setmana,
     hora: row.franja_hora,
-    titol: row.titol,
     curs: row.curs_nom || "",
     tipus: row.tipus || "clay",
     nota: row.nota || "",
@@ -229,7 +261,6 @@ export default function WeeklyCalendar() {
   const [toast, setToast] = useState("");
   const [nowTick, setNowTick] = useState(Date.now());
 
-  const [nvTitol, setNvTitol] = useState("");
   const [nvDia, setNvDia] = useState(0);
   const [nvHora, setNvHora] = useState(0);
   const [nvCurs, setNvCurs] = useState("3r A");
@@ -304,14 +335,16 @@ export default function WeeklyCalendar() {
     return schoolData.mesos.findIndex((x) => x.m === m && x.y === y);
   }, [iniciSetmana, schoolData]);
 
+  const cursColorMap = useMemo(() => calcularCursColorMap(events), [events]);
+
   const rowHeights = useMemo(() => {
     return HORES.map((h) => {
       const maxEvents = DIES.reduce((mx, _, di) => {
         const cnt = events.filter((ev) => ev.dia === di && ev.hora === h.idx).length;
         return Math.max(mx, cnt);
       }, 0);
-      if (maxEvents < 3) return 58;
-      return 58 + (maxEvents - 2) * 22;
+      if (maxEvents < 2) return 38;
+      return 38 + (maxEvents - 1) * 20;
     });
   }, [events]);
 
@@ -323,14 +356,14 @@ export default function WeeklyCalendar() {
 
     const nowMin = now.getHours() * 60 + now.getMinutes();
     const first = HORES[0].min;
-    const last = HORES[HORES.length - 1].min + 60;
+    const last = HORES[HORES.length - 1].min + 30;
     if (nowMin < first || nowMin > last) return null;
 
     const headerH = 52;
-    const rowIdx = Math.max(0, Math.min(HORES.length - 1, Math.floor((nowMin - first) / 60)));
-    const pct = ((nowMin - first) % 60) / 60;
+    const rowIdx = Math.max(0, Math.min(HORES.length - 1, Math.floor((nowMin - first) / 30)));
+    const pct = ((nowMin - first) % 30) / 30;
     const pre = rowHeights.slice(0, rowIdx).reduce((acc, h) => acc + h, 0);
-    const hAct = rowHeights[rowIdx] || 58;
+    const hAct = rowHeights[rowIdx] || 38;
     return headerH + pre + pct * hAct;
   }, [offset, nowTick, rowHeights]);
 
@@ -388,7 +421,6 @@ export default function WeeklyCalendar() {
   );
 
   const obrirNou = useCallback((dia = null, hora = null) => {
-    setNvTitol("");
     setNvNota("");
     setNvCurs("3r A");
     if (dia !== null) setNvDia(dia);
@@ -397,20 +429,23 @@ export default function WeeklyCalendar() {
   }, []);
 
   const guardarEv = useCallback(() => {
-    const titol = nvTitol.trim();
-    if (!titol) {
-      showToast("Escriu el titol");
+    const nota = nvNota.trim();
+    if (!nota) {
+      showToast("Escriu un comentari");
       return;
     }
     const dia = parseInt(String(nvDia), 10);
     const hora = parseInt(String(nvHora), 10);
-    const nota = nvNota.trim();
+    const existents = events.filter((e) => e.dia === dia && e.hora === hora).length;
+    if (existents >= 2) {
+      showToast("Aquesta franja horària ja té 2 activitats/esdeveniments — tria una altra hora");
+      return;
+    }
     if (supabase && professorId) {
       supabase
         .from("cal_events")
         .insert({
           professor_id: professorId,
-          titol,
           dia_setmana: dia,
           franja_hora: hora,
           curs_nom: nvCurs,
@@ -427,7 +462,7 @@ export default function WeeklyCalendar() {
           }
           setEvents((prev) => [...prev, rowToEvent(data)]);
           setShowNou(false);
-          showToast('"' + titol + '" afegit al calendari');
+          showToast("Event afegit al calendari");
         });
       return;
     }
@@ -435,7 +470,6 @@ export default function WeeklyCalendar() {
       id: nextId,
       dia,
       hora,
-      titol,
       curs: nvCurs,
       tipus: "clay",
       creatPelProfessor: true,
@@ -444,8 +478,8 @@ export default function WeeklyCalendar() {
     setEvents((prev) => [...prev, nou]);
     setNextId((x) => x + 1);
     setShowNou(false);
-    showToast('"' + titol + '" afegit al calendari');
-  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, nvTitol, showToast]);
+    showToast("Event afegit al calendari");
+  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, showToast, events]);
 
   const obrirDet = useCallback((ev) => {
     setEvSel(ev);
@@ -476,6 +510,85 @@ export default function WeeklyCalendar() {
     setShowDet(false);
     showToast("Event eliminat");
   }, [evSel, showToast, supabase]);
+
+  const exportarPdf = useCallback(() => {
+    const dies2Iso = diesSetmana.map(
+      (d) =>
+        d.getFullYear() +
+        "-" +
+        String(d.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(d.getDate()).padStart(2, "0")
+    );
+    let files = "";
+    HORES.forEach((h) => {
+      let cel·les = "";
+      DIES.forEach((_, di) => {
+        const evs = events.filter(
+          (ev) => ev.dia === di && ev.hora === h.idx && (!ev.data || ev.data === dies2Iso[di])
+        );
+        if (!evs.length) {
+          cel·les += "<td></td>";
+          return;
+        }
+        cel·les +=
+          "<td>" +
+          evs
+            .map(
+              (ev) =>
+                '<div class="pev"><b>' +
+                escHtmlPdf(ev.nota) +
+                "</b>" +
+                (ev.curs ? '<span class="pev-curs">' + escHtmlPdf(ev.curs) + "</span>" : "") +
+                "</div>"
+            )
+            .join("") +
+          "</td>";
+      });
+      files += "<tr><td class=\"th-hora\">" + h.label + "</td>" + cel·les + "</tr>";
+    });
+
+    const capçaleres = diesSetmana
+      .map((d, di) => "<th>" + DIES[di] + "<br><span class=\"th-num\">" + d.getDate() + "</span></th>")
+      .join("");
+
+    const cont =
+      "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Programació — " +
+      escHtmlPdf(weekLabel) +
+      "</title><style>" +
+      "body{font-family:Arial,sans-serif;padding:20px;color:#222;}" +
+      "h1{font-size:17px;margin-bottom:2px;}" +
+      ".meta{color:#666;font-size:12px;margin-bottom:14px;}" +
+      "table{width:100%;border-collapse:collapse;table-layout:fixed;}" +
+      "th,td{border:1px solid #ddd;padding:4px 6px;vertical-align:top;font-size:10px;}" +
+      "th{background:#f0ece4;font-size:10.5px;text-align:center;}" +
+      ".th-num{color:#888;font-weight:400;}" +
+      ".th-hora{white-space:nowrap;font-weight:700;background:#fafafa;width:52px;font-size:9.5px;}" +
+      ".pev{margin-bottom:4px;}" +
+      ".pev-curs{color:#B5562F;font-size:9px;margin-left:4px;}" +
+      ".pev-nota{color:#666;font-size:9px;}" +
+      ".edit-hint{background:#FBEAE0;color:#B5562F;font-size:10.5px;padding:6px 10px;border-radius:8px;margin-bottom:12px;}" +
+      "@media print{body{padding:8px;}.edit-hint{display:none;}}" +
+      "</style></head><body>" +
+      "<div class=\"edit-hint\">🖨️ <button onclick=\"window.print()\" style=\"margin-left:4px;border:none;background:#B5562F;color:#fff;border-radius:6px;padding:4px 10px;font-size:10.5px;cursor:pointer;\">🖨️ Imprimir / Desar com a PDF</button> Aquest avís no sortirà al PDF.</div>" +
+      "<h1>Programació setmanal</h1>" +
+      "<div class=\"meta\">" +
+      escHtmlPdf(weekLabel) +
+      " · " +
+      escHtmlPdf(weekSub) +
+      "</div>" +
+      "<table><thead><tr><th></th>" +
+      capçaleres +
+      "</tr></thead><tbody>" +
+      files +
+      "</tbody></table>" +
+      "</body></html>";
+
+    const blob = new Blob([cont], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }, [diesSetmana, events, weekLabel, weekSub]);
 
   return (
     <div className="spg-root">
@@ -520,6 +633,9 @@ export default function WeeklyCalendar() {
           <button className="add-btn" onClick={() => obrirNou()}>
             + Nou esdeveniment
           </button>
+          <button className="today-btn" onClick={exportarPdf}>
+            🖨️ Exportar PDF
+          </button>
         </div>
 
         <div className="cal-wrap" id="cal-wrap">
@@ -541,7 +657,7 @@ export default function WeeklyCalendar() {
 
             {HORES.map((h) => (
               <div key={"row-" + h.idx} className="spg-row-contents">
-                <div className="tc" style={{ height: rowHeights[h.idx] || 58 }}>
+                <div className="tc" style={{ height: rowHeights[h.idx] || 38 }}>
                   {h.label}
                 </div>
                 {DIES.map((_, di2) => {
@@ -566,19 +682,20 @@ export default function WeeklyCalendar() {
                     <div
                       key={"cc-" + h.idx + "-" + di2}
                       className={"cc" + (esAvui2 ? " today" : "")}
-                      style={{ height: rowHeights[h.idx] || 58 }}
+                      style={{ height: rowHeights[h.idx] || 38 }}
                       onClick={() => obrirNou(di2, h.idx)}
                     >
                       {evs.map((ev) => (
                         <div
                           key={ev.id}
-                          className={"ev ev-" + ev.tipus + (ev.creatPelProfessor ? " ev-new" : "")}
+                          className="ev"
+                          style={estilEvent(ev, cursColorMap)}
                           onClick={(e) => {
                             e.stopPropagation();
                             obrirDet(ev);
                           }}
                         >
-                          <div className="ev-nom">{ev.titol}</div>
+                          <div className="ev-nom">{truncarComentari(ev.nota, 40)}</div>
                           <div className="ev-curs">{ev.curs}</div>
                         </div>
                       ))}
@@ -601,10 +718,6 @@ export default function WeeklyCalendar() {
         <div className="overlay" id="pop-nou" onClick={(e) => e.target === e.currentTarget && setShowNou(false)}>
           <div className="popup">
             <div className="popup-title">Nou event</div>
-            <div className="fg">
-              <label className="flbl">Títol</label>
-              <input className="inp" value={nvTitol} onChange={(e) => setNvTitol(e.target.value)} placeholder="Dictat, Examen, Reunió..." />
-            </div>
             <div className="grid2 fg">
               <div>
                 <label className="flbl">Dia</label>
@@ -638,8 +751,8 @@ export default function WeeklyCalendar() {
               </div>
             </div>
             <div className="fg">
-              <label className="flbl">Nota (opcional)</label>
-              <textarea className="inp" rows={2} value={nvNota} onChange={(e) => setNvNota(e.target.value)} placeholder="Pàgina del llibre, material, instruccions..." />
+              <label className="flbl">Comentari</label>
+              <textarea className="inp" rows={2} value={nvNota} onChange={(e) => setNvNota(e.target.value)} placeholder="Dictat, examen, pàgina del llibre, instruccions..." />
             </div>
             <div className="spg-actions">
               <button className="btn btn-clay spg-grow" onClick={guardarEv}>
@@ -656,12 +769,12 @@ export default function WeeklyCalendar() {
       {showDet && evSel ? (
         <div className="overlay" id="pop-det" onClick={(e) => e.target === e.currentTarget && setShowDet(false)}>
           <div className="popup">
-            <div className="det-bar" id="det-bar" style={{ background: COLORS[evSel.tipus] || COLORS.clay }} />
+            <div className="det-bar" id="det-bar" style={{ background: COLORS[corPerCurs(evSel.curs, cursColorMap)] }} />
             <div className="det-curs" id="det-curs">
               {evSel.curs}
             </div>
             <div className="det-nom" id="det-nom">
-              {evSel.titol}
+              {evSel.nota}
             </div>
             <div className="spg-actions">
               <button className="btn" onClick={eliminarEv}>

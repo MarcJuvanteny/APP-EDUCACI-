@@ -215,66 +215,26 @@
 
 .ev {
   border-radius: 6px;
-  padding: 2px 4px;
+  padding: 2px 5px;
   margin-bottom: 2px;
-  color: #fff;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   cursor: pointer;
 }
 
 .ev-curs {
   font-size: 9px;
-  opacity: 0.88;
+  opacity: 0.85;
   font-weight: 700;
   line-height: 1.05;
 }
 
 .ev-nom {
   font-size: 11px;
-  line-height: 1.05;
-  font-weight: 800;
+  line-height: 1.15;
+  font-weight: 700;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-}
-
-.ev-sub {
-  font-size: 10px;
-  opacity: 0.9;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.ev-clay {
-  background: var(--clay);
-}
-
-.ev-moss {
-  background: var(--moss);
-}
-
-.ev-honey {
-  background: var(--honey);
-}
-
-.ev-sky {
-  background: var(--sky);
-}
-
-.ev-plum {
-  background: var(--plum);
-}
-
-.ev-gray {
-  background: #7e7568;
-}
-
-.ev-new {
-  background: #f6e2d2;
-  color: #7a3a1d;
-  border: 1px solid #e7c1a0;
-  box-shadow: none;
 }
 
 .now-line {
@@ -430,6 +390,8 @@
   padding: 8px;
   background: #fff8ed;
   font-size: 13px;
+  margin-bottom: 4px;
+  white-space: pre-line;
 }
 
 .toast {
