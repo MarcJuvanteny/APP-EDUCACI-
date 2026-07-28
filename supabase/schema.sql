@@ -192,3 +192,10 @@ alter table alumnes add column if not exists actiu boolean not null default true
 -- mateixa "promocio" (els alumnes nascuts el mateix any) — de moment nomes es
 -- guarda la dada, sense cap logica addicional que en depengui.
 alter table cursos add column if not exists promocio integer;
+
+-- ─── "Prova" (competència fantasma) ───
+-- Una prova crea una activitat "bessona" a cada competència real seleccionada
+-- (2 o 3), totes amb el mateix grup_prova_id — aixi es poden trobar/eliminar
+-- juntes. La nota que hi posa el professor es la mateixa per a tots els
+-- criteris de cada competencia (no hi ha rubrica propia per a "Prova").
+alter table activitats add column if not exists grup_prova_id text;

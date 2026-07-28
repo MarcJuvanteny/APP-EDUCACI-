@@ -1,7 +1,7 @@
 // ═══════════════ DADES ═══════════════
 var prof = {nom:'Anna Garcia', centre:'Escola Montserrat', any:'2025-2026'};
 var cursosList = ['1r A','1r B','2n A','2n B','3r A','3r B','4t A','4t B','5e A','5e B','6e A','6e B'];
-var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts','Valors'];
+var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts','Valors','Competencies transversals'];
 var trimestres = ['1r Trimestre','2n Trimestre','3r Trimestre'];
 
 var mesCursos = [
@@ -192,17 +192,114 @@ var competenciesByArea = {
       crit('Resoldre conflictes amb el diàleg.','Recorre a la força, l\'insult o la fugida per solucionar problemes.','S\'asseu a parlar del conflicte quan el docent l\'obliga.','Escolta la versió de l\'altre i busca un pacte negociat parlant.','Aplica tècniques de mediació espontània per calmar tensions.'),
       crit('Valorar normes democràtiques i drets.','Ignora les normes de convivència i els drets bàsics.','Comprèn la necessitat de les normes si se li expliquen.','Valora i respecta les normes col·lectives i els drets humans.','Promou el funcionament democràtic i proposa millores.')
     ])
+  ],
+  transversals: [
+    comp('trans-ce1','Competència digital','CD','sky',[
+      crit('Utilitzar dispositius i eines digitals de forma segura i responsable.','No sap fer servir els dispositius digitals bàsics ni amb ajuda.','Utilitza dispositius i eines digitals senzilles si rep ajuda constant.','Utilitza dispositius i eines digitals de forma autònoma i responsable.','Domina diverses eines digitals i n\'ajuda els companys a fer-ne un bon ús.'),
+      crit('Cercar, contrastar i tractar informació digital de manera crítica.','Accepta com a certa qualsevol informació que troba a internet.','Cerca informació digital senzilla si rep pautes molt concretes.','Cerca, contrasta i selecciona informació digital fiable de forma autònoma.','Analitza críticament la informació digital i en detecta biaixos o falsedats.')
+    ]),
+    comp('trans-ce2','Competència personal, social i d\'aprendre a aprendre','PSA','clay',[
+      crit('Regular les pròpies emocions i mantenir la motivació per aprendre.','Es bloqueja o abandona la tasca davant la primera dificultat.','Persisteix en la tasca si rep suport o ànims continus.','Regula les seves emocions i manté la motivació davant els reptes.','Mostra alta resiliència i ajuda els companys a gestionar les seves emocions.'),
+      crit('Organitzar el propi procés d\'aprenentatge i treballar en equip.','No planifica la feina ni sap treballar de forma coordinada amb altres.','Organitza tasques senzilles i participa en el grup si se li guia.','Planifica el seu aprenentatge i col·labora activament en equip.','Gestiona el seu aprenentatge amb autonomia i lidera el treball en equip.')
+    ]),
+    comp('trans-ce3','Competència ciutadana','CC','plum',[
+      crit('Participar de forma activa i respectuosa en la vida col·lectiva.','Ignora les normes de convivència i els drets dels altres.','Respecta les normes bàsiques de convivència la major part del temps.','Participa activament en la vida del grup respectant drets i normes.','Promou activament la convivència democràtica i defensa els drets de tothom.'),
+      crit('Comprendre i valorar la diversitat social i cultural.','Mostra actituds d\'exclusió o rebuig cap a la diversitat.','Tolera la diversitat de l\'entorn sense mostrar-hi interès actiu.','Valora i respecta la diversitat social i cultural de l\'entorn.','Defensa activament la inclusió i enriqueix el grup amb la seva mirada oberta.')
+    ]),
+    comp('trans-ce4','Competència emprenedora','CE','moss',[
+      crit('Generar idees i planificar-ne la posada en pràctica.','No proposa idees pròpies ni sap com dur-les a terme.','Aporta idees senzilles si rep un model o guia clara.','Genera idees pròpies i en planifica els passos per portar-les a terme.','Proposa idees originals i en lidera una planificació sòlida i realista.'),
+      crit('Assumir riscos i aprendre dels errors en un projecte.','Abandona el projecte davant el primer entrebanc o error.','Continua el projecte amb suport quan sorgeix una dificultat.','Assumeix riscos raonables i aprèn dels errors per millorar el projecte.','Mostra iniciativa, persevera davant els errors i optimitza el projecte.')
+    ])
+  ],
+  anglesLleng: [
+    comp('angl-ce1','Linguistic diversity','LD','sky',[
+      crit('Recognise and respect linguistic diversity.','Shows rejection or indifference towards other languages and cultures.','Recognises the languages in the classroom and respects them when reminded.','Shows active interest and respect towards different languages.','Actively promotes and values diversity as a shared richness.'),
+      crit('Identify language prejudices and inclusion.','Repeats language prejudices without questioning them.','Identifies some prejudices when guided by an adult.','Detects prejudices independently and argues against them.','Critically analyses language use and proposes inclusive alternatives.')
+    ]),
+    comp('angl-ce2','Listening','LI','clay',[
+      crit('Understand the main ideas of oral texts.','Does not grasp the overall idea of the oral text even with support.','Identifies the main idea when asked direct questions or guided.','Independently identifies main and secondary ideas.','Summarises the speech precisely, picking up subtle details and connections.'),
+      crit('Assess the purpose of an oral text.','Stays at a literal level and confuses the speaker\'s intention.','Recognises the basic purpose (inform, persuade) with guidance.','Detects the speaker\'s intention and gives a reasoned assessment.','Critically analyses intention, detecting bias or irony.')
+    ]),
+    comp('angl-ce3','Speaking','SP','plum',[
+      crit('Produce coherent, well-structured spoken texts.','Expresses ideas in a disordered, unclear or very poor way.','Expresses themselves in an understandable way, though with hesitations or repetitions.','Presents ideas in order, fluently and with varied, appropriate vocabulary.','Builds a structured, rich, fluent speech adapted to the audience.'),
+      crit('Take part in conversations and debates, following the rules.','Constantly interrupts, does not listen or refuses to take part.','Takes part in the conversation and keeps their turn when reminded.','Takes an active part, listens to others and keeps the dialogue flowing.','Leads the dialogue empathetically, integrating others\' contributions.')
+    ]),
+    comp('angl-ce4','Reading','RE','moss',[
+      crit('Extract direct and implicit information from texts.','Does not extract basic information from the text even with support.','Finds direct, literal information but struggles to make inferences.','Independently extracts explicit and implicit information.','Interprets deeper meaning, making complex, critical connections.'),
+      crit('Apply reading strategies to aid comprehension.','Gives up reading when facing a difficulty or an unknown word.','Uses context or rereads when guided by an adult.','Independently applies tricks and strategies when something is not understood.','Selects and combines strategies according to the complexity of the text.')
+    ]),
+    comp('angl-ce5','Writing','WR','honey',[
+      crit('Write well-structured texts according to text type.','Writes incoherent texts that do not follow a structure.','Writes understandable texts that follow a basic structure.','Writes coherently, in an organised way and suited to the text type.','Organises the text with an impeccable structure, fluent and creative style.'),
+      crit('Apply the writing process (planning, revising).','Writes directly without planning and never revises the text.','Plans with visual aids and corrects obvious spelling mistakes.','Plans the text and independently revises spelling and grammar.','Shows a rigorous self-revision process, polishing the text to improve it.')
+    ]),
+    comp('angl-ce6','Information search','IS','sky',[
+      crit('Search for information in analogue and digital sources.','Gets lost in the search and does not find relevant or useful information.','Finds information when given very specific sources and guidance.','Independently searches for and selects relevant information from reliable sources.','Compares different sources, assesses their reliability and selects the best content.'),
+      crit('Process and summarise information (no copying).','Copies and pastes text fragments literally without processing them.','Rewrites information changing only a few isolated words.','Writes information in their own words, organising ideas.','Summarises and personalises information, producing their own account.')
+    ]),
+    comp('angl-ce7','Literary education','LE','clay',[
+      crit('Read literary works independently.','Systematically refuses to read.','Reads the books suggested in class but does not choose books on their own.','Shows a reading habit, choosing books according to their tastes and interests.','Has a well-established reading habit and shares recommendations.'),
+      crit('Recognise basic elements of a story.','Cannot identify the characters or the setting of the story.','Identifies the main characters and the setting when they are obvious.','Clearly recognises characters, setting, time and genre.','Analyses the development of characters, narrator and stylistic devices.')
+    ]),
+    comp('angl-ce8','Plurilingualism','PL','plum',[
+      crit('Transfer strategies from one language to another.','Blocks their learning without connecting it to what they already know.','Recognises simple language similarities when pointed out.','Transfers structures, vocabulary and strategies between languages.','Strategically uses their multilingual repertoire to solve challenges.'),
+      crit('Show an open attitude towards different languages.','Refuses to learn or listen to languages other than their own.','Tolerates different languages in the classroom without showing initiative.','Shows interest and curiosity in learning new words.','Shows enthusiasm and acts as a language bridge in the classroom.')
+    ]),
+    comp('angl-ce9','Language reflection','LR','moss',[
+      crit('Form hypotheses and use grammatical terminology.','Does not recognise grammatical categories or the function of words.','Identifies basic grammatical elements with guidance.','Uses basic grammatical terms to explain the language.','Applies precise metalinguistic reflection to justify choices.'),
+      crit('Review and self-correct their own work.','Does not notice their own mistakes even when pointed out.','Corrects mistakes when the teacher points out exactly where they are.','Independently reviews the text and detects and corrects mistakes.','Self-corrects and improves cohesion, accuracy and sentence structure with judgement.')
+    ])
+  ],
+  castellaLleng: [
+    comp('cast-ce1','Diversidad lingüística','DL','sky',[
+      crit('Reconocer y respetar la diversidad lingüística.','Muestra rechazo o indiferencia hacia otras lenguas y culturas.','Reconoce las lenguas del aula y las respeta si se le recuerda.','Muestra interés activo y respeto hacia las diferentes lenguas.','Promueve y valora activamente la diversidad como una riqueza colectiva.'),
+      crit('Identificar prejuicios lingüísticos y cohesión.','Reproduce prejuicios lingüísticos sin cuestionarlos.','Identifica algunos prejuicios cuando el adulto lo guía.','Detecta prejuicios de forma autónoma y argumenta en contra.','Analiza de forma crítica los usos y propone alternativas inclusivas.')
+    ]),
+    comp('cast-ce2','Comprensión oral','CO','clay',[
+      crit('Comprender ideas principales de textos orales.','No capta la idea global del texto oral ni con apoyo.','Identifica la idea principal si recibe preguntas o guía directa.','Extrae las ideas principales y secundarias de forma autónoma.','Sintetiza el discurso con precisión, captando detalles sutiles y relaciones.'),
+      crit('Valorar la intención del discurso oral.','Se queda en la literalidad y confunde la intención del emisor.','Reconoce la intención básica (informar, convencer) con pautas.','Detecta la intención del emisor y hace una valoración razonada.','Analiza de forma crítica la intención, detectando sesgos o ironías.')
+    ]),
+    comp('cast-ce3','Expresión oral','EO','plum',[
+      crit('Producir textos orales coherentes y estructurados.','Expresa ideas de forma desordenada, incomprensible o muy pobre.','Se expresa de forma comprensible, aunque con dudas o repeticiones.','Expone ideas con orden, fluidez y un vocabulario variado y adecuado.','Construye un discurso estructurado, rico, fluido y adaptado a la audiencia.'),
+      crit('Participar en conversaciones y debates respetando las normas.','Interrumpe sistemáticamente, no escucha o se niega a participar.','Participa en la conversación y mantiene el turno si se le recuerda.','Interviene activamente, escucha a los demás y mantiene un diálogo fluido.','Lidera el diálogo de forma empática, integrando las aportaciones de otros.')
+    ]),
+    comp('cast-ce4','Comprensión lectora','CL','moss',[
+      crit('Extraer información directa e implícita de textos.','No extrae la información básica del texto aunque tenga apoyo.','Encuentra la información literal directa, pero le cuesta hacer deducciones.','Extrae información explícita e implícita de manera autónoma.','Interpreta el sentido profundo, estableciendo relaciones complejas y críticas.'),
+      crit('Aplicar estrategias de lectura para la comprensión.','Abandona la lectura al encontrar un bloqueo o una palabra desconocida.','Utiliza el contexto o relee si el adulto lo guía en el proceso.','Aplica trucos y estrategias de forma autónoma cuando no entiende algo.','Selecciona y combina estrategias según la complejidad del texto.')
+    ]),
+    comp('cast-ce5','Expresión escrita','EE','honey',[
+      crit('Escribir textos estructurados según la tipología.','Redacta textos incoherentes que no mantienen la estructura.','Escribe textos comprensibles que mantienen la estructura básica.','Redacta de forma coherente, organizada y ajustada a la tipología.','Organiza el texto con una estructura impecable, estilo fluido y creativo.'),
+      crit('Aplicar el proceso de escritura (planificar, revisar).','Escribe directamente sin planificar y nunca revisa el texto.','Planifica con ayudas visuales y corrige errores ortográficos evidentes.','Planifica el texto y revisa la ortografía y la gramática de forma autónoma.','Muestra un proceso de autorrevisión riguroso, puliendo el texto para mejorarlo.')
+    ]),
+    comp('cast-ce6','Búsqueda de información','BI','sky',[
+      crit('Buscar información en fuentes analógicas y digitales.','Se pierde en la búsqueda y no encuentra información relevante o útil.','Localiza información si se le dan fuentes y pautas muy concretas.','Busca y selecciona información relevante en fuentes fiables de forma autónoma.','Contrasta diferentes fuentes, evalúa su fiabilidad y selecciona el mejor contenido.'),
+      crit('Procesar y sintetizar la información (sin plagiar).','Copia y pega literalmente fragmentos del texto sin procesarlos.','Reescribe la información cambiando solo algunas palabras sueltas.','Redacta la información con sus propias palabras organizando ideas.','Sintetiza y personaliza la información elaborando un discurso propio.')
+    ]),
+    comp('cast-ce7','Educación literaria','EL','clay',[
+      crit('Leer de manera autónoma obras literarias.','Rechaza la lectura de forma sistemática.','Lee los libros propuestos en clase, pero no elige por iniciativa propia.','Muestra hábito lector, eligiendo obras según sus gustos e intereses.','Tiene un hábito lector consolidado y comparte recomendaciones.'),
+      crit('Reconocer elementos básicos del relato.','No sabe identificar los personajes ni el contexto de la historia.','Identifica los personajes principales y el lugar si son evidentes.','Reconoce claramente personajes, espacio, tiempo y género.','Analiza la evolución de los personajes, el narrador y los recursos expresivos.')
+    ]),
+    comp('cast-ce8','Plurilingüismo','PL','plum',[
+      crit('Transferir estrategias de una lengua a otra.','Bloquea el aprendizaje sin relacionarlo con lo que conoce.','Reconoce semejanzas lingüísticas simples cuando se le hacen notar.','Transfiere estructuras, vocabulario y estrategias entre lenguas.','Utiliza el repertorio plurilingüe de manera estratégica para resolver retos.'),
+      crit('Mostrar una actitud abierta hacia diferentes lenguas.','Rechaza aprender o escuchar lenguas diferentes a la propia.','Tolera diferentes lenguas en el aula sin mostrar iniciativa activa.','Manifiesta interés y curiosidad por aprender palabras nuevas.','Se muestra entusiasta y actúa como puente lingüístico en el aula.')
+    ]),
+    comp('cast-ce9','Reflexión lingüística','RL','moss',[
+      crit('Formular hipótesis y usar terminología gramatical.','No reconoce las categorías gramaticales ni la función de las palabras.','Identifica elementos gramaticales básicos con apoyo de la pauta.','Utiliza los términos gramaticales básicos para explicar la lengua.','Aplica la reflexión metalingüística de forma precisa para argumentar la elección.'),
+      crit('Revisar y autocorregir las producciones.','No detecta sus propios errores ni cuando se le señalan.','Corrige errores cuando el docente le indica exactamente dónde están.','Revisa el texto de forma autónoma y detecta y corrige errores.','Se autocorrige y mejora la cohesión, la precisión y la sintaxis con criterio.')
+    ])
   ]
 };
 
 function areaForSubject(subj){
   var n=normTxt(subj);
-  if(['catala','castella','angles','catalan','castellano','ingles'].indexOf(n)!==-1) return 'llengues';
+  if(['catala','catalan'].indexOf(n)!==-1) return 'llengues';
+  if(['angles','ingles','english'].indexOf(n)!==-1) return 'anglesLleng';
+  if(['castella','castellano','espanyol','espanol'].indexOf(n)!==-1) return 'castellaLleng';
   if(['matematiques','matematicas'].indexOf(n)!==-1) return 'matematiques';
   if(['medi','medinatural','medisocial'].indexOf(n)!==-1) return 'medi';
   if(['educaciofisica','edfisica','edfisi','edfisica','edfísica'].indexOf(n)!==-1) return 'educacioFisica';
   if(['educacioartistica','artsplastiques','music','musica','visualiplastica','arts'].indexOf(n)!==-1) return 'educacioArtistica';
   if(['valors','valorscivics','educacioenvalors','valorsciviciseticscritics'].indexOf(n)!==-1) return 'valorsCivics';
+  if(['competenciestransversals','comptransversals','transversals'].indexOf(n)!==-1) return 'transversals';
   return 'llengues';
 }
 
@@ -446,7 +543,15 @@ function carregarPerfil(){
   if(saved.prof) prof=saved.prof;
   if(saved.mesCursos&&saved.mesCursos.length) mesCursos=saved.mesCursos;
   if(saved.assignaturesList&&saved.assignaturesList.length){
-    assignaturesList=saved.assignaturesList.slice();
+    // Fusiona (no sobreescriu) perque les assignatures noves que s'afegeixin
+    // al codi en el futur (com "Competencies transversals") apareguin tambe
+    // als comptes que ja tenien una llista desada d'una sessio anterior.
+    var mergedList=saved.assignaturesList.slice();
+    assignaturesList.forEach(function(s){
+      var ja=mergedList.some(function(m){ return m.toLowerCase()===s.toLowerCase(); });
+      if(!ja) mergedList.push(s);
+    });
+    assignaturesList=mergedList;
   }
   if(saved.estat){
     estat.cursIdx=parseInt(saved.estat.cursIdx||0);
@@ -620,17 +725,17 @@ function carregarActivitatsDelContext(){
       activitats[k].push({
         dbId:row.id, id:row.id, nom:row.nom,
         data:formatarDataActivitat(row.data,row.hora), dataISO:row.data, hora:row.hora,
-        notes:row.notes||{}, altres:row.comentaris||{}, notaAltres:{}
+        notes:row.notes||{}, altres:row.comentaris||{}, notaAltres:{}, provaGroupId:row.grup_prova_id||null
       });
     });
   });
 }
-function dbCrearActivitat(cursId,assignaturaId,compId,trim,nom,dataISO,hora){
+function dbCrearActivitat(cursId,assignaturaId,compId,trim,nom,dataISO,hora,grupProvaId){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('activitats').insert({
     curs_id:cursId,assignatura_id:assignaturaId,professor_id:dbUid(),
     competencia_id:compId,trimestre:trim,nom:nom,data:dataISO||null,hora:hora||null,
-    notes:{},comentaris:{}
+    notes:{},comentaris:{}, grup_prova_id:grupProvaId||null
   }).select().single();
 }
 function dbActualitzarNotesActivitat(actDbId,notes){
@@ -1245,6 +1350,7 @@ function renderHome(){
     '<div class="mc"><div class="mc-l">Alumnes</div><div class="mc-v">'+alumnes.length+'</div></div>'
     +'<div class="mc"><div class="mc-l">Nota mitjana</div><div class="mc-v">'+mitj+'</div></div>'
     +'<div class="mc"><div class="mc-l">Activitats</div><div class="mc-v">'+totalActs+'</div><div class="mc-s">aquest trimestre</div></div>'
+    +'<div class="mc"><div class="mc-l">'+pv('mot')+'</div><div class="mc-v">'+getProves().length+'</div><div class="mc-s">aquest trimestre</div></div>'
     +'<div class="mc"><div class="mc-l">Trimestre</div><div class="mc-v" style="font-size:17px;">'+(estat.trimIdx+1)+'r Trim.</div></div>';
 
   // Mitjana per competència (usada tant per les barres com pel gràfic d'aranya)
@@ -1400,10 +1506,10 @@ function renderAlumnes(){
       +compCells
       +mitjaCell
       +'<td style="padding:8px 10px;max-width:180px;">'
-        +'<span style="font-size:11.5px;color:var(--ink2);font-style:italic;">'+
-          (missatge?escHtml(missatge.length>60?missatge.slice(0,60)+'...':missatge):'<span style="color:var(--ink3);">—</span>')+
-        '</span>'
-      +'</td>'
+        +(missatge
+          ?'<span style="font-size:11.5px;color:var(--ink2);font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;">'+escHtml(missatge)+'</span>'
+          :'<span style="color:var(--ink3);">—</span>')+
+      '</td>'
       +'<td style="padding:8px 8px;">'
         +'<button class="btn btn-sm" data-nom="'+escHtml(al.nom)+'" onclick="event.stopPropagation();obrirMissatgeAluBtn(this)">'+
           (missatge?'Editar':'+ Comentari')+
@@ -1531,6 +1637,7 @@ function guardarMissatge(){
 // ═══════════════ COMPETÈNCIES ═══════════════
 function renderCompTiles(){
   showCV('cv-llista','cv-activitats'); showCV('cv-llista','cv-graella');
+  showCV('cv-llista','cv-proves'); showCV('cv-llista','cv-prova-graella');
   document.getElementById('cv-llista').style.display='block';
   document.getElementById('comp-tiles').innerHTML=competencies.map(function(comp){
     var acts=getActs(comp.id);
@@ -1540,7 +1647,13 @@ function renderCompTiles(){
         +'<div style="font-size:11px;color:var(--ink3);">'+acts.length+' activitats</div></div>'
       +'<span style="margin-left:auto;color:var(--ink3);">›</span>'
     +'</div>';
-  }).join('');
+  }).join('')
+    +'<div class="comp-tile" onclick="obrirProves()">'
+      +'<div class="comp-ico" style="background:var(--clay-l);color:var(--clay);">PR</div>'
+      +'<div><div style="font-size:13px;font-weight:700;">'+pv('mot')+'</div>'
+        +'<div style="font-size:11px;color:var(--ink3);">'+getProves().length+' '+pv('mot').toLowerCase()+'(s)</div></div>'
+      +'<span style="margin-left:auto;color:var(--ink3);">›</span>'
+    +'</div>';
 }
 function openComp(compId){
   currentCompId=compId;
@@ -1603,6 +1716,311 @@ function openComp(compId){
     +'</tr>';
   }).join('')+'</tbody></table></div>';
   document.getElementById('cv-act-body').innerHTML=html;
+}
+
+// ═══════════════ PROVA (competència fantasma) ═══════════════
+// Una prova crea una activitat "bessona" a cada competència real seleccionada
+// (2-3, totes de la mateixa assignatura), compartint "provaGroupId". La nota
+// que hi posa el professor per a cada competència s'escriu a TOTS els seus
+// criteris de forma uniforme — així la mitjana, el gràfic d'aranya i
+// l'informe funcionen exactament igual que amb qualsevol altra activitat,
+// sense necessitat de tocar cap d'aquests càlculs. "Prova" mai és una
+// competència real: no té criteris propis i no compta en cap mitjana.
+var _currentProvaGroupId='';
+// El nom d'aquesta funcionalitat es tradueix segons l'idioma de l'assignatura
+// activa (Angles->Exam, Castella->Prueba, la resta->Prova en catala).
+var PROVA_I18N = {
+  ca:{mot:'Prova',nova:'Nova prova',sense:'Sense proves.',crearNe:'Crear-ne una',crear:'Crear',cancelar:'Cancel·lar',
+    comp:'Competències (selecciona 2 o 3)',afegirComp:'+ Afegir competència',eliminar:'Eliminar prova',
+    hintLlista:'Una prova reparteix una nota a 2 o 3 competències alhora — no compta com a competència pròpia.',
+    hintGraella:'Posa una nota global per competència — s\'aplicarà a tots els seus criteris d\'avaluació.',
+    eliminarTitle:'Eliminar prova',eliminaras:'Eliminaràs',perdran:'Es perdran totes les notes d\'aquesta prova a totes les competències implicades',
+    siEliminar:'Sí, eliminar',afegirCompTitle:'Afegir competència a la prova',afegir:'Afegir',placeholderNom:'Ex: Examen trimestral...'},
+  en:{mot:'Exam',nova:'New exam',sense:'No exams yet.',crearNe:'Create one',crear:'Create',cancelar:'Cancel',
+    comp:'Competencies (select 2 or 3)',afegirComp:'+ Add competency',eliminar:'Delete exam',
+    hintLlista:'An exam gives one grade to 2 or 3 competencies at once — it never counts as its own competency.',
+    hintGraella:'Enter one overall grade per competency — it will apply to all of its assessment criteria.',
+    eliminarTitle:'Delete exam',eliminaras:'You will delete',perdran:'All grades for this exam will be lost for every competency involved',
+    siEliminar:'Yes, delete',afegirCompTitle:'Add a competency to the exam',afegir:'Add',placeholderNom:'E.g: Term exam...'},
+  es:{mot:'Prueba',nova:'Nueva prueba',sense:'Sin pruebas.',crearNe:'Crear una',crear:'Crear',cancelar:'Cancelar',
+    comp:'Competencias (selecciona 2 o 3)',afegirComp:'+ Añadir competencia',eliminar:'Eliminar prueba',
+    hintLlista:'Una prueba reparte una nota a 2 o 3 competencias a la vez — nunca cuenta como competencia propia.',
+    hintGraella:'Pon una nota global por competencia — se aplicará a todos sus criterios de evaluación.',
+    eliminarTitle:'Eliminar prueba',eliminaras:'Eliminarás',perdran:'Se perderán todas las notas de esta prueba en todas las competencias implicadas',
+    siEliminar:'Sí, eliminar',afegirCompTitle:'Añadir una competencia a la prueba',afegir:'Añadir',placeholderNom:'Ej: Examen trimestral...'}
+};
+function provaLang(){
+  var mc=mesCursos[estat.cursIdx]; var subj=mc&&mc.assigns?mc.assigns[estat.subjIdx]:'';
+  var n=normTxt(subj);
+  if(['angles','ingles','english'].indexOf(n)!==-1) return 'en';
+  if(['castella','castellano','espanyol','espanol'].indexOf(n)!==-1) return 'es';
+  return 'ca';
+}
+function pv(key){ return PROVA_I18N[provaLang()][key]; }
+function getProves(){
+  var grups={}, ordre=[];
+  competencies.forEach(function(comp){
+    getActs(comp.id).forEach(function(act){
+      if(!act.provaGroupId) return;
+      if(!grups[act.provaGroupId]){
+        grups[act.provaGroupId]={groupId:act.provaGroupId,nom:act.nom,data:act.data,dataISO:act.dataISO,hora:act.hora,comps:[]};
+        ordre.push(act.provaGroupId);
+      }
+      grups[act.provaGroupId].comps.push({comp:comp,act:act});
+    });
+  });
+  return ordre.map(function(k){return grups[k];});
+}
+function obrirProves(){
+  document.getElementById('cv-llista').style.display='none';
+  document.getElementById('cv-proves').style.display='block';
+  document.getElementById('cv-prova-graella').style.display='none';
+  document.getElementById('cv-proves-title').textContent=pv('mot');
+  document.getElementById('cv-proves-hint').textContent=pv('hintLlista');
+  renderProvesList();
+}
+function renderProvesList(){
+  var grups=getProves();
+  var html='<div style="display:flex;justify-content:flex-end;margin-bottom:8px;">'
+    +'<button class="btn btn-clay btn-sm" onclick="novaProva()">+ '+pv('nova')+'</button></div>';
+  if(!grups.length){
+    html+='<div style="padding:32px;text-align:center;color:var(--ink3);border:1.5px dashed var(--line2);border-radius:var(--rl);">'+pv('sense')+' <button class="btn btn-clay btn-sm" style="margin-left:6px;" onclick="novaProva()">'+pv('crearNe')+'</button></div>';
+  }else{
+    html+=grups.map(function(g){
+      var noms=g.comps.map(function(x){return x.comp.nom;}).join(' + ');
+      return '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--rl);margin-bottom:8px;cursor:pointer;" onclick="openProvaGraella(\''+g.groupId+'\')">'
+        +'<div style="flex:1;">'
+          +'<div style="font-size:14px;font-weight:700;">'+escHtml(g.nom)+'</div>'
+          +'<div style="font-size:11px;color:var(--ink3);margin-top:2px;">'+escHtml(noms)+' · '+g.data+'</div>'
+        +'</div>'
+        +'<span style="color:var(--ink3);font-size:18px;">›</span>'
+      +'</div>';
+    }).join('');
+  }
+  document.getElementById('cv-proves-body').innerHTML=html;
+}
+function tancarNovaProva(){var e=document.getElementById('pop-nova-prova');if(e)e.remove();}
+function novaProva(){
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-nova-prova';
+  var today=new Date();
+  var dd=('0'+today.getDate()).slice(-2); var mm=('0'+(today.getMonth()+1)).slice(-2); var yy=today.getFullYear();
+  var iso=yy+'-'+mm+'-'+dd;
+  var hh=('0'+today.getHours()).slice(-2); var min=today.getMinutes()<30?'00':'30';
+  overlay.innerHTML='<div class="popup" style="width:400px;">'
+    +'<div class="popup-head">'+pv('nova')+'</div>'
+    +'<div class="fg"><label class="flbl">Nom</label><input class="input" id="nova-prova-nom" placeholder="'+pv('placeholderNom')+'"></div>'
+    +'<div class="g2" style="gap:8px;">'
+      +'<div class="fg"><label class="flbl">Dia</label><input class="input" type="date" id="nova-prova-dia" value="'+iso+'"></div>'
+      +'<div class="fg"><label class="flbl">Hora</label><input class="input" type="time" id="nova-prova-hora" step="1800" value="'+hh+':'+min+'"></div>'
+    +'</div>'
+    +'<div class="fg"><label class="flbl">'+pv('comp')+'</label>'
+      +'<div class="subj-chips" id="nova-prova-comps">'
+        +competencies.map(function(c){return '<button type="button" class="subj-chip" data-cid="'+c.id+'" onclick="toggleProvaCompChip(this)">'+escHtml(c.nom)+'</button>';}).join('')
+      +'</div>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-clay" style="flex:1;" onclick="crearProva()">'+pv('crear')+'</button>'
+      +'<button class="btn btn-ghost" onclick="tancarNovaProva()">'+pv('cancelar')+'</button>'
+    +'</div></div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+  setTimeout(function(){var inp=document.getElementById('nova-prova-nom');if(inp)inp.focus();},60);
+}
+function toggleProvaCompChip(btn){
+  var sel=document.querySelectorAll('#nova-prova-comps .subj-chip.sel');
+  if(!btn.classList.contains('sel') && sel.length>=3){ toast('Màxim 3 competències'); return; }
+  btn.classList.toggle('sel');
+}
+function crearProva(){
+  var nomInp=document.getElementById('nova-prova-nom');
+  var diaInp=document.getElementById('nova-prova-dia');
+  var horaInp=document.getElementById('nova-prova-hora');
+  var nom=nomInp?nomInp.value.trim():''; if(!nom){toast('Escriu el nom');return;}
+  var dia=diaInp?diaInp.value.trim():''; if(!dia){toast('Selecciona el dia');return;}
+  var hora=horaInp?horaInp.value.trim():'';
+  if(hora && !/^([01]\d|2[0-3]):(00|30)$/.test(hora)){toast('L\'hora ha de ser en franges de :00 o :30');return;}
+  var compIds=Array.from(document.querySelectorAll('#nova-prova-comps .subj-chip.sel')).map(function(el){return el.dataset.cid;});
+  if(compIds.length<2){toast('Selecciona almenys 2 competències');return;}
+  if(compIds.length>3){toast('Màxim 3 competències');return;}
+  var data=dia.split('-').reverse().join('/')+(hora?' · '+hora:'');
+  var ov=document.getElementById('pop-nova-prova'); if(ov) ov.remove();
+  crearActivitatsProva('pv_'+Date.now(),compIds,nom,dia,hora,data);
+}
+function crearActivitatsProva(groupId,compIds,nom,dia,hora,data){
+  var mc2=mesCursos[estat.cursIdx];
+  var trim=trimestres[estat.trimIdx];
+  var sb=window.__QUADERN_SUPABASE__;
+  var assignaturaId=mc2&&mc2.assignsIds&&mc2.assignsIds[estat.subjIdx];
+  var afegirLocal=function(compId,id,dbId){
+    var act={id:id,dbId:dbId,nom:nom,data:data,dataISO:dia,hora:hora,notes:{},altres:{},notaAltres:{},provaGroupId:groupId};
+    alumnes.forEach(function(al){act.notes[al.ini]={};act.altres[al.ini]='';act.notaAltres[al.ini]=null;});
+    var k=getKey(compId); if(!activitats[k]) activitats[k]=[];
+    activitats[k].push(act);
+  };
+  var tasks=compIds.map(function(compId){
+    if(sb&&mc2&&mc2.id&&assignaturaId){
+      return dbCrearActivitat(mc2.id,assignaturaId,compId,trim,nom,dia,hora,groupId).then(function(res){
+        if(res.error){ toast('Error creant la prova: '+res.error.message); return; }
+        afegirLocal(compId,res.data.id,res.data.id);
+      });
+    }
+    afegirLocal(compId,compId+'_'+groupId);
+    return Promise.resolve();
+  });
+  Promise.all(tasks).then(function(){
+    calEvents.push({
+      id:'ev_'+groupId, titol:nom+(mc2?' ('+mc2.assigns[estat.subjIdx]+')':''),
+      data:dia, dataFi:dia, hora:hora, tipus:'activitat', source:'auto',
+      curs:mc2?mc2.curs:'', assignatura:mc2?mc2.assigns[estat.subjIdx]:''
+    });
+    sincronitzarActivitatAProgramacio(groupId,nom,dia,hora,mc2);
+    guardarDades();
+    toast('"'+nom+'" creada ✓');
+    obrirProves();
+    setTimeout(function(){openProvaGraella(groupId);},60);
+  });
+}
+function openProvaGraella(groupId){
+  var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
+  _currentProvaGroupId=groupId;
+  document.getElementById('cv-proves').style.display='none';
+  document.getElementById('cv-prova-graella').style.display='block';
+  document.getElementById('cv-pg-title').textContent=g.nom;
+  document.getElementById('cv-pg-data').textContent=g.data;
+  document.getElementById('cv-pg-hint').textContent=pv('hintGraella');
+  document.getElementById('cv-pg-del-btn').textContent=pv('eliminar');
+  var addBtn=document.getElementById('cv-pg-add-comp');
+  addBtn.textContent=pv('afegirComp');
+  addBtn.style.display = g.comps.length<3 ? 'inline-flex' : 'none';
+
+  var thead='<thead><tr style="background:var(--paper);">'
+    +'<th class="sticky" style="min-width:150px;background:var(--paper);">Alumne</th>'
+    +g.comps.map(function(x){
+      return '<th style="min-width:130px;text-align:center;padding:9px 8px;white-space:normal;line-height:1.4;">'
+        +'<span style="font-size:11px;color:var(--ink2);font-weight:700;">'+escHtml(x.comp.nom)+'</span></th>';
+    }).join('')
+    +'</tr></thead>';
+
+  var tbody='<tbody>'+alumnes.map(function(al){
+    return '<tr>'
+      +'<td class="sticky" style="padding:7px 12px;"><div style="display:flex;align-items:center;gap:7px;">'+ava(al,26,10)+'<span style="font-weight:600;font-size:13.5px;">'+escHtml(al.nom)+'</span></div></td>'
+      +g.comps.map(function(x){
+        var v=notaMitjana(x.act,x.comp,al.ini);
+        var id='pi_'+al.ini+'_'+x.comp.id;
+        return '<td style="text-align:center;padding:5px 6px;">'
+          +'<input type="number" id="'+id+'" class="nota-input '+(v!==null?notaClass(v):'')+'" value="'+(v!==null?v:'')+'" placeholder="—" min="0" max="10" step="0.1"'
+          +' data-ini="'+al.ini+'" data-compid="'+x.comp.id+'" data-groupid="'+groupId+'"'
+          +' onfocus="this.select()" onblur="saveNotaProva(this)">'
+          +'</td>';
+      }).join('')
+    +'</tr>';
+  }).join('')+'</tbody>';
+
+  document.getElementById('cv-pg-table').innerHTML=thead+tbody;
+}
+function saveNotaProva(inp){
+  var val=parseFloat(inp.value.toString().replace(',','.'));
+  var ini=inp.dataset.ini; var compId=inp.dataset.compid; var groupId=inp.dataset.groupid;
+  var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
+  var act=getActs(compId).find(function(a){return a.provaGroupId===groupId;}); if(!act) return;
+  if(isNaN(val)||inp.value===''){
+    if(act.notes[ini]) comp.criteris.forEach(function(crit){ delete act.notes[ini][crit]; });
+    inp.value=''; inp.className='nota-input';
+    guardarDades(); sincronitzarNotesActivitat(act);
+    return;
+  }
+  val=Math.max(0,Math.min(10,Math.round(val*10)/10)); inp.value=val;
+  if(!act.notes[ini]) act.notes[ini]={};
+  comp.criteris.forEach(function(crit){ act.notes[ini][crit]=val; });
+  inp.className='nota-input '+notaClass(val);
+  guardarDades();
+  sincronitzarNotesActivitat(act);
+}
+function obrirAfegirCompProva(){
+  var groupId=_currentProvaGroupId;
+  var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
+  if(g.comps.length>=3){ toast('Màxim 3 competències per prova'); return; }
+  var usats=g.comps.map(function(x){return x.comp.id;});
+  var opcions=competencies.filter(function(c){return usats.indexOf(c.id)===-1;});
+  if(!opcions.length){ toast('No hi ha més competències disponibles'); return; }
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-afegir-comp-prova';
+  overlay.innerHTML='<div class="popup" style="width:380px;">'
+    +'<div class="popup-head">'+pv('afegirCompTitle')+'</div>'
+    +'<div class="fg"><label class="flbl">Competència</label>'
+      +'<select class="input" id="afegir-comp-prova-sel">'
+        +opcions.map(function(c){return '<option value="'+c.id+'">'+escHtml(c.nom)+'</option>';}).join('')
+      +'</select>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-clay" style="flex:1;" onclick="afegirCompAProva()">'+pv('afegir')+'</button>'
+      +'<button class="btn btn-ghost" onclick="tancarAfegirCompProva()">'+pv('cancelar')+'</button>'
+    +'</div></div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
+function tancarAfegirCompProva(){var e=document.getElementById('pop-afegir-comp-prova');if(e)e.remove();}
+function afegirCompAProva(){
+  var groupId=_currentProvaGroupId;
+  var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
+  var compId=document.getElementById('afegir-comp-prova-sel').value;
+  var ov=document.getElementById('pop-afegir-comp-prova'); if(ov) ov.remove();
+  var mc2=mesCursos[estat.cursIdx]; var trim=trimestres[estat.trimIdx]; var sb=window.__QUADERN_SUPABASE__;
+  var assignaturaId=mc2&&mc2.assignsIds&&mc2.assignsIds[estat.subjIdx];
+  var afegirLocal=function(id,dbId){
+    var act={id:id,dbId:dbId,nom:g.nom,data:g.data,dataISO:g.dataISO,hora:g.hora,notes:{},altres:{},notaAltres:{},provaGroupId:groupId};
+    alumnes.forEach(function(al){act.notes[al.ini]={};act.altres[al.ini]='';act.notaAltres[al.ini]=null;});
+    var k=getKey(compId); if(!activitats[k]) activitats[k]=[];
+    activitats[k].push(act);
+    guardarDades();
+    toast('Competència afegida ✓');
+    openProvaGraella(groupId);
+  };
+  if(sb&&mc2&&mc2.id&&assignaturaId){
+    dbCrearActivitat(mc2.id,assignaturaId,compId,trim,g.nom,g.dataISO,g.hora,groupId).then(function(res){
+      if(res.error){ toast('Error afegint: '+res.error.message); return; }
+      afegirLocal(res.data.id,res.data.id);
+    });
+  }else{
+    afegirLocal(compId+'_'+groupId);
+  }
+}
+function confirmarEliminarProva(){
+  var groupId=_currentProvaGroupId;
+  var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-del-prova';
+  overlay.innerHTML='<div class="popup" style="width:380px;">'
+    +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
+    +'<div class="popup-head" style="text-align:center;">'+pv('eliminarTitle')+'</div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">'+pv('eliminaras')+': <b>'+escHtml(g.nom)+'</b></div>'
+    +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">'+pv('perdran')+' ('+escHtml(g.comps.map(function(x){return x.comp.nom;}).join(', '))+').</div>'
+    +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarProvaConfirmat()">'+pv('siEliminar')+'</button>'
+      +'<button class="btn" style="flex:1;" onclick="tancarDelProva()">'+pv('cancelar')+'</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+  document.body.appendChild(overlay);
+}
+function tancarDelProva(){ var e=document.getElementById('pop-del-prova'); if(e) e.remove(); }
+function eliminarProvaConfirmat(){
+  var groupId=_currentProvaGroupId;
+  var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
+  var sb=window.__QUADERN_SUPABASE__;
+  var tasks=g.comps.map(function(x){
+    var acts=getActs(x.comp.id);
+    var idx=acts.findIndex(function(a){return a.provaGroupId===groupId;});
+    if(idx===-1) return Promise.resolve();
+    var act=acts[idx];
+    acts.splice(idx,1);
+    if(sb&&act.dbId) return dbEliminarActivitat(act.dbId).catch(function(err){ console.warn('[Arrel]',err.message); });
+    return Promise.resolve();
+  });
+  Promise.all(tasks).then(function(){
+    tancarDelProva();
+    guardarDades();
+    toast('Prova eliminada');
+    obrirProves();
+  });
 }
 
 function saveNota(inp){
