@@ -199,3 +199,24 @@ alter table cursos add column if not exists promocio integer;
 -- juntes. La nota que hi posa el professor es la mateixa per a tots els
 -- criteris de cada competencia (no hi ha rubrica propia per a "Prova").
 alter table activitats add column if not exists grup_prova_id text;
+
+-- ─── Límit d'informes amb IA per any escolar ───
+-- Cada fila es una crida a la IA que ha tingut exit en generar un informe
+-- (curt o llarg). Es compta quantes files te el professor per l'any escolar
+-- actual per aplicar el limit de 4/any (tots els cursos junts) — un registre
+-- en lloc d'un simple comptador perque queda auditable i no es pot desquadrar
+-- per crides simultanies.
+create table if not exists informes_generats (
+  id uuid primary key default gen_random_uuid(),
+  professor_id uuid not null references auth.users(id) on delete cascade,
+  any_escolar text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table informes_generats enable row level security;
+
+drop policy if exists "El professor nomes veu i crea els seus propis informes" on informes_generats;
+create policy "El professor nomes veu i crea els seus propis informes"
+  on informes_generats for all
+  using (professor_id = auth.uid())
+  with check (professor_id = auth.uid());

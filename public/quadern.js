@@ -1,12 +1,12 @@
 // ═══════════════ DADES ═══════════════
 var prof = {nom:'Anna Garcia', centre:'Escola Montserrat', any:'2025-2026'};
 var cursosList = ['1r A','1r B','2n A','2n B','3r A','3r B','4t A','4t B','5e A','5e B','6e A','6e B'];
-var assignaturesList = ['Catala','Castella','Angles','Matematiques','Medi','Musica','Ed. Fisica','Arts','Valors','Competencies transversals'];
+var assignaturesList = ['Català','Castellà','Anglès','Matemàtiques','Medi','Música','Ed. Física','Arts','Valors','Competències transversals'];
 var trimestres = ['1r Trimestre','2n Trimestre','3r Trimestre'];
 
 var mesCursos = [
-  {curs:'3r A', assigns:['Catala','Castella','Angles']},
-  {curs:'4t B', assigns:['Catala','Matematiques']}
+  {curs:'3r A', assigns:['Català','Castellà','Anglès']},
+  {curs:'4t B', assigns:['Català','Matemàtiques']}
 ];
 var estat = {cursIdx:0, trimIdx:0, subjIdx:0};
 
@@ -360,13 +360,13 @@ function getActsFor(cursNom,trimNom,subjNom,compId){ var k=cursNom+'_'+trimNom+'
 function seedDemo(){
   var nivells = {'MR':8.5,'SV':7.2,'LE':6.1,'JP':7.8,'AO':4.3,'MF':9.0,'PL':6.8,'NC':7.5,'JB':5.2,'AT':8.1,'RT':6.4,'IC':7.9};
   var defActs = {
-    'Catala':['Comprensio oral - Conte','Redaccio - La familia','Dictat setmana 8','Exposicio oral'],
+    'Catala':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
     'Castella':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
     'Angles':['Oral presentation','Writing exercise','Reading comp.'],
-    'Matematiques':['Fraccions','Geometria','Calcul mental','Estadistica']
+    'Matematiques':['Fraccions','Geometria','Càlcul mental','Estadística']
   };
   var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
-  var missatgesDef = {'MR':"Excel.lent actitud.","SV":"Cal reforcar l'expressio oral.","LE":"Necessita mes suport.","JP":"Molt participatiu.","AO":"Pla de reforc actiu.","MF":"Alumna destacada.","PL":"Millora progressiva.","NC":"Bona actitud.","JB":"En millora.","AT":"Molt bona alumna.","RT":"Pot millorar.","IC":"Excel.lent en tot."};
+  var missatgesDef = {'MR':"Excel·lent actitud.","SV":"Cal reforçar l'expressió oral.","LE":"Necessita més suport.","JP":"Molt participatiu.","AO":"Pla de reforç actiu.","MF":"Alumna destacada.","PL":"Millora progressiva.","NC":"Bona actitud.","JB":"En millora.","AT":"Molt bona alumna.","RT":"Pot millorar.","IC":"Excel·lent en tot."};
   alumnes.forEach(function(al){ missatgesAlumnes[al.nom] = missatgesDef[al.ini]||''; });
 
   mesCursos.forEach(function(mc){
@@ -397,11 +397,11 @@ function seedDemo(){
 
   // Events de calendari demo
   calEvents = [
-    {id:'e1',titol:'Examen Catala T1',data:'2026-03-15',tipus:'examen'},
-    {id:'e2',titol:'Excursio museu',data:'2026-03-22',tipus:'excursio'},
-    {id:'e3',titol:'Reunio de pares',data:'2026-04-05',tipus:'reunio'},
+    {id:'e1',titol:'Examen Català T1',data:'2026-03-15',tipus:'examen'},
+    {id:'e2',titol:'Excursió museu',data:'2026-03-22',tipus:'excursio'},
+    {id:'e3',titol:'Reunió de pares',data:'2026-04-05',tipus:'reunio'},
     {id:'e4',titol:'Activitat lectura',data:'2026-04-10',tipus:'activitat'},
-    {id:'e5',titol:'Examen Matematiques',data:'2026-04-20',tipus:'examen'}
+    {id:'e5',titol:'Examen Matemàtiques',data:'2026-04-20',tipus:'examen'}
   ];
 }
 // Amb Supabase configurat, els cursos/alumnes/notes reals es carreguen a anarAPasPostAuth();
@@ -416,10 +416,10 @@ function generarNotesDemoPerCurs(mc, roster){
   // que poden no coincidir segons quants cognoms tingui el nom).
   var nivellsBase = [8.5,7.2,6.1,7.8,4.3,9.0,6.8,7.5,5.2,8.1,6.4,7.9];
   var defActs = {
-    'Catala':['Comprensio oral - Conte','Redaccio - La familia','Dictat setmana 8','Exposicio oral'],
+    'Catala':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
     'Castella':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
     'Angles':['Oral presentation','Writing exercise','Reading comp.'],
-    'Matematiques':['Fraccions','Geometria','Calcul mental','Estadistica']
+    'Matematiques':['Fraccions','Geometria','Càlcul mental','Estadística']
   };
   var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
   roster.forEach(function(al){ missatgesAlumnes[al.nom]=al.comentari||''; });
@@ -615,6 +615,18 @@ function dbCarregarPerfil(){
 function dbGuardarPerfil(nom,centre,anyEscolar){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('profiles').upsert({id:dbUid(),nom:nom,centre:centre,any_escolar:anyEscolar});
+}
+// Límit d'informes amb IA: 4 per any escolar, comptant tots els cursos junts.
+function dbComptarInformesGenerats(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve(0);
+  return sb.from('informes_generats').select('id',{count:'exact',head:true}).eq('professor_id',dbUid()).eq('any_escolar',prof.any||'').then(function(res){
+    if(res.error){ console.warn('[Arrel]',res.error.message); return 0; }
+    return res.count||0;
+  });
+}
+function dbRegistrarInformeGenerat(){
+  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
+  return sb.from('informes_generats').insert({professor_id:dbUid(),any_escolar:prof.any||''});
 }
 function trobarCompetencia(compId){
   var trobada=null;
@@ -887,7 +899,7 @@ function iniciarSessio(){
   var pass=(document.getElementById('login-pass').value||'').trim();
   if(!email||!pass){toast('Escriu el correu i la contrasenya');return;}
   sb.auth.signInWithPassword({email:email,password:pass}).then(function(res){
-    if(res.error){toast('Correu o contrasenya incorrectes');return;}
+    if(res.error){toast(res.error.message);return;}
     authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:(res.data.user.user_metadata&&res.data.user.user_metadata.nom)||''}};
     toast('Sessió iniciada ✓');
     anarAPasPostAuth();
@@ -1052,7 +1064,7 @@ function confirmarEliminarCurs(ci){
   overlay.innerHTML='<div class="popup" style="width:400px;">'
     +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
     +'<div class="popup-head" style="text-align:center;">Eliminar curs</div>'
-    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(mc.curs)+'</b></div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaràs: <b>'+escHtml(mc.curs)+'</b></div>'
     +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Es perdran totes les notes, activitats i events d\'aquest curs. Aquesta acció no es pot desfer.</div>'
     +'<div class="fg"><label class="flbl">Per confirmar, escriu el nom del curs: <b>'+escHtml(mc.curs)+'</b></label><input class="input" id="del-curs-confirm" oninput="checkDelCursInput(this)" autocomplete="off"></div>'
     +'<div style="display:flex;gap:8px;">'
@@ -1123,7 +1135,7 @@ function confirmarEliminarAssignatura(ci,si){
   overlay.innerHTML='<div class="popup" style="width:400px;">'
     +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
     +'<div class="popup-head" style="text-align:center;">Eliminar assignatura</div>'
-    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras <b>'+escHtml(subj)+'</b> de <b>'+escHtml(mc.curs)+'</b></div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaràs <b>'+escHtml(subj)+'</b> de <b>'+escHtml(mc.curs)+'</b></div>'
     +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Es perdran totes les notes i activitats d\'aquesta assignatura per a aquest curs. Aquesta acció no es pot desfer.</div>'
     +'<div class="fg"><label class="flbl">Per confirmar, escriu el nom de l\'assignatura: <b>'+escHtml(subj)+'</b></label><input class="input" id="del-assig-confirm" oninput="checkDelAssigInput(this)" autocomplete="off"></div>'
     +'<div style="display:flex;gap:8px;">'
@@ -2179,7 +2191,7 @@ function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
       if(cnt.error){ console.warn('[Arrel]',cnt.error.message); return; }
       if((cnt.count||0)>=2){ toast('Aquesta franja horària ja té 2 activitats/esdeveniments — no s\'ha afegit a Programació'); return; }
       sb.from('cal_events').insert({
-        professor_id:dbUid(), titol:nom, dia_setmana:dow, franja_hora:horaIdx,
+        professor_id:dbUid(), nota:nom, dia_setmana:dow, franja_hora:horaIdx,
         data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
       }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
     });
@@ -2199,7 +2211,7 @@ function obrirComentariAct(ini, actId, compId){
     +'<textarea class="input" id="comentari-act-text" rows="9" style="min-height:190px;line-height:1.55;" placeholder="Observacions, comportament, aspectes de millora...">'+escHtml(actual)+'</textarea>'
     +'<div style="display:flex;gap:8px;margin-top:10px;">'
       +'<button class="btn btn-clay" style="flex:1;" onclick="guardarComentariActBtn(this)" data-ini="'+ini+'" data-act="'+actId+'" data-comp="'+compId+'">Guardar</button>'
-      +'<button class="btn btn-ghost" onclick="tancarComentariAct()">Cancel</button>'
+      +'<button class="btn btn-ghost" onclick="tancarComentariAct()">Cancel·lar</button>'
     +'</div>'
   +'</div>';
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
@@ -2227,7 +2239,7 @@ function renderCal(){
     if(!reactFrame.getAttribute('src')) reactFrame.setAttribute('src','/programacio');
     return;
   }
-  var mesNoms=['Gener','Febrer','Marc','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
+  var mesNoms=['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
   document.getElementById('cal-mes-label').textContent=mesNoms[calMes]+' '+calAny;
   var d=new Date(calAny,calMes,1);
   var startDay=(d.getDay()+6)%7;
@@ -2288,7 +2300,7 @@ function obrirNouEventDia(dateStr){
 }
 function guardarEvent(){
   var titol=document.getElementById('ev-titol').value.trim();
-  if(!titol){toast('Escriu el titol');return;}
+  if(!titol){toast('Escriu el títol');return;}
   var dataInici=document.getElementById('ev-data').value;
   var dataFi=document.getElementById('ev-data-fi').value;
   if(!dataInici){toast('Cal la data');return;}
@@ -2621,7 +2633,7 @@ function confirmarEliminarCriteri(compId,ci){
   overlay.innerHTML='<div class="popup" style="width:380px;">'
     +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
     +'<div class="popup-head" style="text-align:center;">Eliminar criteri</div>'
-    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(nom)+'</b></div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaràs: <b>'+escHtml(nom)+'</b></div>'
     +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Un cop eliminat, aquest apartat de la rúbrica es perdrà per sempre i no es podrà recuperar.</div>'
     +'<div style="display:flex;gap:8px;">'
       +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarCriteri(\''+compId+'\','+ci+')">Sí, eliminar</button>'
@@ -2653,7 +2665,7 @@ function exportarJSON(){
     +'<div style="font-size:11px;color:var(--ink3);margin-bottom:12px;">Nom per al fitxer exportat.</div>'
     +'<div style="display:flex;gap:8px;">'
       +'<button class="btn btn-clay" style="flex:1;" onclick="exportarJSONConfirmar()">Exportar</button>'
-      +'<button class="btn btn-ghost" onclick="tancarJSONNom()">Cancel</button>'
+      +'<button class="btn btn-ghost" onclick="tancarJSONNom()">Cancel·lar</button>'
     +'</div>'
   +'</div>';
   overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
@@ -2730,7 +2742,7 @@ function exportarPDF(){
     win.addEventListener('load',function(){ win.print(); });
   }
   setTimeout(function(){URL.revokeObjectURL(url);},5000);
-  toast('Informe obert ✓ — al dialeg d\'impressio tria "Desar com a PDF"');
+  toast('Informe obert ✓ — al diàleg d\'impressió tria "Desar com a PDF"');
 }
 
 // Informe JSON
@@ -2788,6 +2800,7 @@ function obrirGenerarInforme(){
   var titolInp=document.getElementById('inf-titol'); if(titolInp) titolInp.value='';
   document.getElementById('inf-curs-body').style.display='none';
   infRenderFitxers();
+  actualitzarLimitInformesUI();
   showGatePas('g-informe');
 }
 function infSeleccionarCurs(){
@@ -2932,7 +2945,7 @@ function prepararDadesInforme(){
   // per ordre d'entrada (posicio 1,2,3...) dins la llista, no per nom ni codi,
   // aixi que nomes te sentit si tots venen de la mateixa llista de classe.
   var cursos=[]; jsonsFilt.forEach(function(j){ var c=j.dades.curs||''; if(cursos.indexOf(c)===-1) cursos.push(c); });
-  if(cursos.length>1){ toast('Els fitxers son de cursos diferents ('+cursos.join(', ')+'). Han de ser tots del mateix curs.'); return null; }
+  if(cursos.length>1){ toast('Els fitxers són de cursos diferents ('+cursos.join(', ')+'). Han de ser tots del mateix curs.'); return null; }
 
   var titolInforme=(document.getElementById('inf-titol')||{}).value.trim()||'Informe de notes consolidades';
   var etapaText=trimFilt||'Informe de tot el curs';
@@ -3050,6 +3063,40 @@ function generarComentarisIA(d, mode){
     .catch(function(err){ console.warn('[Arrel] Error generant comentaris IA:',err.message); return null; });
 }
 
+// Aplica el límit de 4 informes amb IA per any escolar (tots els cursos junts)
+// abans de trucar generarComentarisIA(). Si s'ha arribat al límit, no es crida
+// la IA (l'informe es genera igualment, sense comentaris). Si la crida té èxit,
+// es registra a informes_generats perquè compti pel límit.
+var LIMIT_INFORMES_IA=4;
+function generarComentarisIAAmbLimit(d, mode){
+  // En mode desenvolupament (npm run dev, mai en producció) el límit no
+  // s'aplica ni es registra — les proves del desenvolupador no han de
+  // gastar el límit real dels professors.
+  if(window.__QUADERN_DEV_MODE__) return generarComentarisIA(d, mode);
+  return dbComptarInformesGenerats().then(function(count){
+    if(count>=LIMIT_INFORMES_IA){
+      toast('Has arribat al límit de '+LIMIT_INFORMES_IA+' informes amb IA per aquest any escolar — l\'informe es generarà sense comentaris IA');
+      return null;
+    }
+    return generarComentarisIA(d, mode).then(function(comentarisIA){
+      if(comentarisIA) dbRegistrarInformeGenerat().then(actualitzarLimitInformesUI).catch(function(err){ console.warn('[Arrel]',err.message); });
+      return comentarisIA;
+    });
+  });
+}
+// Mostra a la pantalla "Generar informe" quants informes amb IA queden aquest
+// any escolar (o l'avís d'haver arribat al límit).
+function actualitzarLimitInformesUI(){
+  var el=document.getElementById('inf-limit-info'); if(!el) return;
+  if(window.__QUADERN_DEV_MODE__){ el.textContent='Mode desenvolupament: límit d\'informes IA desactivat.'; return; }
+  dbComptarInformesGenerats().then(function(count){
+    var restants=LIMIT_INFORMES_IA-count;
+    el.textContent=restants>0
+      ? 'Et queden '+restants+' de '+LIMIT_INFORMES_IA+' informes amb IA aquest curs escolar.'
+      : 'Has arribat al límit de '+LIMIT_INFORMES_IA+' informes amb IA aquest curs escolar — els informes es generaran sense comentaris.';
+  });
+}
+
 // Construeix l'HTML de l'informe a partir de les dades de prepararDadesInforme().
 // renderChart(labels,datasets,colors,W,H) genera el gràfic d'aranya — SVG per veure
 // l'informe al navegador, o una imatge PNG quan cal exportar a Word/Google Docs
@@ -3162,7 +3209,7 @@ function generarInforme(mode){
   var dades=prepararDadesInforme(); if(!dades) return;
   var btnId=mode==='llarg'?'inf-gen-llarg-btn':'inf-gen-curt-btn';
   ambBotoCarregant(btnId,'Generant comentaris IA…',function(){
-    return generarComentarisIA(dades, mode).then(function(comentarisIA){
+    return generarComentarisIAAmbLimit(dades, mode).then(function(comentarisIA){
       var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);
@@ -3187,7 +3234,7 @@ function chartImgPng(labels, datasets, colors, W, H){
 function exportarInformeDoc(){
   var dades=prepararDadesInforme(); if(!dades) return;
   ambBotoCarregant('inf-doc-btn','Generant comentaris IA…',function(){
-    return generarComentarisIA(dades,'curt').then(function(comentarisIA){
+    return generarComentarisIAAmbLimit(dades,'curt').then(function(comentarisIA){
       var cont=generarInformeHTML(dades, chartImgPng, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);
@@ -3203,7 +3250,7 @@ function exportarInformeDoc(){
 function exportarInformePdf(){
   var dades=prepararDadesInforme(); if(!dades) return;
   ambBotoCarregant('inf-pdf-btn','Generant comentaris IA…',function(){
-    return generarComentarisIA(dades,'curt').then(function(comentarisIA){
+    return generarComentarisIAAmbLimit(dades,'curt').then(function(comentarisIA){
       var cont=generarInformeHTML(dades, spiderSvg, comentarisIA);
       var blob=new Blob([cont],{type:'text/html'});
       var url=URL.createObjectURL(blob);
@@ -3287,7 +3334,7 @@ function confirmarEliminarActivitat(){
   overlay.innerHTML='<div class="popup" style="width:380px;">'
     +'<div style="font-size:32px;text-align:center;margin-bottom:10px;">⚠️</div>'
     +'<div class="popup-head" style="text-align:center;">Eliminar activitat</div>'
-    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaras: <b>'+escHtml(act.nom)+'</b></div>'
+    +'<div style="font-size:13px;color:var(--ink2);text-align:center;margin-bottom:10px;">Eliminaràs: <b>'+escHtml(act.nom)+'</b></div>'
     +'<div style="font-size:12.5px;color:var(--clay);background:var(--clay-l);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;text-align:center;line-height:1.6;">Es perdran totes les notes d\'aquesta activitat per a tots els alumnes. Aquesta acció no es pot desfer.</div>'
     +'<div style="display:flex;gap:8px;">'
       +'<button class="btn btn-danger" style="flex:1;background:var(--clay);color:#fff;border-color:var(--clay);" onclick="eliminarActivitatConfirmat()">Sí, eliminar</button>'

@@ -5,10 +5,11 @@ import "../programacio/programacio-calendari.css";
 import { createSupabaseClient } from "../lib/supabaseClient";
 
 const DIES = ["Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres"];
+const DIES_ABREUJATS = ["Dl", "Dm", "Dc", "Dj", "Dv"];
 const MESOS = [
   "gener",
   "febrer",
-  "marc",
+  "març",
   "abril",
   "maig",
   "juny",
@@ -84,7 +85,7 @@ const EVENTS_INICIALS = [
     hora: 0,
     curs: "3r A",
     tipus: "clay",
-    nota: 'Activitat: conte "El Petit Princep". Preguntes orals.',
+    nota: 'Activitat: conte "El Petit Príncep". Preguntes orals.',
   },
   {
     id: 2,
@@ -92,7 +93,7 @@ const EVENTS_INICIALS = [
     hora: 1,
     curs: "4t B",
     tipus: "clay",
-    nota: "Redaccio lliure. Minim 10 linies.",
+    nota: "Redacció lliure. Mínim 10 línies.",
   },
   {
     id: 3,
@@ -108,7 +109,7 @@ const EVENTS_INICIALS = [
     hora: 6,
     curs: "General",
     tipus: "honey",
-    nota: "Sala de professors. Tema: avaluacio T2.",
+    nota: "Sala de professors. Tema: avaluació T2.",
   },
   {
     id: 5,
@@ -124,7 +125,7 @@ const EVENTS_INICIALS = [
     hora: 1,
     curs: "3r A",
     tipus: "clay",
-    nota: "Pagina 45. Torn de 3 alumnes.",
+    nota: "Pàgina 45. Torn de 3 alumnes.",
   },
   {
     id: 7,
@@ -140,7 +141,7 @@ const EVENTS_INICIALS = [
     hora: 0,
     curs: "3r B",
     tipus: "clay",
-    nota: 'Presentacio: "El meu animal preferit"',
+    nota: 'Presentació: "El meu animal preferit"',
   },
   {
     id: 9,
@@ -148,7 +149,7 @@ const EVENTS_INICIALS = [
     hora: 1,
     curs: "4t B",
     tipus: "moss",
-    nota: "Recordar fotocopies! Pag. 66-80.",
+    nota: "Recordar fotocòpies! Pàg. 66-80.",
   },
   {
     id: 10,
@@ -156,7 +157,7 @@ const EVENTS_INICIALS = [
     hora: 3,
     curs: "General",
     tipus: "gray",
-    nota: "Guardia pati",
+    nota: "Guàrdia pati",
   },
   {
     id: 11,
@@ -188,7 +189,7 @@ const EVENTS_INICIALS = [
     hora: 0,
     curs: "3r B",
     tipus: "plum",
-    nota: "Ultim dia per entregar poema.",
+    nota: "Últim dia per entregar poema.",
   },
   {
     id: 15,
@@ -196,7 +197,7 @@ const EVENTS_INICIALS = [
     hora: 1,
     curs: "5e A",
     tipus: "moss",
-    nota: "Idem 4t A del dimarts.",
+    nota: "Ídem 4t A del dimarts.",
   },
   {
     id: 16,
@@ -265,6 +266,10 @@ export default function WeeklyCalendar() {
   const [nvHora, setNvHora] = useState(0);
   const [nvCurs, setNvCurs] = useState("3r A");
   const [nvNota, setNvNota] = useState("");
+  // false = nomes aquesta data concreta (per defecte — es el que s'espera en
+  // clicar un dia amb data visible a la graella). true = es repeteix cada
+  // setmana (horari fix), com abans.
+  const [nvRepetir, setNvRepetir] = useState(false);
 
   const avui = useMemo(() => new Date(), [nowTick]);
   const base = useMemo(() => startOfWeek(avui), [avui]);
@@ -319,7 +324,7 @@ export default function WeeklyCalendar() {
       { nom: "Desembre", m: 11, y: anyInici },
       { nom: "Gener", m: 0, y: anyFi },
       { nom: "Febrer", m: 1, y: anyFi },
-      { nom: "Marc", m: 2, y: anyFi },
+      { nom: "Març", m: 2, y: anyFi },
       { nom: "Abril", m: 3, y: anyFi },
       { nom: "Maig", m: 4, y: anyFi },
       { nom: "Juny", m: 5, y: anyFi },
@@ -423,6 +428,7 @@ export default function WeeklyCalendar() {
   const obrirNou = useCallback((dia = null, hora = null) => {
     setNvNota("");
     setNvCurs("3r A");
+    setNvRepetir(false);
     if (dia !== null) setNvDia(dia);
     if (hora !== null) setNvHora(hora);
     setShowNou(true);
@@ -436,7 +442,19 @@ export default function WeeklyCalendar() {
     }
     const dia = parseInt(String(nvDia), 10);
     const hora = parseInt(String(nvHora), 10);
-    const existents = events.filter((e) => e.dia === dia && e.hora === hora).length;
+    // Data concreta del dia triat dins la setmana que s'esta veient ara mateix
+    // — null nomes si l'event s'ha de repetir cada setmana (horari fix).
+    const diaData = diesSetmana[dia];
+    const dataISO = nvRepetir
+      ? null
+      : diaData.getFullYear() +
+        "-" +
+        String(diaData.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(diaData.getDate()).padStart(2, "0");
+    const existents = events.filter(
+      (e) => e.dia === dia && e.hora === hora && (!e.data || e.data === dataISO)
+    ).length;
     if (existents >= 2) {
       showToast("Aquesta franja horària ja té 2 activitats/esdeveniments — tria una altra hora");
       return;
@@ -448,6 +466,7 @@ export default function WeeklyCalendar() {
           professor_id: professorId,
           dia_setmana: dia,
           franja_hora: hora,
+          data: dataISO,
           curs_nom: nvCurs,
           tipus: "clay",
           origen: "manual",
@@ -470,6 +489,7 @@ export default function WeeklyCalendar() {
       id: nextId,
       dia,
       hora,
+      data: dataISO,
       curs: nvCurs,
       tipus: "clay",
       creatPelProfessor: true,
@@ -479,7 +499,7 @@ export default function WeeklyCalendar() {
     setNextId((x) => x + 1);
     setShowNou(false);
     showToast("Event afegit al calendari");
-  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, showToast, events]);
+  }, [supabase, professorId, nextId, nvCurs, nvDia, nvHora, nvNota, nvRepetir, showToast, events, diesSetmana]);
 
   const obrirDet = useCallback((ev) => {
     setEvSel(ev);
@@ -649,7 +669,7 @@ export default function WeeklyCalendar() {
                 d.getFullYear() === avui.getFullYear();
               return (
                 <div className={"dh" + (esAvui ? " dh-today" : "")} key={"dh" + di}>
-                  <div className="dh-name">{DIES[di].substring(0, 2).toUpperCase()}</div>
+                  <div className="dh-name">{DIES_ABREUJATS[di].toUpperCase()}</div>
                   <div className="dh-num">{d.getDate()}</div>
                 </div>
               );
@@ -722,11 +742,11 @@ export default function WeeklyCalendar() {
               <div>
                 <label className="flbl">Dia</label>
                 <select className="inp" value={nvDia} onChange={(e) => setNvDia(parseInt(e.target.value, 10))}>
-                  <option value={0}>Dilluns</option>
-                  <option value={1}>Dimarts</option>
-                  <option value={2}>Dimecres</option>
-                  <option value={3}>Dijous</option>
-                  <option value={4}>Divendres</option>
+                  {DIES.map((nom, i) => (
+                    <option key={i} value={i}>
+                      {nom} {diesSetmana[i].getDate()}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -753,6 +773,16 @@ export default function WeeklyCalendar() {
             <div className="fg">
               <label className="flbl">Comentari</label>
               <textarea className="inp" rows={2} value={nvNota} onChange={(e) => setNvNota(e.target.value)} placeholder="Dictat, examen, pàgina del llibre, instruccions..." />
+            </div>
+            <div className="fg">
+              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={nvRepetir}
+                  onChange={(e) => setNvRepetir(e.target.checked)}
+                />
+                Repetir cada setmana (si no, nomes surt el {DIES[nvDia]} {diesSetmana[nvDia].getDate()})
+              </label>
             </div>
             <div className="spg-actions">
               <button className="btn btn-clay spg-grow" onClick={guardarEv}>
