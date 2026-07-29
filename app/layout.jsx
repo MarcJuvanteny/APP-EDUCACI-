@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Arrel — Avaluacio de l'alumnat",
-  description: "Aplicacio educativa feta amb Next.js i React",
+  title: "Arrel — Avaluació de l'alumnat",
+  description: "Aplicació educativa feta amb Next.js i React",
 };
 
 export default function RootLayout({ children }) {

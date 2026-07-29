@@ -37,6 +37,10 @@ export default function QuadernPrototype({ initialScreen }) {
       window.__QUADERN_ROUTE_MODE__ = true;
       window.__QUADERN_ROUTE_MAP__ = ROUTE_MAP;
       window.__QUADERN_SUPABASE__ = createSupabaseClient();
+      // Nomes true en "npm run dev" / build de desenvolupament — mai en el
+      // desplegament de producció — perquè el límit d'informes IA no molesti
+      // durant les proves pero es respecti sempre pels usuaris reals.
+      window.__QUADERN_DEV_MODE__ = process.env.NODE_ENV !== "production";
 
       const hasFonts = document.querySelector(
         'link[data-quadern-fonts="1"]'
@@ -71,6 +75,7 @@ export default function QuadernPrototype({ initialScreen }) {
       delete window.__QUADERN_ROUTE_MODE__;
       delete window.__QUADERN_ROUTE_MAP__;
       delete window.__QUADERN_SUPABASE__;
+      delete window.__QUADERN_DEV_MODE__;
       if (injectedScript && injectedScript.parentNode) {
         injectedScript.parentNode.removeChild(injectedScript);
       }

@@ -1,0 +1,142 @@
+{
+  ".vscode/settings.json": {
+    "mtime": 1785314006.0594404,
+    "ast_hash": "47436785c5f3c339da09d93b6dedae84",
+    "semantic_hash": "47436785c5f3c339da09d93b6dedae84"
+  },
+  "app/_components/quadern-prototype.jsx": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "69d298251f7950be7f3466e979bfcaed",
+    "semantic_hash": "69d298251f7950be7f3466e979bfcaed"
+  },
+  "app/_components/weekly-calendar.jsx": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "848f51d254db55b00011b69eff610ded",
+    "semantic_hash": "848f51d254db55b00011b69eff610ded"
+  },
+  "app/api/generar-comentaris/route.js": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "b73e5c1e6955ccf88b769fe4cabfbca6",
+    "semantic_hash": "b73e5c1e6955ccf88b769fe4cabfbca6"
+  },
+  "app/competencies/page.jsx": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "d781315d8379b89994063cadda4b9afa",
+    "semantic_hash": "d781315d8379b89994063cadda4b9afa"
+  },
+  "app/configuracio/page.jsx": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "6322cb3338f78e5e0638d4042c493ff8",
+    "semantic_hash": "6322cb3338f78e5e0638d4042c493ff8"
+  },
+  "app/inici/page.jsx": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "9e407bdcefccf753cc4eac6c7f19ae6b",
+    "semantic_hash": "9e407bdcefccf753cc4eac6c7f19ae6b"
+  },
+  "app/layout.jsx": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "7e170dae735e88030d0a53cfeaf39d57",
+    "semantic_hash": "7e170dae735e88030d0a53cfeaf39d57"
+  },
+  "app/lib/supabaseClient.js": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "ce8e661c3908d7625b87fc2222bf0526",
+    "semantic_hash": "ce8e661c3908d7625b87fc2222bf0526"
+  },
+  "app/nova-activitat/page.jsx": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "8d99bbfa21f5666ffdae490dd9e30a77",
+    "semantic_hash": "8d99bbfa21f5666ffdae490dd9e30a77"
+  },
+  "app/page.jsx": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "d6207187c92ecd2eb34889753e5ba93d",
+    "semantic_hash": "d6207187c92ecd2eb34889753e5ba93d"
+  },
+  "app/programacio/page.jsx": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "3355c2a1c49f88f45f948525f8f5540b",
+    "semantic_hash": "3355c2a1c49f88f45f948525f8f5540b"
+  },
+  "app/recuperar-contrasenya/page.jsx": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "588f2b9624f11526139553308d5d88c7",
+    "semantic_hash": "588f2b9624f11526139553308d5d88c7"
+  },
+  "eslint.config.mjs": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "0bfaf43288aa7d7124626cfc0308be38",
+    "semantic_hash": "0bfaf43288aa7d7124626cfc0308be38"
+  },
+  "next.config.mjs": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "21958f5752add43cc47ab0ff5172cd46",
+    "semantic_hash": "21958f5752add43cc47ab0ff5172cd46"
+  },
+  "package.json": {
+    "mtime": 1785314006.0624404,
+    "ast_hash": "208acf3b39e06df5848be6f29bc8b8ec",
+    "semantic_hash": "208acf3b39e06df5848be6f29bc8b8ec"
+  },
+  "public/demo-informe/3rA_EducacioFisica_2nTrimestre.json": {
+    "mtime": 1785314006.0624404,
+    "ast_hash": "a7a9f41672b86eac17d8dea76c58a396",
+    "semantic_hash": "a7a9f41672b86eac17d8dea76c58a396"
+  },
+  "public/demo-informe/3rA_Matematiques_2nTrimestre.json": {
+    "mtime": 1785314006.0624404,
+    "ast_hash": "0965065b2c3eea4d69769f8ef2651b57",
+    "semantic_hash": "0965065b2c3eea4d69769f8ef2651b57"
+  },
+  "public/quadern.js": {
+    "mtime": 1785314006.0634403,
+    "ast_hash": "67cdef18398626931e4569a2e58187ca",
+    "semantic_hash": "67cdef18398626931e4569a2e58187ca"
+  },
+  "scripts/backup-supabase.sh": {
+    "mtime": 1785314006.0634403,
+    "ast_hash": "9439761ecf70775ae4aaa5ca095cad35",
+    "semantic_hash": "9439761ecf70775ae4aaa5ca095cad35"
+  },
+  "supabase/schema.sql": {
+    "mtime": 1785314006.0634403,
+    "ast_hash": "f853613de79aa2b0390bd2c134080e98",
+    "semantic_hash": "f853613de79aa2b0390bd2c134080e98"
+  },
+  "ESTRUCTURA_PROJECTE.md": {
+    "mtime": 1785314006.0594404,
+    "ast_hash": "9349e78832f4f178354db8666da4f2ba",
+    "semantic_hash": "9349e78832f4f178354db8666da4f2ba"
+  },
+  "README.md": {
+    "mtime": 1785314006.0594404,
+    "ast_hash": "fe578cc3baac691e39b2124f9c7bc0e7",
+    "semantic_hash": "fe578cc3baac691e39b2124f9c7bc0e7"
+  },
+  "actualizaciones_de_app.md": {
+    "mtime": 1785314006.0594404,
+    "ast_hash": "de86605261ea74a3315c3aace6d7d36e",
+    "semantic_hash": "de86605261ea74a3315c3aace6d7d36e"
+  },
+  "app/docs/Brand.md": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "4ee85958013929c5db9f1fd24a4fdb30",
+    "semantic_hash": "4ee85958013929c5db9f1fd24a4fdb30"
+  },
+  "app/docs/Competencies.md": {
+    "mtime": 1785314006.0604403,
+    "ast_hash": "c4b045c30a3be1fa92aaea46e3c07302",
+    "semantic_hash": "c4b045c30a3be1fa92aaea46e3c07302"
+  },
+  "informe_estructura.md": {
+    "mtime": 1785314006.0614405,
+    "ast_hash": "3fa13261ca97ba77aacbe86a3b07c7be",
+    "semantic_hash": "3fa13261ca97ba77aacbe86a3b07c7be"
+  },
+  "public/quadern.html": {
+    "mtime": 1785314006.0634403,
+    "ast_hash": "b1456640424b51b172742a5033935f4a",
+    "semantic_hash": "b1456640424b51b172742a5033935f4a"
+  }
+}
