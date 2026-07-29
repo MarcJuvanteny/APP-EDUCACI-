@@ -360,10 +360,10 @@ function getActsFor(cursNom,trimNom,subjNom,compId){ var k=cursNom+'_'+trimNom+'
 function seedDemo(){
   var nivells = {'MR':8.5,'SV':7.2,'LE':6.1,'JP':7.8,'AO':4.3,'MF':9.0,'PL':6.8,'NC':7.5,'JB':5.2,'AT':8.1,'RT':6.4,'IC':7.9};
   var defActs = {
-    'Catala':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
-    'Castella':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
-    'Angles':['Oral presentation','Writing exercise','Reading comp.'],
-    'Matematiques':['Fraccions','Geometria','Càlcul mental','Estadística']
+    'Català':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
+    'Castellà':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
+    'Anglès':['Oral presentation','Writing exercise','Reading comp.'],
+    'Matemàtiques':['Fraccions','Geometria','Càlcul mental','Estadística']
   };
   var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
   var missatgesDef = {'MR':"Excel·lent actitud.","SV":"Cal reforçar l'expressió oral.","LE":"Necessita més suport.","JP":"Molt participatiu.","AO":"Pla de reforç actiu.","MF":"Alumna destacada.","PL":"Millora progressiva.","NC":"Bona actitud.","JB":"En millora.","AT":"Molt bona alumna.","RT":"Pot millorar.","IC":"Excel·lent en tot."};
@@ -416,10 +416,10 @@ function generarNotesDemoPerCurs(mc, roster){
   // que poden no coincidir segons quants cognoms tingui el nom).
   var nivellsBase = [8.5,7.2,6.1,7.8,4.3,9.0,6.8,7.5,5.2,8.1,6.4,7.9];
   var defActs = {
-    'Catala':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
-    'Castella':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
-    'Angles':['Oral presentation','Writing exercise','Reading comp.'],
-    'Matematiques':['Fraccions','Geometria','Càlcul mental','Estadística']
+    'Català':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
+    'Castellà':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
+    'Anglès':['Oral presentation','Writing exercise','Reading comp.'],
+    'Matemàtiques':['Fraccions','Geometria','Càlcul mental','Estadística']
   };
   var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
   roster.forEach(function(al){ missatgesAlumnes[al.nom]=al.comentari||''; });
@@ -786,7 +786,7 @@ var DEMO_ALUMNES_MISSATGES=["Excel·lent actitud.","Cal reforçar l'expressió o
 // una plena (per veure com es fa servir) i una buida (tal com trobaria un curs nou de veritat).
 function dbSembrarDemo(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
-  return dbCrearCurs('3r A',['Catala','Castella','Angles']).then(function(curPle){
+  return dbCrearCurs('3r A',['Català','Castellà','Anglès']).then(function(curPle){
     var files=DEMO_ALUMNES_NOMS.map(function(nom,i){
       return {curs_id:curPle.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''};
     });
@@ -797,7 +797,7 @@ function dbSembrarDemo(){
       return generarNotesDemoPerCurs(curPle, roster);
     });
   }).then(function(){
-    return dbCrearCurs('4t B',['Catala','Matematiques']); // curs buit, sense alumnes ni notes
+    return dbCrearCurs('4t B',['Català','Matemàtiques']); // curs buit, sense alumnes ni notes
   });
 }
 // Igual que dbSembrarDemo, pero per a un curs que ja existeix i que resulta estar

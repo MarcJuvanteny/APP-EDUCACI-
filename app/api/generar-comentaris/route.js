@@ -1,5 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 
+// Evita que Vercel talli la funció abans que acabin totes les crides a
+// Claude en paral·lel (una per alumne) quan la classe és gran o el mode
+// és "llarg" — sense això el límit per defecte pot tallar la resposta.
+// 60s és el màxim permès al pla Hobby de Vercel; si el projecte és Pro
+// es pot pujar (fins a 300s) si calgués més marge.
+export const maxDuration = 60;
+
 const MODEL = "claude-haiku-4-5";
 
 function client() {
