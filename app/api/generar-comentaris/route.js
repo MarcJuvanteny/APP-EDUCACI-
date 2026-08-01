@@ -17,8 +17,15 @@ export const maxDuration = 60;
 
 const MODEL = "claude-haiku-4-5";
 
+// L'SDK d'Anthropic ja reintenta automàticament (amb backoff, respectant
+// Retry-After) els 429 i errors transitoris — per defecte 2 cops. Ho pugem a
+// 3 perquè aquest endpoint dispara moltes crides en paral·lel per petició
+// (una per alumne), així que si hi ha un pic de 2-3 professors alhora és més
+// probable que totes toquin el límit de l'API a la vegada. No el pugem més
+// perquè cada reintent suma temps i el pla Hobby de Vercel talla als 60s
+// (maxDuration, més amunt).
 function client() {
-  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 }
 
 // ── System prompt ──────────────────────────────────────────────────────────
@@ -441,12 +448,24 @@ export async function POST(req) {
     }
   });
 
-  if (errors === alumnes.length && comentariClasseResult.status === "rejected") {
+  // Tot o res: si falla encara que sigui un sol comentari (d'un alumne o el
+  // de classe), es descarta TOTA la resposta en lloc de lliurar un informe
+  // a mitges — el professor prefereix que l'informe surti sense cap
+  // comentari IA (i pugui tornar-ho a provar) abans que descobrir més tard,
+  // llegint-lo, que a un parell d'alumnes els falta comentari sense avís.
+  if (errors > 0 || comentariClasseResult.status === "rejected") {
+    console.warn(
+      "[generar-comentaris] Generació parcial (" +
+        errors +
+        " alumne(s) i comentari de classe " +
+        (comentariClasseResult.status === "rejected" ? "fallat" : "ok") +
+        ") — es descarta tota la resposta perquè no surti un informe a mitges."
+    );
     return Response.json(
-      { error: "Error generant els comentaris amb IA" },
+      { error: "No s'han pogut generar tots els comentaris amb IA" },
       { status: 502 }
     );
   }
 
-  return Response.json({ comentariClasse, comentaris, errors });
+  return Response.json({ comentariClasse, comentaris });
 }

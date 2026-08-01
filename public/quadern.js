@@ -3087,15 +3087,22 @@ function generarComentarisIA(d, mode){
   })
     .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
     .then(function(json){
+      // El servidor nomes retorna 200 si TOTS els comentaris (classe + cada
+      // alumne) s'han generat be — si algun ha fallat, respon amb error i
+      // aqui es tracta igual que qualsevol altre fallo (vegeu .catch): es
+      // prefereix cap comentari IA abans que un informe a mitges.
       var comentaris={};
       d.ordres.forEach(function(uid){
         var numero=d.alumnesMap[uid].ordre;
         comentaris[uid]=(json.comentaris||{})[String(numero)]||'';
       });
-      if(json.errors){ toast(json.errors+' comentari(s) d\'alumne no s\'han pogut generar — completa\'ls a mà a l\'informe'); }
       return {comentariClasse:json.comentariClasse||'',comentaris:comentaris};
     })
-    .catch(function(err){ console.warn('[Arrel] Error generant comentaris IA:',err.message); return null; });
+    .catch(function(err){
+      console.warn('[Arrel] Error generant comentaris IA:',err.message);
+      toast('No s\'han pogut generar els comentaris amb IA — l\'informe es generarà sense ells. Torna-ho a provar en uns minuts.');
+      return null;
+    });
 }
 
 // Aplica el límit de 4 informes amb IA per any escolar (tots els cursos junts)

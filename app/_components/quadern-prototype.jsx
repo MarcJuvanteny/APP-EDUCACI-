@@ -10,6 +10,14 @@ const ROUTE_MAP = {
   config: "/configuracio",
 };
 
+// Versió dels fitxers estàtics del "quadern" — puja aquest número cada cop
+// que es desplegui un canvi a public/quadern.{html,css,js}. Així el navegador
+// pot fer servir la seva caché normal (cada usuari no torna a descarregar
+// aquests fitxers sencers a cada pantalla, important amb molts usuaris a la
+// vegada) i només demana la versió nova quan aquest número canvia — en lloc
+// de desactivar la caché sempre amb "cache: no-store".
+const QUADERN_ASSET_VERSION = "2026-08-01.1";
+
 export default function QuadernPrototype({ initialScreen }) {
   const containerRef = useRef(null);
 
@@ -20,9 +28,9 @@ export default function QuadernPrototype({ initialScreen }) {
 
     async function loadPrototype() {
       const [htmlRes, cssRes, jsRes] = await Promise.all([
-        fetch("/quadern.html", { cache: "no-store" }),
-        fetch("/quadern.css", { cache: "no-store" }),
-        fetch("/quadern.js", { cache: "no-store" }),
+        fetch(`/quadern.html?v=${QUADERN_ASSET_VERSION}`),
+        fetch(`/quadern.css?v=${QUADERN_ASSET_VERSION}`),
+        fetch(`/quadern.js?v=${QUADERN_ASSET_VERSION}`),
       ]);
 
       const [html, css, js] = await Promise.all([
