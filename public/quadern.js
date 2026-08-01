@@ -1764,20 +1764,20 @@ var _currentProvaGroupId='';
 // activa (Angles->Exam, Castella->Prueba, la resta->Prova en catala).
 var PROVA_I18N = {
   ca:{mot:'Prova',nova:'Nova prova',sense:'Sense proves.',crearNe:'Crear-ne una',crear:'Crear',cancelar:'Cancel·lar',
-    comp:'Competències (selecciona 2 o 3)',afegirComp:'+ Afegir competència',eliminar:'Eliminar prova',
-    hintLlista:'Una prova reparteix una nota a 2 o 3 competències alhora — no compta com a competència pròpia.',
+    comp:'Competències (selecciona 2 o més)',afegirComp:'+ Afegir competència',eliminar:'Eliminar prova',
+    hintLlista:'Una prova reparteix una nota a diverses competències alhora — no compta com a competència pròpia.',
     hintGraella:'Posa una nota global per competència — s\'aplicarà a tots els seus criteris d\'avaluació.',
     eliminarTitle:'Eliminar prova',eliminaras:'Eliminaràs',perdran:'Es perdran totes les notes d\'aquesta prova a totes les competències implicades',
     siEliminar:'Sí, eliminar',afegirCompTitle:'Afegir competència a la prova',afegir:'Afegir',placeholderNom:'Ex: Examen trimestral...'},
   en:{mot:'Exam',nova:'New exam',sense:'No exams yet.',crearNe:'Create one',crear:'Create',cancelar:'Cancel',
-    comp:'Competencies (select 2 or 3)',afegirComp:'+ Add competency',eliminar:'Delete exam',
-    hintLlista:'An exam gives one grade to 2 or 3 competencies at once — it never counts as its own competency.',
+    comp:'Competencies (select 2 or more)',afegirComp:'+ Add competency',eliminar:'Delete exam',
+    hintLlista:'An exam gives one grade to several competencies at once — it never counts as its own competency.',
     hintGraella:'Enter one overall grade per competency — it will apply to all of its assessment criteria.',
     eliminarTitle:'Delete exam',eliminaras:'You will delete',perdran:'All grades for this exam will be lost for every competency involved',
     siEliminar:'Yes, delete',afegirCompTitle:'Add a competency to the exam',afegir:'Add',placeholderNom:'E.g: Term exam...'},
   es:{mot:'Prueba',nova:'Nueva prueba',sense:'Sin pruebas.',crearNe:'Crear una',crear:'Crear',cancelar:'Cancelar',
-    comp:'Competencias (selecciona 2 o 3)',afegirComp:'+ Añadir competencia',eliminar:'Eliminar prueba',
-    hintLlista:'Una prueba reparte una nota a 2 o 3 competencias a la vez — nunca cuenta como competencia propia.',
+    comp:'Competencias (selecciona 2 o más)',afegirComp:'+ Añadir competencia',eliminar:'Eliminar prueba',
+    hintLlista:'Una prueba reparte una nota a varias competencias a la vez — nunca cuenta como competencia propia.',
     hintGraella:'Pon una nota global por competencia — se aplicará a todos sus criterios de evaluación.',
     eliminarTitle:'Eliminar prueba',eliminaras:'Eliminarás',perdran:'Se perderán todas las notas de esta prueba en todas las competencias implicadas',
     siEliminar:'Sí, eliminar',afegirCompTitle:'Añadir una competencia a la prueba',afegir:'Añadir',placeholderNom:'Ej: Examen trimestral...'}
@@ -1860,8 +1860,6 @@ function novaProva(){
   setTimeout(function(){var inp=document.getElementById('nova-prova-nom');if(inp)inp.focus();},60);
 }
 function toggleProvaCompChip(btn){
-  var sel=document.querySelectorAll('#nova-prova-comps .subj-chip.sel');
-  if(!btn.classList.contains('sel') && sel.length>=3){ toast('Màxim 3 competències'); return; }
   btn.classList.toggle('sel');
 }
 function crearProva(){
@@ -1874,7 +1872,6 @@ function crearProva(){
   if(hora && !/^([01]\d|2[0-3]):(00|30)$/.test(hora)){toast('L\'hora ha de ser en franges de :00 o :30');return;}
   var compIds=Array.from(document.querySelectorAll('#nova-prova-comps .subj-chip.sel')).map(function(el){return el.dataset.cid;});
   if(compIds.length<2){toast('Selecciona almenys 2 competències');return;}
-  if(compIds.length>3){toast('Màxim 3 competències');return;}
   var data=dia.split('-').reverse().join('/')+(hora?' · '+hora:'');
   var ov=document.getElementById('pop-nova-prova'); if(ov) ov.remove();
   crearActivitatsProva('pv_'+Date.now(),compIds,nom,dia,hora,data);
@@ -1924,7 +1921,7 @@ function openProvaGraella(groupId){
   document.getElementById('cv-pg-del-btn').textContent=pv('eliminar');
   var addBtn=document.getElementById('cv-pg-add-comp');
   addBtn.textContent=pv('afegirComp');
-  addBtn.style.display = g.comps.length<3 ? 'inline-flex' : 'none';
+  addBtn.style.display = g.comps.length<competencies.length ? 'inline-flex' : 'none';
 
   var thead='<thead><tr style="background:var(--paper);">'
     +'<th class="sticky" style="min-width:150px;background:var(--paper);">Alumne</th>'
@@ -1972,7 +1969,6 @@ function saveNotaProva(inp){
 function obrirAfegirCompProva(){
   var groupId=_currentProvaGroupId;
   var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
-  if(g.comps.length>=3){ toast('Màxim 3 competències per prova'); return; }
   var usats=g.comps.map(function(x){return x.comp.id;});
   var opcions=competencies.filter(function(c){return usats.indexOf(c.id)===-1;});
   if(!opcions.length){ toast('No hi ha més competències disponibles'); return; }
@@ -3082,7 +3078,13 @@ function generarComentarisIA(d, mode){
     alumnes:alumnesPayload.map(function(a){return {numero:a.numero,global:a.global,assignatures:a.assignatures};})
   };
 
-  return fetch('/api/generar-comentaris',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  var sb=window.__QUADERN_SUPABASE__;
+  var tokenPromise=sb?sb.auth.getSession().then(function(r){ return r.data&&r.data.session&&r.data.session.access_token; }):Promise.resolve(null);
+  return tokenPromise.then(function(token){
+    var headers={'Content-Type':'application/json'};
+    if(token) headers['Authorization']='Bearer '+token;
+    return fetch('/api/generar-comentaris',{method:'POST',headers:headers,body:JSON.stringify(payload)});
+  })
     .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
     .then(function(json){
       var comentaris={};
