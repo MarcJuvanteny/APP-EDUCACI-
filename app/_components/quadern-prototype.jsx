@@ -20,9 +20,9 @@ export default function QuadernPrototype({ initialScreen }) {
 
     async function loadPrototype() {
       const [htmlRes, cssRes, jsRes] = await Promise.all([
-        fetch("/quadern.html"),
-        fetch("/quadern.css"),
-        fetch("/quadern.js"),
+        fetch("/quadern.html", { cache: "no-store" }),
+        fetch("/quadern.css", { cache: "no-store" }),
+        fetch("/quadern.js", { cache: "no-store" }),
       ]);
 
       const [html, css, js] = await Promise.all([

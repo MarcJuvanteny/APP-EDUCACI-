@@ -29,6 +29,21 @@ var missatgesAlumnes = {};
 var PERFIL_KEY = 'arrel_perfil_v1';
 var authState = { isLogged: false, user: null };
 
+// Peticions de guardat (notes, comentaris...) que encara no han confirmat contra
+// Supabase. Cal esperar-les abans de tornar a carregar dades del context (canvi
+// d'assignatura/curs) o abans de deixar tancar la pestanya, sino una recarrega pot
+// arribar abans que el guardat i "esborrar" (revertir) el que s'acaba d'escriure.
+var pendingSaves = [];
+function trackSave(promise){
+  pendingSaves.push(promise);
+  var neteja=function(){ var idx=pendingSaves.indexOf(promise); if(idx!==-1) pendingSaves.splice(idx,1); };
+  promise.then(neteja,neteja);
+  return promise;
+}
+window.addEventListener('beforeunload', function(e){
+  if(pendingSaves.length){ e.preventDefault(); e.returnValue=''; }
+});
+
 function normTxt(s){
   return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 }
@@ -972,7 +987,8 @@ function tancarSessio(){
     showGatePas('g-login');
     toast('Sessió tancada');
   };
-  if(sb) sb.auth.signOut().then(acabar); else acabar();
+  var sortir=function(){ if(sb) sb.auth.signOut().then(acabar); else acabar(); };
+  if(pendingSaves.length) Promise.all(pendingSaves).catch(function(){}).then(sortir); else sortir();
 }
 
 // ═══════════════ GATE ═══════════════
@@ -1275,7 +1291,12 @@ function selSubj(si){
   guardarPerfil();
   document.getElementById('gate').classList.add('hide');
   syncCompetenciesForCurrentSubject();
-  Promise.all([carregarAlumnesDelCursActiu(), carregarActivitatsDelContext()]).then(function(){
+  // Espera que qualsevol guardat en curs (notes, comentaris...) confirmi contra
+  // Supabase abans de tornar a carregar dades del context, sino la recarrega pot
+  // arribar abans que el guardat i mostrar dades antigues (com si s'haguessin esborrat).
+  Promise.all(pendingSaves).catch(function(){}).then(function(){
+    return Promise.all([carregarAlumnesDelCursActiu(), carregarActivitatsDelContext()]);
+  }).then(function(){
     updateNav(); renderAll();
   });
 }
@@ -1620,7 +1641,7 @@ function guardarComentariInline(ta){
   toast('Comentari guardat ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al&&al.dbId){
-    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+    trackSave(dbActualitzarComentariAlumne(al.dbId,text)).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
   }
 }
 function obrirMissatgeAluBtn(btn){ obrirMissatgeAlu(btn.dataset.nom); }
@@ -1642,7 +1663,7 @@ function guardarMissatge(){
   renderAlumnes(); toast('Comentari guardat ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al&&al.dbId){
-    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+    trackSave(dbActualitzarComentariAlumne(al.dbId,text)).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
   }
 }
 
@@ -2057,11 +2078,17 @@ function saveNota(inp){
 }
 function sincronitzarNotesActivitat(act){
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb&&act.dbId) dbActualitzarNotesActivitat(act.dbId,act.notes).catch(function(err){ console.warn('[Arrel]',err.message); });
+  if(!sb||!act.dbId) return;
+  trackSave(dbActualitzarNotesActivitat(act.dbId,act.notes)).then(function(res){
+    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error guardant la nota: '+res.error.message); }
+  },function(err){ console.warn('[Arrel]',err.message); toast('Error guardant la nota: '+err.message); });
 }
 function sincronitzarComentarisActivitat(act){
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb&&act.dbId) dbActualitzarComentarisActivitat(act.dbId,act.altres).catch(function(err){ console.warn('[Arrel]',err.message); });
+  if(!sb||!act.dbId) return;
+  trackSave(dbActualitzarComentarisActivitat(act.dbId,act.altres)).then(function(res){
+    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error guardant el comentari: '+res.error.message); }
+  },function(err){ console.warn('[Arrel]',err.message); toast('Error guardant el comentari: '+err.message); });
 }
 function recalcGlobal(act,comp,ini){
   var t=0,c=0;
@@ -2204,6 +2231,7 @@ function obrirComentariAct(ini, actId, compId){
   var al=alumnes.find(function(a){return a.ini===ini;}); if(!al) return;
   if(!act.altres) act.altres={};
   var actual=act.altres[ini]||'';
+  tancarComentariAct(); // evita que quedin dos popups (i dos textarea amb el mateix id) superposats
   var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-comentari-act';
   overlay.innerHTML='<div class="popup" style="width:460px;max-height:86vh;overflow:auto;">'
     +'<div class="popup-title">'+escHtml(act.nom)+'</div>'
@@ -2220,13 +2248,18 @@ function obrirComentariAct(ini, actId, compId){
 }
 function guardarComentariActBtn(btn){guardarComentariAct(btn.dataset.ini,btn.dataset.act,btn.dataset.comp);}
 function guardarComentariAct(ini,actId,compId){
-  var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
+  // Captura el text i tanca el popup ABANS de qualsevol altra cosa: si el guardat
+  // (cerca de l'activitat, localStorage, Supabase...) falla o triga, el popup ha de
+  // desapareixer igualment — no ha de dependre de que tot surti be per tancar-se.
+  var textEl=document.getElementById('comentari-act-text');
+  var text=textEl?textEl.value:'';
+  var ov=document.getElementById('pop-comentari-act'); if(ov) ov.remove();
+  var act=getActs(compId).find(function(a){return a.id===actId;});
+  if(!act){ console.warn('[Arrel] No s\'ha trobat l\'activitat per guardar el comentari'); return; }
   if(!act.altres) act.altres={};
-  var text=document.getElementById('comentari-act-text').value;
   act.altres[ini]=text;
   guardarDades();
   sincronitzarComentarisActivitat(act);
-  var ov=document.getElementById('pop-comentari-act'); if(ov) ov.remove();
   openGraella(compId,actId);
   toast('Comentari guardat ✓');
 }
@@ -3318,7 +3351,7 @@ function openGraella(compId, actId){
       +'<td style="padding:5px 8px;">'
         +'<button class="btn btn-sm" style="font-size:11px;max-width:220px;" title="'+escHtml(altres)+'" '
           +'data-ini="'+al.ini+'" data-act="'+actId+'" data-comp="'+compId+'" onclick="obrirComentariActBtn(this)">'
-          +(altres?'<span class="act-comment-preview">'+escHtml(altres.substring(0,120))+(altres.length>120?'...':'')+'</span>':'+ Nota')
+          +(altres?'<span class="act-comment-preview">'+escHtml(altres.substring(0,120))+(altres.length>120?'...':'')+'</span>':'+ Comentari')
         +'</button>'
       +'</td>'
     +'</tr>';
