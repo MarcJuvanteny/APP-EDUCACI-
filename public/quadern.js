@@ -29,6 +29,21 @@ var missatgesAlumnes = {};
 var PERFIL_KEY = 'arrel_perfil_v1';
 var authState = { isLogged: false, user: null };
 
+// Peticions de guardat (notes, comentaris...) que encara no han confirmat contra
+// Supabase. Cal esperar-les abans de tornar a carregar dades del context (canvi
+// d'assignatura/curs) o abans de deixar tancar la pestanya, sino una recarrega pot
+// arribar abans que el guardat i "esborrar" (revertir) el que s'acaba d'escriure.
+var pendingSaves = [];
+function trackSave(promise){
+  pendingSaves.push(promise);
+  var neteja=function(){ var idx=pendingSaves.indexOf(promise); if(idx!==-1) pendingSaves.splice(idx,1); };
+  promise.then(neteja,neteja);
+  return promise;
+}
+window.addEventListener('beforeunload', function(e){
+  if(pendingSaves.length){ e.preventDefault(); e.returnValue=''; }
+});
+
 function normTxt(s){
   return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 }
@@ -972,7 +987,8 @@ function tancarSessio(){
     showGatePas('g-login');
     toast('Sessió tancada');
   };
-  if(sb) sb.auth.signOut().then(acabar); else acabar();
+  var sortir=function(){ if(sb) sb.auth.signOut().then(acabar); else acabar(); };
+  if(pendingSaves.length) Promise.all(pendingSaves).catch(function(){}).then(sortir); else sortir();
 }
 
 // ═══════════════ GATE ═══════════════
@@ -1275,7 +1291,12 @@ function selSubj(si){
   guardarPerfil();
   document.getElementById('gate').classList.add('hide');
   syncCompetenciesForCurrentSubject();
-  Promise.all([carregarAlumnesDelCursActiu(), carregarActivitatsDelContext()]).then(function(){
+  // Espera que qualsevol guardat en curs (notes, comentaris...) confirmi contra
+  // Supabase abans de tornar a carregar dades del context, sino la recarrega pot
+  // arribar abans que el guardat i mostrar dades antigues (com si s'haguessin esborrat).
+  Promise.all(pendingSaves).catch(function(){}).then(function(){
+    return Promise.all([carregarAlumnesDelCursActiu(), carregarActivitatsDelContext()]);
+  }).then(function(){
     updateNav(); renderAll();
   });
 }
@@ -1620,7 +1641,7 @@ function guardarComentariInline(ta){
   toast('Comentari guardat ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al&&al.dbId){
-    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+    trackSave(dbActualitzarComentariAlumne(al.dbId,text)).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
   }
 }
 function obrirMissatgeAluBtn(btn){ obrirMissatgeAlu(btn.dataset.nom); }
@@ -1642,7 +1663,7 @@ function guardarMissatge(){
   renderAlumnes(); toast('Comentari guardat ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al&&al.dbId){
-    dbActualitzarComentariAlumne(al.dbId,text).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+    trackSave(dbActualitzarComentariAlumne(al.dbId,text)).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
   }
 }
 
@@ -1743,20 +1764,20 @@ var _currentProvaGroupId='';
 // activa (Angles->Exam, Castella->Prueba, la resta->Prova en catala).
 var PROVA_I18N = {
   ca:{mot:'Prova',nova:'Nova prova',sense:'Sense proves.',crearNe:'Crear-ne una',crear:'Crear',cancelar:'Cancel·lar',
-    comp:'Competències (selecciona 2 o 3)',afegirComp:'+ Afegir competència',eliminar:'Eliminar prova',
-    hintLlista:'Una prova reparteix una nota a 2 o 3 competències alhora — no compta com a competència pròpia.',
+    comp:'Competències (selecciona 2 o més)',afegirComp:'+ Afegir competència',eliminar:'Eliminar prova',
+    hintLlista:'Una prova reparteix una nota a diverses competències alhora — no compta com a competència pròpia.',
     hintGraella:'Posa una nota global per competència — s\'aplicarà a tots els seus criteris d\'avaluació.',
     eliminarTitle:'Eliminar prova',eliminaras:'Eliminaràs',perdran:'Es perdran totes les notes d\'aquesta prova a totes les competències implicades',
     siEliminar:'Sí, eliminar',afegirCompTitle:'Afegir competència a la prova',afegir:'Afegir',placeholderNom:'Ex: Examen trimestral...'},
   en:{mot:'Exam',nova:'New exam',sense:'No exams yet.',crearNe:'Create one',crear:'Create',cancelar:'Cancel',
-    comp:'Competencies (select 2 or 3)',afegirComp:'+ Add competency',eliminar:'Delete exam',
-    hintLlista:'An exam gives one grade to 2 or 3 competencies at once — it never counts as its own competency.',
+    comp:'Competencies (select 2 or more)',afegirComp:'+ Add competency',eliminar:'Delete exam',
+    hintLlista:'An exam gives one grade to several competencies at once — it never counts as its own competency.',
     hintGraella:'Enter one overall grade per competency — it will apply to all of its assessment criteria.',
     eliminarTitle:'Delete exam',eliminaras:'You will delete',perdran:'All grades for this exam will be lost for every competency involved',
     siEliminar:'Yes, delete',afegirCompTitle:'Add a competency to the exam',afegir:'Add',placeholderNom:'E.g: Term exam...'},
   es:{mot:'Prueba',nova:'Nueva prueba',sense:'Sin pruebas.',crearNe:'Crear una',crear:'Crear',cancelar:'Cancelar',
-    comp:'Competencias (selecciona 2 o 3)',afegirComp:'+ Añadir competencia',eliminar:'Eliminar prueba',
-    hintLlista:'Una prueba reparte una nota a 2 o 3 competencias a la vez — nunca cuenta como competencia propia.',
+    comp:'Competencias (selecciona 2 o más)',afegirComp:'+ Añadir competencia',eliminar:'Eliminar prueba',
+    hintLlista:'Una prueba reparte una nota a varias competencias a la vez — nunca cuenta como competencia propia.',
     hintGraella:'Pon una nota global por competencia — se aplicará a todos sus criterios de evaluación.',
     eliminarTitle:'Eliminar prueba',eliminaras:'Eliminarás',perdran:'Se perderán todas las notas de esta prueba en todas las competencias implicadas',
     siEliminar:'Sí, eliminar',afegirCompTitle:'Añadir una competencia a la prueba',afegir:'Añadir',placeholderNom:'Ej: Examen trimestral...'}
@@ -1839,8 +1860,6 @@ function novaProva(){
   setTimeout(function(){var inp=document.getElementById('nova-prova-nom');if(inp)inp.focus();},60);
 }
 function toggleProvaCompChip(btn){
-  var sel=document.querySelectorAll('#nova-prova-comps .subj-chip.sel');
-  if(!btn.classList.contains('sel') && sel.length>=3){ toast('Màxim 3 competències'); return; }
   btn.classList.toggle('sel');
 }
 function crearProva(){
@@ -1853,7 +1872,6 @@ function crearProva(){
   if(hora && !/^([01]\d|2[0-3]):(00|30)$/.test(hora)){toast('L\'hora ha de ser en franges de :00 o :30');return;}
   var compIds=Array.from(document.querySelectorAll('#nova-prova-comps .subj-chip.sel')).map(function(el){return el.dataset.cid;});
   if(compIds.length<2){toast('Selecciona almenys 2 competències');return;}
-  if(compIds.length>3){toast('Màxim 3 competències');return;}
   var data=dia.split('-').reverse().join('/')+(hora?' · '+hora:'');
   var ov=document.getElementById('pop-nova-prova'); if(ov) ov.remove();
   crearActivitatsProva('pv_'+Date.now(),compIds,nom,dia,hora,data);
@@ -1903,7 +1921,7 @@ function openProvaGraella(groupId){
   document.getElementById('cv-pg-del-btn').textContent=pv('eliminar');
   var addBtn=document.getElementById('cv-pg-add-comp');
   addBtn.textContent=pv('afegirComp');
-  addBtn.style.display = g.comps.length<3 ? 'inline-flex' : 'none';
+  addBtn.style.display = g.comps.length<competencies.length ? 'inline-flex' : 'none';
 
   var thead='<thead><tr style="background:var(--paper);">'
     +'<th class="sticky" style="min-width:150px;background:var(--paper);">Alumne</th>'
@@ -1951,7 +1969,6 @@ function saveNotaProva(inp){
 function obrirAfegirCompProva(){
   var groupId=_currentProvaGroupId;
   var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
-  if(g.comps.length>=3){ toast('Màxim 3 competències per prova'); return; }
   var usats=g.comps.map(function(x){return x.comp.id;});
   var opcions=competencies.filter(function(c){return usats.indexOf(c.id)===-1;});
   if(!opcions.length){ toast('No hi ha més competències disponibles'); return; }
@@ -2057,11 +2074,17 @@ function saveNota(inp){
 }
 function sincronitzarNotesActivitat(act){
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb&&act.dbId) dbActualitzarNotesActivitat(act.dbId,act.notes).catch(function(err){ console.warn('[Arrel]',err.message); });
+  if(!sb||!act.dbId) return;
+  trackSave(dbActualitzarNotesActivitat(act.dbId,act.notes)).then(function(res){
+    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error guardant la nota: '+res.error.message); }
+  },function(err){ console.warn('[Arrel]',err.message); toast('Error guardant la nota: '+err.message); });
 }
 function sincronitzarComentarisActivitat(act){
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb&&act.dbId) dbActualitzarComentarisActivitat(act.dbId,act.altres).catch(function(err){ console.warn('[Arrel]',err.message); });
+  if(!sb||!act.dbId) return;
+  trackSave(dbActualitzarComentarisActivitat(act.dbId,act.altres)).then(function(res){
+    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error guardant el comentari: '+res.error.message); }
+  },function(err){ console.warn('[Arrel]',err.message); toast('Error guardant el comentari: '+err.message); });
 }
 function recalcGlobal(act,comp,ini){
   var t=0,c=0;
@@ -2204,6 +2227,7 @@ function obrirComentariAct(ini, actId, compId){
   var al=alumnes.find(function(a){return a.ini===ini;}); if(!al) return;
   if(!act.altres) act.altres={};
   var actual=act.altres[ini]||'';
+  tancarComentariAct(); // evita que quedin dos popups (i dos textarea amb el mateix id) superposats
   var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-comentari-act';
   overlay.innerHTML='<div class="popup" style="width:460px;max-height:86vh;overflow:auto;">'
     +'<div class="popup-title">'+escHtml(act.nom)+'</div>'
@@ -2220,13 +2244,18 @@ function obrirComentariAct(ini, actId, compId){
 }
 function guardarComentariActBtn(btn){guardarComentariAct(btn.dataset.ini,btn.dataset.act,btn.dataset.comp);}
 function guardarComentariAct(ini,actId,compId){
-  var act=getActs(compId).find(function(a){return a.id===actId;}); if(!act) return;
+  // Captura el text i tanca el popup ABANS de qualsevol altra cosa: si el guardat
+  // (cerca de l'activitat, localStorage, Supabase...) falla o triga, el popup ha de
+  // desapareixer igualment — no ha de dependre de que tot surti be per tancar-se.
+  var textEl=document.getElementById('comentari-act-text');
+  var text=textEl?textEl.value:'';
+  var ov=document.getElementById('pop-comentari-act'); if(ov) ov.remove();
+  var act=getActs(compId).find(function(a){return a.id===actId;});
+  if(!act){ console.warn('[Arrel] No s\'ha trobat l\'activitat per guardar el comentari'); return; }
   if(!act.altres) act.altres={};
-  var text=document.getElementById('comentari-act-text').value;
   act.altres[ini]=text;
   guardarDades();
   sincronitzarComentarisActivitat(act);
-  var ov=document.getElementById('pop-comentari-act'); if(ov) ov.remove();
   openGraella(compId,actId);
   toast('Comentari guardat ✓');
 }
@@ -3049,18 +3078,31 @@ function generarComentarisIA(d, mode){
     alumnes:alumnesPayload.map(function(a){return {numero:a.numero,global:a.global,assignatures:a.assignatures};})
   };
 
-  return fetch('/api/generar-comentaris',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  var sb=window.__QUADERN_SUPABASE__;
+  var tokenPromise=sb?sb.auth.getSession().then(function(r){ return r.data&&r.data.session&&r.data.session.access_token; }):Promise.resolve(null);
+  return tokenPromise.then(function(token){
+    var headers={'Content-Type':'application/json'};
+    if(token) headers['Authorization']='Bearer '+token;
+    return fetch('/api/generar-comentaris',{method:'POST',headers:headers,body:JSON.stringify(payload)});
+  })
     .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
     .then(function(json){
+      // El servidor nomes retorna 200 si TOTS els comentaris (classe + cada
+      // alumne) s'han generat be — si algun ha fallat, respon amb error i
+      // aqui es tracta igual que qualsevol altre fallo (vegeu .catch): es
+      // prefereix cap comentari IA abans que un informe a mitges.
       var comentaris={};
       d.ordres.forEach(function(uid){
         var numero=d.alumnesMap[uid].ordre;
         comentaris[uid]=(json.comentaris||{})[String(numero)]||'';
       });
-      if(json.errors){ toast(json.errors+' comentari(s) d\'alumne no s\'han pogut generar — completa\'ls a mà a l\'informe'); }
       return {comentariClasse:json.comentariClasse||'',comentaris:comentaris};
     })
-    .catch(function(err){ console.warn('[Arrel] Error generant comentaris IA:',err.message); return null; });
+    .catch(function(err){
+      console.warn('[Arrel] Error generant comentaris IA:',err.message);
+      toast('No s\'han pogut generar els comentaris amb IA — l\'informe es generarà sense ells. Torna-ho a provar en uns minuts.');
+      return null;
+    });
 }
 
 // Aplica el límit de 4 informes amb IA per any escolar (tots els cursos junts)
@@ -3318,7 +3360,7 @@ function openGraella(compId, actId){
       +'<td style="padding:5px 8px;">'
         +'<button class="btn btn-sm" style="font-size:11px;max-width:220px;" title="'+escHtml(altres)+'" '
           +'data-ini="'+al.ini+'" data-act="'+actId+'" data-comp="'+compId+'" onclick="obrirComentariActBtn(this)">'
-          +(altres?'<span class="act-comment-preview">'+escHtml(altres.substring(0,120))+(altres.length>120?'...':'')+'</span>':'+ Nota')
+          +(altres?'<span class="act-comment-preview">'+escHtml(altres.substring(0,120))+(altres.length>120?'...':'')+'</span>':'+ Comentari')
         +'</button>'
       +'</td>'
     +'</tr>';

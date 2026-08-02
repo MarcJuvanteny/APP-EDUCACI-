@@ -342,16 +342,33 @@ export default function WeeklyCalendar() {
 
   const cursColorMap = useMemo(() => calcularCursColorMap(events), [events]);
 
+  // Dates (yyyy-mm-dd) de la setmana que s'esta veient ara mateix — cal per
+  // saber, franja a franja, si de veritat no hi ha res per a AQUESTA setmana
+  // (un event amb data concreta d'una altra setmana no ha de comptar aqui).
+  const diesSetmanaIso = useMemo(() => {
+    return diesSetmana.map(
+      (d) =>
+        d.getFullYear() +
+        "-" +
+        String(d.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(d.getDate()).padStart(2, "0")
+    );
+  }, [diesSetmana]);
+
   const rowHeights = useMemo(() => {
     return HORES.map((h) => {
       const maxEvents = DIES.reduce((mx, _, di) => {
-        const cnt = events.filter((ev) => ev.dia === di && ev.hora === h.idx).length;
+        const cnt = events.filter(
+          (ev) => ev.dia === di && ev.hora === h.idx && (!ev.data || ev.data === diesSetmanaIso[di])
+        ).length;
         return Math.max(mx, cnt);
       }, 0);
+      if (maxEvents === 0) return 24;
       if (maxEvents < 2) return 38;
       return 38 + (maxEvents - 1) * 20;
     });
-  }, [events]);
+  }, [events, diesSetmanaIso]);
 
   const nowLineTop = useMemo(() => {
     if (offset !== 0) return null;
@@ -419,6 +436,13 @@ export default function WeeklyCalendar() {
       if (!target) return;
       const primerDia = new Date(target.y, target.m, 1);
       const dilluns = startOfWeek(primerDia);
+      // Si el dia 1 no cau en dilluns, el dilluns d'aquesta setmana pot ser
+      // encara del mes anterior — saltem a la setmana seguent perque la
+      // setmana mostrada (i el mes ressaltat a la barra lateral) coincideixi
+      // sempre amb el mes que s'ha clicat.
+      if (dilluns.getMonth() !== target.m || dilluns.getFullYear() !== target.y) {
+        dilluns.setDate(dilluns.getDate() + 7);
+      }
       const diff = Math.round((dilluns - base) / (7 * 86400000));
       setOffset(diff);
     },

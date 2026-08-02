@@ -1,4 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { getAuthedUser } from "../../lib/supabaseServer";
+import { checkRateLimit, clientIp } from "../../lib/rateLimit";
+import { generarComentarisSchema } from "./schema";
+
+// Endpoint "sensible": crida l'API d'Anthropic (cost per petició) i processa
+// dades d'alumnes — límit estricte per IP, seguint la política de seguretat
+// del projecte (endpoints sensibles: 10 peticions / 15 min / IP).
+const RATE_LIMIT = { limit: 10, windowMs: 15 * 60 * 1000 };
 
 // Evita que Vercel talli la funció abans que acabin totes les crides a
 // Claude en paral·lel (una per alumne) quan la classe és gran o el mode
@@ -9,8 +17,15 @@ export const maxDuration = 60;
 
 const MODEL = "claude-haiku-4-5";
 
+// L'SDK d'Anthropic ja reintenta automàticament (amb backoff, respectant
+// Retry-After) els 429 i errors transitoris — per defecte 2 cops. Ho pugem a
+// 3 perquè aquest endpoint dispara moltes crides en paral·lel per petició
+// (una per alumne), així que si hi ha un pic de 2-3 professors alhora és més
+// probable que totes toquin el límit de l'API a la vegada. No el pugem més
+// perquè cada reintent suma temps i el pla Hobby de Vercel talla als 60s
+// (maxDuration, més amunt).
 function client() {
-  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, maxRetries: 3 });
 }
 
 // ── System prompt ──────────────────────────────────────────────────────────
@@ -347,17 +362,51 @@ export async function POST(req) {
     );
   }
 
-  let body;
+  const ip = clientIp(req);
+
+  const rl = checkRateLimit("generar-comentaris:" + ip, RATE_LIMIT);
+  if (!rl.allowed) {
+    console.warn("[security] Rate limit excedit a /api/generar-comentaris — IP:", ip);
+    return Response.json(
+      { error: "Massa peticions. Torna-ho a provar més tard." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) },
+      }
+    );
+  }
+
+  // Nomes exigeix sessio si Supabase esta configurat al servidor — en mode
+  // local/demo sense backend (undefined) no hi ha cap sistema d'auth contra
+  // el qual validar, igual que la resta de l'app en aquest mode.
+  const user = await getAuthedUser(req);
+  if (user === null) {
+    console.warn("[security] Petició sense sessió vàlida a /api/generar-comentaris — IP:", ip);
+    return Response.json({ error: "Cal iniciar sessió" }, { status: 401 });
+  }
+
+  let rawBody;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch {
+    console.warn("[security] JSON invàlid a /api/generar-comentaris — IP:", ip);
     return Response.json({ error: "JSON invàlid" }, { status: 400 });
   }
 
-  const { etapa, curs, classe, alumnes, mode } = body || {};
-  if (!Array.isArray(alumnes) || !alumnes.length) {
-    return Response.json({ error: "Cal la llista d'alumnes" }, { status: 400 });
+  const parsed = generarComentarisSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    console.warn(
+      "[security] Input rebutjat a /api/generar-comentaris — IP:",
+      ip,
+      "— issues:",
+      parsed.error.issues.map((i) => i.path.join(".") + ": " + i.code)
+    );
+    return Response.json(
+      { error: "Dades de la petició no vàlides" },
+      { status: 400 }
+    );
   }
+  const { etapa, curs, classe, alumnes, mode } = parsed.data;
 
   const anthropic = client();
 
@@ -399,12 +448,24 @@ export async function POST(req) {
     }
   });
 
-  if (errors === alumnes.length && comentariClasseResult.status === "rejected") {
+  // Tot o res: si falla encara que sigui un sol comentari (d'un alumne o el
+  // de classe), es descarta TOTA la resposta en lloc de lliurar un informe
+  // a mitges — el professor prefereix que l'informe surti sense cap
+  // comentari IA (i pugui tornar-ho a provar) abans que descobrir més tard,
+  // llegint-lo, que a un parell d'alumnes els falta comentari sense avís.
+  if (errors > 0 || comentariClasseResult.status === "rejected") {
+    console.warn(
+      "[generar-comentaris] Generació parcial (" +
+        errors +
+        " alumne(s) i comentari de classe " +
+        (comentariClasseResult.status === "rejected" ? "fallat" : "ok") +
+        ") — es descarta tota la resposta perquè no surti un informe a mitges."
+    );
     return Response.json(
-      { error: "Error generant els comentaris amb IA" },
+      { error: "No s'han pogut generar tots els comentaris amb IA" },
       { status: 502 }
     );
   }
 
-  return Response.json({ comentariClasse, comentaris, errors });
+  return Response.json({ comentariClasse, comentaris });
 }
