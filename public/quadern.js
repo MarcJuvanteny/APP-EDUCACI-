@@ -358,10 +358,7 @@ function syncCompetenciesForCurrentSubject(){
 // key = cursNom + '_' + trimNom + '_' + subjNom + '_' + compId
 var activitats = {};
 var missatgesAlumnes = {};
-var calEvents = []; // [{id,titol,data,tipus}]
 var currentCompId = '';
-var calMes = new Date().getMonth();
-var calAny = new Date().getFullYear();
 
 // ─── SEED DADES ───
 function getKey(compId){
@@ -410,79 +407,10 @@ function seedDemo(){
     });
   });
 
-  // Events de calendari demo
-  calEvents = [
-    {id:'e1',titol:'Examen Català T1',data:'2026-03-15',tipus:'examen'},
-    {id:'e2',titol:'Excursió museu',data:'2026-03-22',tipus:'excursio'},
-    {id:'e3',titol:'Reunió de pares',data:'2026-04-05',tipus:'reunio'},
-    {id:'e4',titol:'Activitat lectura',data:'2026-04-10',tipus:'activitat'},
-    {id:'e5',titol:'Examen Matemàtiques',data:'2026-04-20',tipus:'examen'}
-  ];
 }
 // Amb Supabase configurat, els cursos/alumnes/notes reals es carreguen a anarAPasPostAuth();
 // aquest seed generic nomes cal per al mode sense base de dades (fallback local).
 if(!window.__QUADERN_SUPABASE__) seedDemo();
-
-// Genera activitats i notes de mostra per a UN curs concret amb el seu propi roster
-// (fa falta perque, amb Supabase, cada curs te els seus propis alumnes en comptes
-// d'una llista global unica com passava abans).
-function generarNotesDemoPerCurs(mc, roster){
-  // Nivell base per alumne segons la seva posicio a la llista (no per inicials,
-  // que poden no coincidir segons quants cognoms tingui el nom).
-  var nivellsBase = [8.5,7.2,6.1,7.8,4.3,9.0,6.8,7.5,5.2,8.1,6.4,7.9];
-  var defActs = {
-    'Català':['Comprensió oral - Conte','Redacció - La família','Dictat setmana 8','Exposició oral'],
-    'Castellà':['Texto narrativo','Dictado sem. 5','Expresion oral','Comprension lectora'],
-    'Anglès':['Oral presentation','Writing exercise','Reading comp.'],
-    'Matemàtiques':['Fraccions','Geometria','Càlcul mental','Estadística']
-  };
-  var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
-  roster.forEach(function(al){ missatgesAlumnes[al.nom]=al.comentari||''; });
-
-  var perInserir=[]; // { fila per Supabase, act: referencia a l'objecte local per assignar-hi el dbId }
-  trimestres.forEach(function(trim){
-    mc.assigns.forEach(function(subj,si){
-      var assignaturaId=mc.assignsIds&&mc.assignsIds[si];
-      var compsSubj = getCompetenciesForSubject(subj);
-      var actDef = defActs[subj]||['Activitat 1','Activitat 2'];
-      compsSubj.forEach(function(comp){
-        var k = mc.curs+'_'+trim+'_'+subj+'_'+comp.id;
-        activitats[k] = actDef.map(function(nom,i){
-          var diaISO=dataISO(dates[i]||dates[0]);
-          var act = {id:'a'+i+'_'+k,nom:nom,data:dates[i]||dates[0],dataISO:diaISO,notes:{},altres:{},notaAltres:{}};
-          roster.forEach(function(al,ai){
-            act.notes[al.ini]={};
-            act.altres[al.ini]='';
-            act.notaAltres[al.ini]=null;
-            comp.criteris.forEach(function(crit){
-              var base = nivellsBase[ai]!=null?nivellsBase[ai]:6;
-              var v = (Math.random()-0.5)*2.5;
-              act.notes[al.ini][crit] = Math.round(Math.min(10,Math.max(1,base+v))*10)/10;
-            });
-          });
-          if(assignaturaId){
-            perInserir.push({
-              fila:{curs_id:mc.id,assignatura_id:assignaturaId,professor_id:dbUid(),competencia_id:comp.id,trimestre:trim,nom:nom,data:diaISO,hora:null,notes:act.notes,comentaris:act.altres},
-              act:act
-            });
-          }
-          return act;
-        });
-      });
-    });
-  });
-
-  var sb=window.__QUADERN_SUPABASE__;
-  if(!sb||!perInserir.length) return Promise.resolve();
-  return sb.from('activitats').insert(perInserir.map(function(p){return p.fila;})).select().then(function(res){
-    if(res.error){ console.warn('[Arrel]',res.error.message); return; }
-    var pendents=perInserir.slice();
-    res.data.forEach(function(row){
-      var idx=pendents.findIndex(function(p){ return p.fila.trimestre===row.trimestre && p.fila.competencia_id===row.competencia_id && p.fila.nom===row.nom; });
-      if(idx!==-1){ pendents[idx].act.dbId=row.id; pendents[idx].act.id=row.id; pendents.splice(idx,1); }
-    });
-  });
-}
 
 // ═══════════════ HELPERS ═══════════════
 function ava(al,w,fs){ return '<div class="ava" style="width:'+w+'px;height:'+w+'px;font-size:'+fs+'px;background:var(--'+al.color+'-l);color:var(--'+al.color+');">'+al.ini+'</div>'; }
@@ -498,10 +426,6 @@ function escHtml(txt){
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#39;');
-}
-function colorCurs(cursNom){
-  var idx=mesCursos.findIndex(function(c){return c.curs===cursNom;});
-  return idx===-1?'var(--line2)':'var(--'+colorIdx(idx)+')';
 }
 function afegirAssignaturaGlobal(nom){
   if(!nom) return;
@@ -585,7 +509,6 @@ function guardarDades(){
   lsSet(DADES_KEY, {
     alumnes: alumnes,
     activitats: activitats,
-    calEvents: calEvents,
     missatgesAlumnes: missatgesAlumnes,
     rubrica: rubrica,
     competenciesByArea: competenciesByArea
@@ -596,7 +519,6 @@ function carregarDades(){
   if(!saved) return false;
   if(saved.alumnes && saved.alumnes.length) alumnes=saved.alumnes;
   if(saved.activitats) activitats=saved.activitats;
-  if(saved.calEvents) calEvents=saved.calEvents;
   if(saved.missatgesAlumnes) missatgesAlumnes=saved.missatgesAlumnes;
   // La rubrica i les competencies per defecte nomes es restauren del localStorage en
   // mode sense base de dades. Amb Supabase connectat, els valors per defecte vius al
@@ -793,60 +715,6 @@ function dbActualitzarNomAlumne(alumneDbId,nom){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').update({nom:nom}).eq('id',alumneDbId);
 }
-// Roster fictici compartit pel sembrat de demo, tant a la primera entrada (dbSembrarDemo)
-// com quan cal completar un curs que ja existeix pero encara esta buit (omplirCursSiBuit).
-var DEMO_ALUMNES_NOMS=['Marc Roca Bosch','Sofia Vila Torrent','Laia Esteve Mas','Joan Puig Serra','Arnau Oms Ferrer','Marta Font Giro','Pol Llopis Camps','Neus Carbonell Costa','Jordi Badia Valls','Alba Trias Nadal','Roger Torres Vila','Irene Comas Prat'];
-var DEMO_ALUMNES_MISSATGES=["Excel·lent actitud.","Cal reforçar l'expressió oral.","Necessita més suport.","Molt participatiu.","Pla de reforç actiu.","Alumna destacada.","Millora progressiva.","Bona actitud.","En millora.","Molt bona alumna.","Pot millorar.","Excel·lent en tot."];
-// Sembra dues classes de mostra la primera vegada que un professor entra sense cap curs:
-// una plena (per veure com es fa servir) i una buida (tal com trobaria un curs nou de veritat).
-function dbSembrarDemo(){
-  var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
-  return dbCrearCurs('3r A',['Català','Castellà','Anglès']).then(function(curPle){
-    var files=DEMO_ALUMNES_NOMS.map(function(nom,i){
-      return {curs_id:curPle.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''};
-    });
-    return sb.from('alumnes').insert(files).select().then(function(res){
-      if(res.error) throw res.error;
-      var dades=res.data.slice().sort(function(a,b){return a.ordre-b.ordre;});
-      var roster=dades.map(function(row,i){ return {dbId:row.id,id:'',ini:ini2(row.nom),nom:row.nom,color:colorIdx(i),comentari:row.comentari||''}; });
-      return generarNotesDemoPerCurs(curPle, roster);
-    });
-  }).then(function(){
-    return dbCrearCurs('4t B',['Català','Matemàtiques']); // curs buit, sense alumnes ni notes
-  });
-}
-// Igual que dbSembrarDemo, pero per a un curs que ja existeix i que resulta estar
-// buit (per exemple perque el sembrat automatic nomes es dispara la primera vegada,
-// amb el compte totalment buit de cursos). S'invoca sola des de anarAPasPostAuth,
-// sense cap boto ni accio manual — nomes actua si el curs no te cap alumne encara.
-function omplirCursSiBuit(mc){
-  var sb=window.__QUADERN_SUPABASE__;
-  if(!sb||!mc||!mc.id||!mc.assigns||!mc.assigns.length) return Promise.resolve();
-  return dbCarregarAlumnes(mc.id).then(function(existents){
-    if(existents.length){
-      // Ja te alumnes. Comprovem les activitats que ja te: poden ser inexistents
-      // (execucio anterior interrompuda) o "orfes" — apuntant a ids de competencia
-      // d'una versio anterior del curriculum, que ja no existeixen al codi actual.
-      var idsValids=totesLesCompetenciesIds();
-      return sb.from('activitats').select('id,competencia_id').eq('curs_id',mc.id).then(function(res){
-        if(res.error){ console.warn('[Arrel]',res.error.message); return; }
-        var files=res.data||[];
-        var orfes=files.filter(function(f){ return idsValids.indexOf(f.competencia_id)===-1; });
-        var vigents=files.filter(function(f){ return idsValids.indexOf(f.competencia_id)!==-1; });
-        if(vigents.length) return; // ja te activitats amb competencies actuals, no toquem res
-        var neteja=orfes.length?sb.from('activitats').delete().in('id',orfes.map(function(f){return f.id;})):Promise.resolve();
-        return neteja.then(function(){ return generarNotesDemoPerCurs(mc, existents); });
-      });
-    }
-    var files=DEMO_ALUMNES_NOMS.map(function(nom,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:nom,ordre:i+1,comentari:DEMO_ALUMNES_MISSATGES[i]||''}; });
-    return sb.from('alumnes').insert(files).select().then(function(res){
-      if(res.error){ console.warn('[Arrel]',res.error.message); return; }
-      var dades=res.data.slice().sort(function(a,b){return a.ordre-b.ordre;});
-      var roster=dades.map(function(row,i){ return {dbId:row.id,id:'',ini:ini2(row.nom),nom:row.nom,color:colorIdx(i),comentari:row.comentari||''}; });
-      return generarNotesDemoPerCurs(mc, roster);
-    });
-  }).catch(function(err){ console.warn('[Arrel] Error omplint curs de mostra:',err.message); });
-}
 function anarAPasPostAuth(){
   document.getElementById('gate').classList.remove('hide');
   carregarPerfil();
@@ -865,23 +733,20 @@ function anarAPasPostAuth(){
   }).then(function(){
     return dbCarregarCursosComplet();
   }).then(function(cursos){
-    if(cursos.length) return cursos;
-    toast('Preparant el teu espai...');
-    return dbSembrarDemo().then(function(){ return dbCarregarCursosComplet(); });
-  }).then(function(cursos){
+    // Un compte nou comença totalment buit: sense cursos, assignatures ni
+    // alumnes de mostra — el professor els crea ell mateix des de zero.
     mesCursos=cursos;
     if(estat.cursIdx>=mesCursos.length) estat.cursIdx=0;
     if(estat.subjIdx>=(mesCursos[estat.cursIdx]?mesCursos[estat.cursIdx].assigns.length:0)) estat.subjIdx=0;
-    // Si el curs "3r A" existeix pero encara esta buit (per exemple perque el
-    // sembrat inicial nomes es dispara amb el compte totalment sense cursos),
-    // l'omplim ara amb alumnes i notes de mostra.
-    var curs3rA=mesCursos.find(function(mc){ return mc.curs==='3r A'; });
-    return (curs3rA?omplirCursSiBuit(curs3rA):Promise.resolve()).then(function(){
-      return carregarAlumnesDelCursActiu();
-    });
+    return carregarAlumnesDelCursActiu();
   }).then(function(){
     renderGateCursos();
     showGatePas('g-sel-cursos');
+    // Un compte nou de Supabase no passa per "g-dades" (aixo nomes existeix al
+    // mode local) — si encara no ha triat centre/any escolar, li ho demanem ara
+    // amb el mateix popup d'editar perfil, en lloc de deixar-ho en blanc en
+    // silenci fins que generi un informe i el trobi buit.
+    if(!prof.centre||!prof.any) obrirEditarPerfil();
   }).catch(function(err){
     toast('Error carregant les dades: '+err.message);
   });
@@ -895,17 +760,28 @@ function registrarCompte(){
   if(!nom){toast('Escriu el nom i cognoms');return;}
   if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
   if(pass.length<6){toast('La contrasenya ha de tenir mínim 6 caràcters');return;}
-  sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom}}}).then(function(res){
-    if(res.error){toast(res.error.message);return;}
-    if(!res.data.session){
-      toast('Compte creat ✓ Revisa el teu correu per confirmar-lo');
-      showGatePas('g-login');
-      return;
-    }
-    authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:nom}};
-    prof.nom=nom;
-    toast('Compte creat ✓');
-    anarAPasPostAuth();
+  ambBotoCarregant('reg-user-submit-btn','Creant compte…',function(){
+    return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom}}}).then(function(res){
+      if(res.error){toast(res.error.message);return;}
+      // Per no filtrar quins correus estan registrats, Supabase respon "sense error"
+      // fins i tot si el correu ja te un compte — es distingeix perque "identities"
+      // ve buit en aquest cas (un compte nou de veritat sempre en te com a minim 1).
+      var jaExisteix=res.data.user&&res.data.user.identities&&res.data.user.identities.length===0;
+      if(jaExisteix){
+        toast('Ja hi ha un compte amb aquest correu. Inicia sessió o recupera la contrasenya.');
+        showGatePas('g-login');
+        return;
+      }
+      if(!res.data.session){
+        toast('Compte creat ✓ Revisa el teu correu per confirmar-lo');
+        showGatePas('g-login');
+        return;
+      }
+      authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:nom}};
+      prof.nom=nom;
+      toast('Compte creat ✓');
+      anarAPasPostAuth();
+    });
   });
 }
 function iniciarSessio(){
@@ -977,12 +853,24 @@ function guardarEdicioPerfil(){
   updateNav();
   toast('Perfil actualitzat ✓');
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb) dbGuardarPerfil(prof.nom,prof.centre,prof.any).catch(function(err){ console.warn('[Arrel]',err.message); });
+  if(sb) dbGuardarPerfil(prof.nom,prof.centre,prof.any).then(function(res){
+    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error desant el perfil: '+res.error.message); }
+  },function(err){ console.warn('[Arrel]',err.message); toast('Error desant el perfil: '+err.message); });
 }
 function tancarSessio(){
   var sb=window.__QUADERN_SUPABASE__;
   var acabar=function(){
     authState={isLogged:false,user:null};
+    if(sb){
+      // Neteja l'estat en memoria i la copia local (nomes en mode Supabase,
+      // on aquesta cache es un mirall de la BD): si algu inicia sessio amb un
+      // altre compte en aquest mateix navegador, no ha de veure cap resta
+      // d'aquest (cursos, alumnes, notes...). En mode local sense backend
+      // aquesta cache ES l'unica copia de les dades, no es pot esborrar.
+      mesCursos=[]; alumnes=[]; activitats={}; missatgesAlumnes={};
+      estat={cursIdx:0,trimIdx:0,subjIdx:0};
+      try{ window.localStorage.removeItem(PERFIL_KEY); window.localStorage.removeItem(DADES_KEY); }catch(err){}
+    }
     document.getElementById('gate').classList.remove('hide');
     showGatePas('g-login');
     toast('Sessió tancada');
@@ -1103,7 +991,6 @@ function eliminarCursConfirmat(ci){
   Object.keys(activitats).forEach(function(k){
     if(k.indexOf(mc.curs+'_')===0) delete activitats[k];
   });
-  calEvents=calEvents.filter(function(e){ return e.curs!==mc.curs; });
   var sb=window.__QUADERN_SUPABASE__;
   var acabar=function(){
     mesCursos.splice(ci,1);
@@ -1403,9 +1290,12 @@ function renderHome(){
     +'</div>';
   }).join('');
 
-  // Gràfic d'aranya classe (drawSpider ja abrevia i parteix les etiquetes llargues)
-  var spiderVals=compAvgs.map(function(v){ return v||0; });
-  var spiderLabels=competencies.map(function(c){ return c.nom; });
+  // Gràfic d'aranya classe (drawSpider ja abrevia i parteix les etiquetes llargues).
+  // Nomes s'hi inclouen les competencies amb alguna nota — sino l'eix es dibuixaria
+  // a 0, indistingible visualment d'un assoliment realment nul.
+  var spiderIdx=compAvgs.map(function(v,i){return i;}).filter(function(i){ return compAvgs[i]!==null; });
+  var spiderVals=spiderIdx.map(function(i){ return compAvgs[i]; });
+  var spiderLabels=spiderIdx.map(function(i){ return competencies[i].nom; });
   drawSpider('spider-home', spiderLabels, [spiderVals], ['var(--clay)'], 260, 220);
 }
 
@@ -1564,17 +1454,17 @@ function obrirAlumne(ini){
   document.getElementById('alumnes-table-wrap').style.display='none';
   document.getElementById('alumne-detail').style.display='block';
 
-  // Calcular notes per competència per a l'alumne
+  // Calcular notes per competència per a l'alumne (null = encara sense cap nota)
   var alumneVals=competencies.map(function(comp){
     var acts=getActsFor(mc.curs,trim,subj,comp.id); var t=0,c=0;
     acts.forEach(function(act){ comp.criteris.forEach(function(crit){ var n=act.notes[ini]?act.notes[ini][crit]:null; if(n!=null){t+=n;c++;} }); });
-    return c?Math.round(t/c*10)/10:0;
+    return c?Math.round(t/c*10)/10:null;
   });
-  // Calcular mitjana de classe per competència
+  // Calcular mitjana de classe per competència (null = encara sense cap nota)
   var classeVals=competencies.map(function(comp){
     var acts=getActsFor(mc.curs,trim,subj,comp.id); var t=0,c=0;
     acts.forEach(function(act){ alumnes.forEach(function(al2){ comp.criteris.forEach(function(crit){ var n=act.notes[al2.ini]?act.notes[al2.ini][crit]:null; if(n!=null){t+=n;c++;} }); }); });
-    return c?Math.round(t/c*10)/10:0;
+    return c?Math.round(t/c*10)/10:null;
   });
 
   var canvasId='spider-alu-'+ini;
@@ -1618,10 +1508,14 @@ function obrirAlumne(ini){
       +'</div>'
     +'</div>';
 
-  // Dibuixar spider
+  // Dibuixar spider — nomes eixos amb alguna nota (de l'alumne o de la classe),
+  // sino es dibuixarien a 0, indistingible visualment d'un assoliment realment nul.
   setTimeout(function(){
-    var spiderLbls=competencies.map(function(c){ return c.nom; });
-    drawSpider(canvasId, spiderLbls, [alumneVals, classeVals], ['var(--moss)','var(--clay)'], 240, 200);
+    var spiderIdx=competencies.map(function(c,i){return i;}).filter(function(i){ return alumneVals[i]!==null || classeVals[i]!==null; });
+    var spiderLbls=spiderIdx.map(function(i){ return competencies[i].nom; });
+    var spiderAlu=spiderIdx.map(function(i){ return alumneVals[i]||0; });
+    var spiderCla=spiderIdx.map(function(i){ return classeVals[i]||0; });
+    drawSpider(canvasId, spiderLbls, [spiderAlu, spiderCla], ['var(--moss)','var(--clay)'], 240, 200);
     var ta=document.getElementById('inline-comment-'+ini); if(ta) autoResizeTextarea(ta);
   }, 30);
 }
@@ -1668,10 +1562,11 @@ function guardarMissatge(){
 }
 
 // ═══════════════ COMPETÈNCIES ═══════════════
-function renderCompTiles(){
-  showCV('cv-llista','cv-activitats'); showCV('cv-llista','cv-graella');
-  showCV('cv-llista','cv-proves'); showCV('cv-llista','cv-prova-graella');
-  document.getElementById('cv-llista').style.display='block';
+// Nomes regenera l'HTML de les targetes (comptador d'activitats inclos) sense
+// tocar quina vista es visible — cal cridar-ho despres de crear/eliminar una
+// activitat perque el comptador no quedi desfasat fins que es recarregui la
+// pagina, encara que en aquell moment no s'estigui mirant aquesta llista.
+function actualitzarCompTiles(){
   document.getElementById('comp-tiles').innerHTML=competencies.map(function(comp){
     var acts=getActs(comp.id);
     return '<div class="comp-tile" onclick="openComp(\''+comp.id+'\')">'
@@ -1687,6 +1582,12 @@ function renderCompTiles(){
         +'<div style="font-size:11px;color:var(--ink3);">'+getProves().length+' '+pv('mot').toLowerCase()+'(s)</div></div>'
       +'<span style="margin-left:auto;color:var(--ink3);">›</span>'
     +'</div>';
+}
+function renderCompTiles(){
+  showCV('cv-llista','cv-activitats'); showCV('cv-llista','cv-graella');
+  showCV('cv-llista','cv-proves'); showCV('cv-llista','cv-prova-graella');
+  document.getElementById('cv-llista').style.display='block';
+  actualitzarCompTiles();
 }
 function openComp(compId){
   currentCompId=compId;
@@ -1898,13 +1799,9 @@ function crearActivitatsProva(groupId,compIds,nom,dia,hora,data){
     return Promise.resolve();
   });
   Promise.all(tasks).then(function(){
-    calEvents.push({
-      id:'ev_'+groupId, titol:nom+(mc2?' ('+mc2.assigns[estat.subjIdx]+')':''),
-      data:dia, dataFi:dia, hora:hora, tipus:'activitat', source:'auto',
-      curs:mc2?mc2.curs:'', assignatura:mc2?mc2.assigns[estat.subjIdx]:''
-    });
     sincronitzarActivitatAProgramacio(groupId,nom,dia,hora,mc2);
     guardarDades();
+    actualitzarCompTiles();
     toast('"'+nom+'" creada ✓');
     obrirProves();
     setTimeout(function(){openProvaGraella(groupId);},60);
@@ -2165,19 +2062,9 @@ function crearActivitat(){
     alumnes.forEach(function(al){act.notes[al.ini]={};act.altres[al.ini]='';act.notaAltres[al.ini]=null;});
     var k=getKey(_novaActCompId); if(!activitats[k]) activitats[k]=[];
     activitats[k].push(act);
-    calEvents.push({
-      id:'ev_'+id,
-      titol:nom+(mc2?' ('+mc2.assigns[estat.subjIdx]+')':''),
-      data:dia,
-      dataFi:dia,
-      hora:hora,
-      tipus:'activitat',
-      source:'auto',
-      curs:mc2?mc2.curs:'',
-      assignatura:mc2?mc2.assigns[estat.subjIdx]:''
-    });
     sincronitzarActivitatAProgramacio(id,nom,dia,hora,mc2);
     guardarDades();
+    actualitzarCompTiles();
     toast('"'+nom+'" creada ✓');
     openComp(_novaActCompId);
     setTimeout(function(){openGraella(_novaActCompId,id);},60);
@@ -2192,8 +2079,10 @@ function crearActivitat(){
     acabar('a'+Date.now());
   }
 }
-// Publica l'activitat al calendari setmanal de Programacio (component React, iframe).
-// Es comparteixen via localStorage perque son dos "mons" separats (JS classic + React).
+// Publica l'activitat al calendari setmanal de Programacio (component React, iframe)
+// inserint-la directament a la taula "cal_events" de Supabase — i despres avisa
+// l'iframe amb postMessage (avisarProgramacioRefresc) perque es refresqui, ja que
+// son dos "mons" separats (JS classic + React) que no comparteixen estat en memoria.
 function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return;
   var dataObj=new Date(diaISO+'T00:00:00');
@@ -2213,11 +2102,24 @@ function sincronitzarActivitatAProgramacio(actId,nom,diaISO,hora,mc2){
     .then(function(cnt){
       if(cnt.error){ console.warn('[Arrel]',cnt.error.message); return; }
       if((cnt.count||0)>=2){ toast('Aquesta franja horària ja té 2 activitats/esdeveniments — no s\'ha afegit a Programació'); return; }
+      var subjNom=mc2&&mc2.assigns?mc2.assigns[estat.subjIdx]:'';
       sb.from('cal_events').insert({
-        professor_id:dbUid(), nota:nom, dia_setmana:dow, franja_hora:horaIdx,
+        professor_id:dbUid(), nota:nom+(subjNom?' ('+subjNom+')':''), dia_setmana:dow, franja_hora:horaIdx,
         data:diaISO, hora:hora||null, tipus:'moss', origen:'activitat', curs_nom:mc2?mc2.curs:''
-      }).then(function(res){ if(res.error) console.warn('[Arrel]',res.error.message); });
+      }).then(function(res){
+        if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+        avisarProgramacioRefresc();
+      });
     });
+}
+// El calendari de Programacio viu en un iframe (component React independent)
+// que nomes carrega els events de Supabase un cop, en muntar-se — no te cap
+// manera de saber que aquest "mon" (JS classic) acaba d'inserir-ne un de nou.
+// Li avisem amb postMessage perque es torni a carregar sense obligar a
+// recarregar tota la pagina.
+function avisarProgramacioRefresc(){
+  var f=document.getElementById('programacio-react-frame');
+  if(f&&f.contentWindow) f.contentWindow.postMessage({type:'arrel:refresc-cal-events'},'*');
 }
 
 function tancarComentariAct(){var e=document.getElementById('pop-comentari-act');if(e)e.remove();}
@@ -2261,96 +2163,12 @@ function guardarComentariAct(ini,actId,compId){
 }
 
 // ═══════════════ PROGRAMACIÓ - CALENDARI ═══════════════
-var evColors={examen:'clay',activitat:'sky',excursio:'moss',reunio:'plum',altre:'honey'};
+// Programació viu sencer al component React de l'iframe (carregat de forma
+// fixa a quadern.html) — aqui nomes cal assegurar que ja te "src" assignat.
 function renderCal(){
   var reactFrame=document.getElementById('programacio-react-frame');
-  if(reactFrame){
-    if(!reactFrame.getAttribute('src')) reactFrame.setAttribute('src','/programacio');
-    return;
-  }
-  var mesNoms=['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
-  document.getElementById('cal-mes-label').textContent=mesNoms[calMes]+' '+calAny;
-  var d=new Date(calAny,calMes,1);
-  var startDay=(d.getDay()+6)%7;
-  var daysInMes=new Date(calAny,calMes+1,0).getDate();
-  var prevDays=new Date(calAny,calMes,0).getDate();
-  var today=new Date();
-  var html='';
-  var totalCells=Math.ceil((startDay+daysInMes)/7)*7;
-  for(var i=0;i<totalCells;i++){
-    var day,month,year,otherMonth=false;
-    if(i<startDay){day=prevDays-startDay+i+1;month=calMes===0?11:calMes-1;year=calMes===0?calAny-1:calAny;otherMonth=true;}
-    else if(i>=startDay+daysInMes){day=i-startDay-daysInMes+1;month=calMes===11?0:calMes+1;year=calMes===11?calAny+1:calAny;otherMonth=true;}
-    else{day=i-startDay+1;month=calMes;year=calAny;}
-    var mm2=('0'+(month+1)).slice(-2); var dd2=('0'+day).slice(-2);
-    var dateStr=year+'-'+mm2+'-'+dd2;
-    var isToday=(!otherMonth&&day===today.getDate()&&month===today.getMonth()&&year===today.getFullYear());
-    var dayEvs=calEvents.filter(function(ev){return dateStr>=ev.data&&dateStr<=(ev.dataFi||ev.data);});
-    var evHtml=dayEvs.slice(0,2).map(function(ev){
-      var col=evColors[ev.tipus]||'honey';
-      var lbl=(ev.hora?ev.hora+' · ':'')+ev.titol;
-      var mode=ev.source==='auto'?'auto':'manual';
-      var bord=colorCurs(ev.curs);
-      return '<div class="cal-event '+mode+'" style="background:var(--'+col+'-l);color:var(--'+col+');border-left:3px solid '+bord+';" title="'+escHtml(lbl)+'">'+escHtml(lbl)+'</div>';
-    }).join('');
-    html+='<div class="cal-day'+(isToday?' today':'')+(otherMonth?' other-month':'')+'" data-date="'+dateStr+'" onclick="obrirNouEventDiaBtn(this)">'
-      +'<div class="cal-day-num">'+day+'</div>'+evHtml+'</div>';
-  }
-  document.getElementById('cal-grid').innerHTML=html;
-  var mesEvs=calEvents.filter(function(ev){
-    var d2=new Date(ev.data); return d2.getMonth()===calMes&&d2.getFullYear()===calAny;
-  });
-  document.getElementById('cal-events-avui').innerHTML=mesEvs.length?
-    '<div class="card"><div class="sec">Events aquest mes</div>'
-    +mesEvs.map(function(ev){
-      var col=evColors[ev.tipus]||'honey';
-      var dataTxt=(ev.dataFi&&ev.dataFi!==ev.data?ev.data.split('-').reverse().slice(0,2).join('/')+' → '+ev.dataFi.split('-').reverse().slice(0,2).join('/'):ev.data.split('-').reverse().join('/'));
-      if(ev.hora) dataTxt+=' · '+ev.hora;
-      var origen=ev.source==='auto'?'Activitat':'Manual';
-      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);">'
-        +'<span class="pill p-'+col+'" style="font-size:10px;">'+ev.tipus+'</span>'
-        +'<span style="flex:1;font-size:13px;font-weight:500;line-height:1.35;">'
-          +(ev.curs?'<span class="cal-course-dot" style="background:'+colorCurs(ev.curs)+';"></span>':'')
-          +escHtml(ev.titol)
-          +(ev.curs?'<span style="display:block;font-size:10px;color:var(--ink3);">'+escHtml(ev.curs)+(ev.assignatura?' · '+escHtml(ev.assignatura):'')+' · '+origen+'</span>':'')
-        +'</span>'
-        +'<span style="font-size:11px;color:var(--ink3);">'+dataTxt+'</span>'
-        +'<button class="btn btn-sm btn-danger" data-evid="'+ev.id+'" onclick="eliminarEventBtn(this)">✕</button>'
-      +'</div>';
-    }).join('')+'</div>':'';
+  if(reactFrame&&!reactFrame.getAttribute('src')) reactFrame.setAttribute('src','/programacio');
 }
-function obrirNouEventDiaBtn(el){obrirNouEventDia(el.dataset.date);}
-function obrirNouEventDia(dateStr){
-  document.getElementById('ev-data').value=dateStr;
-  document.getElementById('ev-data-fi').value='';
-  document.getElementById('ev-titol').value='';
-  document.getElementById('pop-event').style.display='flex';
-  setTimeout(function(){document.getElementById('ev-titol').focus();},60);
-}
-function guardarEvent(){
-  var titol=document.getElementById('ev-titol').value.trim();
-  if(!titol){toast('Escriu el títol');return;}
-  var dataInici=document.getElementById('ev-data').value;
-  var dataFi=document.getElementById('ev-data-fi').value;
-  if(!dataInici){toast('Cal la data');return;}
-  if(dataFi&&dataFi<dataInici){toast('La data fi no pot ser anterior');return;}
-  var mc=mesCursos[estat.cursIdx];
-  calEvents.push({
-    id:'e'+Date.now(),
-    titol:titol,
-    data:dataInici,
-    dataFi:dataFi||dataInici,
-    tipus:document.getElementById('ev-tipus').value,
-    source:'manual',
-    curs:mc?mc.curs:'',
-    assignatura:mc&&mc.assigns?mc.assigns[estat.subjIdx]:''
-  });
-  document.getElementById('pop-event').style.display='none';
-  document.getElementById('ev-data-fi').value='';
-  renderCal(); toast('Event guardat ✓');
-}
-function eliminarEventBtn(btn){eliminarEvent(btn.dataset.evid);}
-function eliminarEvent(id){calEvents=calEvents.filter(function(e){return e.id!==id;});renderCal();toast('Event eliminat');}
 
 // ═══════════════ CONFIGURACIÓ ═══════════════
 function cfgTab(btn,id){
@@ -2427,7 +2245,9 @@ function guardarNomAlumne(idx){
   toast('Alumne actualitzat ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al.dbId){
-    dbActualitzarNomAlumne(al.dbId,nom).catch(function(err){ toast('Error guardant: '+err.message); });
+    dbActualitzarNomAlumne(al.dbId,nom).then(function(res){
+      if(res&&res.error) toast('Error guardant: '+res.error.message);
+    },function(err){ toast('Error guardant: '+err.message); });
   }
 }
 // Baixa logica: mai s'elimina un alumne de la llista (splice) perque desplaçaria
@@ -2443,7 +2263,9 @@ function toggleActiuAlumne(idx){
   toast(al.actiu?'Alumne reactivat ✓':'Alumne marcat com a inactiu ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al.dbId){
-    dbActualitzarActiuAlumne(al.dbId,al.actiu).catch(function(err){ toast('Error guardant: '+err.message); });
+    dbActualitzarActiuAlumne(al.dbId,al.actiu).then(function(res){
+      if(res&&res.error) toast('Error guardant: '+res.error.message);
+    },function(err){ toast('Error guardant: '+err.message); });
   }
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
@@ -3398,6 +3220,7 @@ function eliminarActivitatConfirmat(){
     acts.splice(idx,1);
     tancarDelActivitat();
     guardarDades();
+    actualitzarCompTiles();
     toast('Activitat eliminada');
     showCV('cv-activitats','cv-graella');
     openComp(compId);

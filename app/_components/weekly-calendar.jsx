@@ -230,7 +230,10 @@ function rowToEvent(row) {
     hora: row.franja_hora,
     curs: row.curs_nom || "",
     tipus: row.tipus || "clay",
-    nota: row.nota || "",
+    // Files antigues (abans que el formulari nomes tingues "nota") poden tenir
+    // el text a "titol" i "nota" buida — si encara no s'ha executat el backfill
+    // (supabase/backfill_legacy_data.sql), que no es vegi l'event en blanc.
+    nota: row.nota || row.titol || "",
     data: row.data || null,
     creatPelProfessor: row.origen === "manual",
     origen: row.origen,
@@ -261,6 +264,12 @@ export default function WeeklyCalendar() {
   const [showDet, setShowDet] = useState(false);
   const [toast, setToast] = useState("");
   const [nowTick, setNowTick] = useState(Date.now());
+  // La posicio de la linia de "ara" depen de l'hora exacta del navegador i
+  // sempre sera diferent entre el render del servidor i el primer render del
+  // client (encara que sigui per pocs mil·lisegons) — es renderitza nomes
+  // despres de muntar per evitar el mismatch d'hidratacio de React.
+  const [muntat, setMuntat] = useState(false);
+  useEffect(() => { setMuntat(true); }, []);
 
   const [nvDia, setNvDia] = useState(0);
   const [nvHora, setNvHora] = useState(0);
@@ -404,28 +413,40 @@ export default function WeeklyCalendar() {
     return () => clearInterval(i);
   }, []);
 
-  // Carrega els events reals des de Supabase (la sessio ja hi es, es comparteix
-  // via localStorage amb la resta de l'app perque son la mateixa pagina web)
-  useEffect(() => {
+  const carregarEvents = useCallback(() => {
     if (!supabase) return;
-    let cancelat = false;
-    supabase.auth.getSession().then(({ data }) => {
+    return supabase.auth.getSession().then(({ data }) => {
       const uid = data && data.session && data.session.user && data.session.user.id;
-      if (!uid || cancelat) return;
+      if (!uid) return;
       setProfessorId(uid);
-      supabase
+      return supabase
         .from("cal_events")
         .select("*")
         .eq("professor_id", uid)
         .then(({ data: rows, error }) => {
-          if (cancelat || error) return;
+          if (error) return;
           if (rows) setEvents(rows.map(rowToEvent));
         });
     });
-    return () => {
-      cancelat = true;
-    };
   }, [supabase]);
+
+  // Carrega els events reals des de Supabase (la sessio ja hi es, es comparteix
+  // via localStorage amb la resta de l'app perque son la mateixa pagina web)
+  useEffect(() => {
+    carregarEvents();
+  }, [carregarEvents]);
+
+  // Aquest component viu en un iframe independent de l'app classica
+  // (public/quadern.js) — quan aquella crea una activitat nova (un "mon" JS
+  // separat), avisa amb postMessage perque tornem a carregar els events en
+  // lloc de quedar-nos amb la foto fixa que vam carregar en muntar-nos.
+  useEffect(() => {
+    function onMessage(e) {
+      if (e.data && e.data.type === "arrel:refresc-cal-events") carregarEvents();
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [carregarEvents]);
 
   const navS = useCallback((d) => setOffset((x) => x + d), []);
   const goAvui = useCallback(() => setOffset(0), []);
@@ -750,7 +771,7 @@ export default function WeeklyCalendar() {
             ))}
           </div>
 
-          {nowLineTop !== null ? (
+          {muntat && nowLineTop !== null ? (
             <div className="now-line" style={{ top: nowLineTop }}>
               <div className="now-dot" />
             </div>

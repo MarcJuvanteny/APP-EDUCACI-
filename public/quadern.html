@@ -24,7 +24,7 @@
     <div class="fg"><label class="flbl">Nom i cognoms</label><input class="input" id="reg-user-nom" placeholder="Ex: Anna Garcia Puig"></div>
     <div class="fg"><label class="flbl">Correu electrònic</label><input class="input" id="reg-user-email" type="email" placeholder="nom@centre.cat"></div>
     <div class="fg"><label class="flbl">Contrasenya</label><input class="input" id="reg-user-pass" type="password" placeholder="Mínim 6 caràcters"></div>
-    <button class="btn btn-clay" style="width:100%;padding:10px;margin-bottom:8px;" onclick="registrarCompte()">Crear compte i continuar →</button>
+    <button class="btn btn-clay" id="reg-user-submit-btn" style="width:100%;padding:10px;margin-bottom:8px;" onclick="registrarCompte()">Crear compte i continuar →</button>
     <button class="btn" style="width:100%;" onclick="showGatePas('g-login')">Ja tinc compte</button>
   </div>
 
@@ -361,31 +361,6 @@
     <div style="display:flex;gap:8px;margin-top:10px;">
       <button class="btn btn-clay" style="flex:1;" onclick="guardarMissatge()">Guardar</button>
       <button class="btn btn-ghost" onclick="document.getElementById('pop-miss').style.display='none'">Cancel·lar</button>
-    </div>
-  </div>
-</div>
-
-<!-- POPUP NOU EVENT CALENDARI -->
-<div class="overlay" id="pop-event" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
-  <div class="popup">
-    <div class="popup-head">Nou event</div>
-    <div class="fg"><label class="flbl">Títol</label><input class="input" id="ev-titol" placeholder="Ex: Examen tema 3, Setmana del llibre..."></div>
-    <div class="g2" style="gap:8px;">
-      <div class="fg"><label class="flbl">Data inici</label><input class="input" type="date" id="ev-data"></div>
-      <div class="fg"><label class="flbl">Data fi (opcional)</label><input class="input" type="date" id="ev-data-fi"></div>
-    </div>
-    <div class="fg"><label class="flbl">Tipus</label>
-      <select class="input" id="ev-tipus">
-        <option value="examen">Examen</option>
-        <option value="activitat">Activitat</option>
-        <option value="excursio">Excursió / Colònies</option>
-        <option value="reunio">Reunió</option>
-        <option value="altre">Altre</option>
-      </select>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-clay" style="flex:1;" onclick="guardarEvent()">Guardar</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('pop-event').style.display='none'">Cancel·lar</button>
     </div>
   </div>
 </div>
