@@ -74,7 +74,8 @@ Tot el que hi ha aquí es serveix directament pel navegador a `/nom-del-fitxer`,
 
 | Fitxer | Per a què serveix |
 |---|---|
-| `schema.sql` | Tot l'esquema de la base de dades: les taules (`profiles`, `cursos`, `assignatures`, `alumnes`, `activitats`, `rubrica_custom`, `cal_events`), les seves polítiques de seguretat (RLS, perquè cada professor només vegi les seves pròpies dades) i el trigger que crea el perfil automàticament quan algú es registra. És el fitxer que s'executa manualment al SQL Editor de Supabase per crear/actualitzar la base de dades. |
+| `schema.sql` | Foto congelada de tot l'esquema de la base de dades (taules, RLS, triggers) tal com estava en el moment en què es va deixar d'editar. Serveix per muntar un entorn nou des de zero. **No s'edita més** — els canvis nous van a `migrations/`. |
+| `migrations/` | Cada canvi nou a l'esquema, un fitxer per canvi, en ordre cronològic. Veure `migrations/README.md` per la convenció. |
 
 ---
 

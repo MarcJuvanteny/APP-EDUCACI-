@@ -68,17 +68,34 @@ tria només les que més cridin l'atenció o consideris més prioritàries
 rellevants dels professors). És preferible parlar amb profunditat
 de poques coses rellevants que mencionar-ho tot per sobre.`;
 
+// Els punts forts i fluixos s'han de triar mirant TOTES les assignatures
+// juntes com un sol conjunt, no assignatura per assignatura — les 3 més
+// fortes poden sortir totes de la mateixa assignatura, una de cada, o
+// qualsevol altra combinació, segons el cas real de l'alumne/a.
+const FORTS_I_FLUIXOS_EN_CONJUNT = `Per triar els punts forts i els aspectes a treballar, combina TOTES
+les assignatures en un únic conjunt de competències — no facis un
+rànquing assignatura per assignatura. D'aquest conjunt global, tria
+les 3 competències més fortes i les 3 més fluixes.
+Aquesta és la manera per defecte de triar-los, però no és una norma
+estricta: si en algun cas concret té més sentit fer un comentari
+general sobre una assignatura sencera en lloc d'una competència
+concreta, pots fer-ho igualment.`;
+
 const ESTRUCTURA_TRIMESTRAL_CURT = `TASCA: informe trimestral.
 
 ANÀLISI PRÈVIA OBLIGATÒRIA:
 Abans d'escriure, analitza en silenci:
-1. Quines assignatures i competències tenen les notes més altes
-2. Quines assignatures i competències tenen les notes més baixes
+1. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fortes en conjunt
+2. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fluixes en conjunt
 3. Si hi ha comentaris de comportament repetits per 2 o més professors
    — si és així, INCLOU-HO obligatòriament als aspectes a treballar
 4. Si els comentaris dels professors contradiuen les notes,
    dona més pes al comentari
 5. Si hi ha un patró clar entre assignatures
+
+${FORTS_I_FLUIXOS_EN_CONJUNT}
 
 ${PRIORITZACIO}
 
@@ -86,19 +103,22 @@ ESTRUCTURA (informe trimestral):
 
 — BLOC 1: VALORACIÓ GENERAL I PUNTS FORTS (text corregut, 3-5 frases)
 Comença felicitant l'alumne/a de forma sincera i específica.
-Descriu 2-3 punts forts explicats en llenguatge que qualsevol pare entengui,
-sense noms tècnics de competències.
+Descriu les 3 competències més fortes (triades en conjunt, veure més amunt)
+explicades en llenguatge que qualsevol pare entengui, sense noms tècnics
+de competències.
 En lloc de "té una gran comprensió lectora" digues "llegeix amb atenció
 i és capaç d'entendre el que vol dir un text fins i tot quan no ho diu directament".
 
-— BLOC 2: ASPECTES A TREBALLAR (text corregut, 2-3 frases)
-Descriu 1-2 àrees on necessita més suport, sempre de forma constructiva.
+— BLOC 2: ASPECTES A TREBALLAR (text corregut, 3-4 frases)
+Descriu les 3 competències més fluixes (triades en conjunt, veure més amunt)
+on necessita més suport, sempre de forma constructiva.
 Si hi ha comentaris de comportament repetits per 2 o més professors,
 inclou-los aquí de forma assertiva i sense ser agressiu.
 En lloc de "interromp constantment" digues "treballar l'escolta activa
 i els torns de paraula li permetrà aprofitar molt més les classes".
 
-— BLOC 3: COM MILLORAR A CASA (llista de 2 a 4 punts concrets)
+— BLOC 3: COM MILLORAR A CASA (llista de 3 punts concrets, un per cada
+competència fluixa del BLOC 2, en el mateix ordre en què les has presentat)
 Cada punt ha de ser una recomanació pràctica i senzilla.
 Específic i accionable — no diguis "llegir més", digues "dedicar
 10-15 minuts diaris a llegir un llibre que li agradi, deixant que
@@ -109,19 +129,23 @@ concreta per a casa sobre aquest punt.
 — TANCAMENT (1 frase)
 Breu i animadora mirant cap al proper trimestre, sense ser buida.
 
-EXTENSIÓ: 80-110 paraules en total.`;
+EXTENSIÓ: 100-130 paraules en total.`;
 
 const ESTRUCTURA_TRIMESTRAL_LLARG = `TASCA: informe trimestral detallat.
 
 ANÀLISI PRÈVIA OBLIGATÒRIA:
 Abans d'escriure, analitza en silenci:
-1. Quines assignatures i competències tenen les notes més altes
-2. Quines assignatures i competències tenen les notes més baixes
+1. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fortes en conjunt
+2. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fluixes en conjunt
 3. Si hi ha comentaris de comportament repetits per 2 o més professors
    — si és així, INCLOU-HO obligatòriament als aspectes a treballar
 4. Si els comentaris dels professors contradiuen les notes,
    dona més pes al comentari
 5. Si hi ha un patró clar entre assignatures
+
+${FORTS_I_FLUIXOS_EN_CONJUNT}
 
 ${PRIORITZACIO}
 
@@ -130,18 +154,20 @@ corregut i natural — mai el marquis amb títols, numeracions ni etiquetes
 visibles com "Punts forts" o "Com millorar"):
 
 Comença felicitant l'alumne/a de forma sincera i específica. Desenvolupa
-EXACTAMENT 3 punts forts, cadascun en el seu propi mini-paràgraf (2-3 frases
-per punt), explicats en llenguatge que qualsevol pare entengui, sense noms
+les 3 competències més fortes en conjunt (triades mirant totes les
+assignatures juntes), cadascuna en el seu propi mini-paràgraf (2-3 frases
+per punt), explicades en llenguatge que qualsevol pare entengui, sense noms
 tècnics de competències. En lloc de "té una gran comprensió lectora" digues
 "llegeix amb atenció i és capaç d'entendre el que vol dir un text fins i tot
 quan no ho diu directament".
 
-Tot seguit, desenvolupa EXACTAMENT 3 aspectes on necessita més suport,
-cadascun en el seu propi mini-paràgraf (2-3 frases per punt), sempre de
-forma constructiva. Si hi ha comentaris de comportament repetits per 2 o
-més professors, inclou-los aquí de forma assertiva i sense ser agressiu.
-En lloc de "interromp constantment" digues "treballar l'escolta activa
-i els torns de paraula li permetrà aprofitar molt més les classes".
+Tot seguit, desenvolupa les 3 competències més fluixes en conjunt (triades
+de la mateixa manera), cadascuna en el seu propi mini-paràgraf (2-3 frases
+per punt), sempre de forma constructiva. Si hi ha comentaris de comportament
+repetits per 2 o més professors, inclou-los aquí de forma assertiva i sense
+ser agressiu. En lloc de "interromp constantment" digues "treballar
+l'escolta activa i els torns de paraula li permetrà aprofitar molt més les
+classes".
 
 Finalment, per a cadascun d'aquests 3 aspectes a millorar, dona una
 recomanació pràctica i concreta (una recomanació per punt, en el mateix
@@ -167,6 +193,12 @@ Abans d'escriure, compara els tres trimestres en silenci:
    (ha millorat? ha empitjorat? es repeteix el mateix patró?)
 5. Quin ha estat el trimestre de major creixement
 6. Quins aspectes segueixen sense assolir-se al final del curs
+7. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fortes en conjunt (consolidades durant el curs)
+8. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fluixes en conjunt (les que encara no s'han acabat d'assolir)
+
+${FORTS_I_FLUIXOS_EN_CONJUNT}
 
 ${PRIORITZACIO}
 
@@ -176,19 +208,22 @@ ESTRUCTURA (informe final de curs):
 Comença fent referència a l'evolució al llarg del curs, no només al
 resultat final. Menciona de forma concreta com ha crescut des del
 primer trimestre fins ara.
-Destaca 2-3 punts forts consolidats durant el curs, explicats
-en llenguatge accessible per als pares.
+Destaca les 3 competències més fortes en conjunt (triades mirant totes
+les assignatures juntes, veure més amunt), consolidades durant el curs,
+explicades en llenguatge accessible per als pares.
 Si hi ha hagut una millora notable en algun aspecte, celebra-la
 de forma explícita.
 
-— BLOC 2: ASPECTES QUE ENCARA CAL TREBALLAR (text corregut, 2-3 frases)
-Descriu 1-2 aspectes que tot i el curs no s'han acabat d'assolir.
+— BLOC 2: ASPECTES QUE ENCARA CAL TREBALLAR (text corregut, 3-4 frases)
+Descriu les 3 competències més fluixes en conjunt (triades de la mateixa
+manera) que tot i el curs no s'han acabat d'assolir.
 Si un patró de comportament s'ha repetit els tres trimestres,
 inclou-lo aquí de forma constructiva.
 Si un aspecte ha millorat però encara no és prou sòlid,
 reflecteix-ho com un treball en curs positiu, no com un fracàs.
 
-— BLOC 3: COM MILLORAR A L'ESTIU (llista de 2 a 4 punts concrets)
+— BLOC 3: COM MILLORAR A L'ESTIU (llista de 3 punts concrets, un per cada
+competència fluixa del BLOC 2, en el mateix ordre en què les has presentat)
 Recomanacions pràctiques i lúdiques per a l'estiu que els pares
 puguin aplicar sense que sembli deures.
 Han de ser específiques i agradables — no "repassar matemàtiques",
@@ -200,7 +235,7 @@ recomanació concreta i positiva.
 — TANCAMENT (1 frase)
 Una frase càlida i motivadora mirant cap al curs vinent.
 
-EXTENSIÓ: 150-180 paraules en total.`;
+EXTENSIÓ: 160-200 paraules en total.`;
 
 const ESTRUCTURA_CURS_LLARG = `TASCA: informe final de curs detallat. Rebràs notes i comentaris del 1r, 2n i 3r trimestre per separat.
 
@@ -213,6 +248,12 @@ Abans d'escriure, compara els tres trimestres en silenci:
    (ha millorat? ha empitjorat? es repeteix el mateix patró?)
 5. Quin ha estat el trimestre de major creixement
 6. Quins aspectes segueixen sense assolir-se al final del curs
+7. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fortes en conjunt (consolidades durant el curs)
+8. Mirant TOTES les assignatures juntes, quines són les 3 competències
+   més fluixes en conjunt (les que encara no s'han acabat d'assolir)
+
+${FORTS_I_FLUIXOS_EN_CONJUNT}
 
 ${PRIORITZACIO}
 
@@ -222,18 +263,20 @@ visibles com "Punts forts" o "Com millorar"):
 
 Comença fent referència a l'evolució al llarg del curs, no només al
 resultat final. Menciona de forma concreta com ha crescut des del
-primer trimestre fins ara. Desenvolupa EXACTAMENT 3 punts forts
-consolidats durant el curs, cadascun en el seu propi mini-paràgraf
-(2-3 frases per punt), explicats en llenguatge accessible per als
+primer trimestre fins ara. Desenvolupa les 3 competències més fortes en
+conjunt (triades mirant totes les assignatures juntes, veure més amunt),
+consolidades durant el curs, cadascuna en el seu propi mini-paràgraf
+(2-3 frases per punt), explicades en llenguatge accessible per als
 pares. Si hi ha hagut una millora notable en algun aspecte, celebra-la
 de forma explícita.
 
-Tot seguit, desenvolupa EXACTAMENT 3 aspectes que tot i el curs no
-s'han acabat d'assolir, cadascun en el seu propi mini-paràgraf
-(2-3 frases per punt). Si un patró de comportament s'ha repetit els
-tres trimestres, inclou-lo aquí de forma constructiva. Si un aspecte
-ha millorat però encara no és prou sòlid, reflecteix-ho com un treball
-en curs positiu, no com un fracàs.
+Tot seguit, desenvolupa les 3 competències més fluixes en conjunt
+(triades de la mateixa manera) que tot i el curs no s'han acabat
+d'assolir, cadascuna en el seu propi mini-paràgraf (2-3 frases per
+punt). Si un patró de comportament s'ha repetit els tres trimestres,
+inclou-lo aquí de forma constructiva. Si un aspecte ha millorat però
+encara no és prou sòlid, reflecteix-ho com un treball en curs positiu,
+no com un fracàs.
 
 Finalment, per a cadascun d'aquests 3 aspectes, dona una recomanació
 pràctica i lúdica per a l'estiu (una recomanació per punt, en el mateix

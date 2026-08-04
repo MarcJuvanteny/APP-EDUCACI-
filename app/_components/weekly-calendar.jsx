@@ -677,7 +677,7 @@ export default function WeeklyCalendar() {
 
       <div className="spg-main">
         <div className="top">
-          <div className="brand">A · Arrel</div>
+          <div className="brand">S · SeJus</div>
           <button className="nav-btn" onClick={() => navS(-1)}>
             ←
           </button>

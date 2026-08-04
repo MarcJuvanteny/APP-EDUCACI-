@@ -24,7 +24,6 @@ var alumnes = [
   {ini:'RT',nom:'Roger Torres Vila',color:'sky'},
   {ini:'IC',nom:'Irene Comas Prat',color:'moss'}
 ];
-var missatgesAlumnes = {};
 
 var PERFIL_KEY = 'arrel_perfil_v1';
 var authState = { isLogged: false, user: null };
@@ -228,40 +227,40 @@ var competenciesByArea = {
   ],
   anglesLleng: [
     comp('angl-ce1','Linguistic diversity','LD','sky',[
-      crit('Recognise and respect linguistic diversity.','Shows rejection or indifference towards other languages and cultures.','Recognises the languages in the classroom and respects them when reminded.','Shows active interest and respect towards different languages.','Actively promotes and values diversity as a shared richness.'),
-      crit('Identify language prejudices and inclusion.','Repeats language prejudices without questioning them.','Identifies some prejudices when guided by an adult.','Detects prejudices independently and argues against them.','Critically analyses language use and proposes inclusive alternatives.')
+      crit('Reconèixer i respectar la diversitat lingüística.','Mostra rebuig o indiferència cap a altres llengües i cultures.','Reconeix les llengües de l\'aula i les respecta si se li recorda.','Mostra interès actiu i respecte cap a les diferents llengües.','Promou i valora activament la diversitat com una riquesa col·lectiva.'),
+      crit('Identificar prejudicis lingüístics i cohesió.','Reprodueix prejudicis lingüístics sense qüestionar-los.','Identifica alguns prejudicis quan l\'adult el guia.','Detecta prejudicis de forma autònoma i hi argumenta en contra.','Analitza de forma crítica els usos i proposa alternatives inclusives.')
     ]),
     comp('angl-ce2','Listening','LI','clay',[
-      crit('Understand the main ideas of oral texts.','Does not grasp the overall idea of the oral text even with support.','Identifies the main idea when asked direct questions or guided.','Independently identifies main and secondary ideas.','Summarises the speech precisely, picking up subtle details and connections.'),
-      crit('Assess the purpose of an oral text.','Stays at a literal level and confuses the speaker\'s intention.','Recognises the basic purpose (inform, persuade) with guidance.','Detects the speaker\'s intention and gives a reasoned assessment.','Critically analyses intention, detecting bias or irony.')
+      crit('Comprendre idees principals de textos orals.','No capta la idea global del text oral ni amb suport.','Identifica la idea principal si rep preguntes o guiatge directament.','Extreu les idees principals i secundàries de forma autònoma.','Sintetitza el discurs amb precisió, captant detalls subtils i relacions.'),
+      crit('Valorar la intenció del discurs oral.','Es queda en la literalitat i confon la intenció de l\'emissor.','Reconeix la intenció bàsica (informar, convèncer) amb pautes.','Detecta la intenció de l\'emissor i en fa una valoració raonada.','Analitza de forma crítica la intenció, detectant biaixos o ironies.')
     ]),
     comp('angl-ce3','Speaking','SP','plum',[
-      crit('Produce coherent, well-structured spoken texts.','Expresses ideas in a disordered, unclear or very poor way.','Expresses themselves in an understandable way, though with hesitations or repetitions.','Presents ideas in order, fluently and with varied, appropriate vocabulary.','Builds a structured, rich, fluent speech adapted to the audience.'),
-      crit('Take part in conversations and debates, following the rules.','Constantly interrupts, does not listen or refuses to take part.','Takes part in the conversation and keeps their turn when reminded.','Takes an active part, listens to others and keeps the dialogue flowing.','Leads the dialogue empathetically, integrating others\' contributions.')
+      crit('Produir textos orals coherents i estructurats.','Expressa idees de forma desordenada, incomprensible o molt pobre.','S\'expressa de forma entenedora, tot i que amb dubtes o repeticions.','Exposa idees amb ordre, fluïdesa i un vocabulari variat i adequat.','Construeix un discurs estructurat, ric, fluid i adaptat a l\'audiència.'),
+      crit('Participar en converses i debats respectant normes.','Interromp sistemàticament, no escolta o es nega a participar.','Participa en la conversa i manté el torn si se li recorda.','Intervé activament, escolta els altres i manté un diàleg fluid.','Lidera el diàleg de forma empàtica, integrant les aportacions d\'altres.')
     ]),
     comp('angl-ce4','Reading','RE','moss',[
-      crit('Extract direct and implicit information from texts.','Does not extract basic information from the text even with support.','Finds direct, literal information but struggles to make inferences.','Independently extracts explicit and implicit information.','Interprets deeper meaning, making complex, critical connections.'),
-      crit('Apply reading strategies to aid comprehension.','Gives up reading when facing a difficulty or an unknown word.','Uses context or rereads when guided by an adult.','Independently applies tricks and strategies when something is not understood.','Selects and combines strategies according to the complexity of the text.')
+      crit('Extreure informació directa i implícita de textos.','No extreu la informació bàsica del text encara que tingui suport.','Troba la informació literal directa, però li costa fer deduccions.','Extreu informació explícita i implícita de manera autònoma.','Interpreta el sentit profund, establint relacions complexes i crítiques.'),
+      crit('Aplicar estratègies de lectura per la comprensió.','Abandona la lectura en trobar un bloqueig o paraula desconeguda.','Utilitza el context o rellegeix si l\'adult el guia en el procés.','Aplica trucs i estratègies autònomament quan no entén alguna cosa.','Selecciona i combina estratègies segons la complexitat del text.')
     ]),
     comp('angl-ce5','Writing','WR','honey',[
-      crit('Write well-structured texts according to text type.','Writes incoherent texts that do not follow a structure.','Writes understandable texts that follow a basic structure.','Writes coherently, in an organised way and suited to the text type.','Organises the text with an impeccable structure, fluent and creative style.'),
-      crit('Apply the writing process (planning, revising).','Writes directly without planning and never revises the text.','Plans with visual aids and corrects obvious spelling mistakes.','Plans the text and independently revises spelling and grammar.','Shows a rigorous self-revision process, polishing the text to improve it.')
+      crit('Escriure textos estructurats segons la tipologia.','Redacta textos incoherents que no mantenen l\'estructura.','Escriu textos entenedors que mantenen l\'estructura bàsica.','Redacta de forma coherent, organitzada i ajustada a la tipologia.','Organitza el text amb una estructura impecable, estil fluid i creatiu.'),
+      crit('Aplicar el procés d\'escriptura (planificar, revisar).','Escriu directament sense planificar i no revisa mai el text.','Planifica amb ajuts visuals i corregeix errors ortogràfics evidents.','Planifica el text i en revisa l\'ortografia i gramàtica autònomament.','Mostra un procés d\'auto-revisió rigorós, polint el text per millorar-lo.')
     ]),
     comp('angl-ce6','Information search','IS','sky',[
-      crit('Search for information in analogue and digital sources.','Gets lost in the search and does not find relevant or useful information.','Finds information when given very specific sources and guidance.','Independently searches for and selects relevant information from reliable sources.','Compares different sources, assesses their reliability and selects the best content.'),
-      crit('Process and summarise information (no copying).','Copies and pastes text fragments literally without processing them.','Rewrites information changing only a few isolated words.','Writes information in their own words, organising ideas.','Summarises and personalises information, producing their own account.')
+      crit('Cercar informació en fonts analògiques i digitals.','Es perd en la cerca i no troba informació rellevant o útil.','Localitza informació si se li donen fonts i pautes molt concretes.','Cerca i selecciona informació rellevant en fonts fiables autònomament.','Contrasta diferents fonts, n\'avalua la fiabilitat i selecciona el millor contingut.'),
+      crit('Processar i sintetitzar la informació (no plagiar).','Copia i enganxa literalment fragments del text sense processar.','Reescriu la informació canviant només algunes paraules soltes.','Redacta la informació amb les seves pròpies paraules organitzant idees.','Sintetitza i personalitza la informació elaborant un discurs propi.')
     ]),
     comp('angl-ce7','Literary education','LE','clay',[
-      crit('Read literary works independently.','Systematically refuses to read.','Reads the books suggested in class but does not choose books on their own.','Shows a reading habit, choosing books according to their tastes and interests.','Has a well-established reading habit and shares recommendations.'),
-      crit('Recognise basic elements of a story.','Cannot identify the characters or the setting of the story.','Identifies the main characters and the setting when they are obvious.','Clearly recognises characters, setting, time and genre.','Analyses the development of characters, narrator and stylistic devices.')
+      crit('Llegir de manera autònoma obres literàries.','Rebutja la lectura de forma sistemàtica.','Llegeix els llibres proposats a classe, però no en tria per iniciativa.','Mostra hàbit lector, triant obres segons els seus gustos i interessos.','Té un hàbit lector consolidat i comparteix recomanacions.'),
+      crit('Reconèixer elements bàsics del relat.','No sap identificar els personatges ni el context de la història.','Identifica els personatges principals i el lloc si són evidents.','Reconeix clarament personatges, espai, temps i el gènere.','Analitza l\'evolució dels personatges, el narrador i recursos expressius.')
     ]),
     comp('angl-ce8','Plurilingualism','PL','plum',[
-      crit('Transfer strategies from one language to another.','Blocks their learning without connecting it to what they already know.','Recognises simple language similarities when pointed out.','Transfers structures, vocabulary and strategies between languages.','Strategically uses their multilingual repertoire to solve challenges.'),
-      crit('Show an open attitude towards different languages.','Refuses to learn or listen to languages other than their own.','Tolerates different languages in the classroom without showing initiative.','Shows interest and curiosity in learning new words.','Shows enthusiasm and acts as a language bridge in the classroom.')
+      crit('Transferir estratègies d\'una llengua a una altra.','Bloqueja l\'aprenentatge sense relacionar-ho amb el que coneix.','Reconeix semblances lingüístiques simples quan se li fan notar.','Transfereix estructures, vocabulari i estratègies entre llengües.','Utilitza el repertori multilingüe de manera estratègica per resoldre reptes.'),
+      crit('Actitud oberta cap a diferents llengües.','Rebutja aprendre o escoltar llengües diferents a la pròpia.','Tolera diferents llengües a l\'aula sense mostrar iniciativa activa.','Manifesta interès i curiositat per aprendre paraules noves.','Es mostra entusiasta i actua com a pont lingüístic a l\'aula.')
     ]),
     comp('angl-ce9','Language reflection','LR','moss',[
-      crit('Form hypotheses and use grammatical terminology.','Does not recognise grammatical categories or the function of words.','Identifies basic grammatical elements with guidance.','Uses basic grammatical terms to explain the language.','Applies precise metalinguistic reflection to justify choices.'),
-      crit('Review and self-correct their own work.','Does not notice their own mistakes even when pointed out.','Corrects mistakes when the teacher points out exactly where they are.','Independently reviews the text and detects and corrects mistakes.','Self-corrects and improves cohesion, accuracy and sentence structure with judgement.')
+      crit('Formular hipòtesis i usar terminologia gramatical.','No reconeix les categories gramaticals ni la funció de paraules.','Identifica elements gramaticals bàsics amb suport de la pauta.','Utilitza els termes gramaticals bàsics per explicar la llengua.','Aplica la reflexió metalingüística de forma precisa per argumentar la tria.'),
+      crit('Revisar i auto-corregir les produccions.','No detecta els seus propis errors ni quan se li assenyalen.','Corregeix errors quan el docent li indica exactament on són.','Revisa el text autònomament i detecta i corregeix errades.','Autocorregeix i millora la cohesió, la precisió i la sintaxi amb criteri.')
     ])
   ],
   castellaLleng: [
@@ -357,7 +356,6 @@ function syncCompetenciesForCurrentSubject(){
 // activitats[key] = [{id,nom,data,notes,altres,notaAltres}]
 // key = cursNom + '_' + trimNom + '_' + subjNom + '_' + compId
 var activitats = {};
-var missatgesAlumnes = {};
 var currentCompId = '';
 
 // ─── SEED DADES ───
@@ -379,7 +377,12 @@ function seedDemo(){
   };
   var dates = ['15/01/2026','12/02/2026','05/03/2026','02/04/2026','28/04/2026'];
   var missatgesDef = {'MR':"Excel·lent actitud.","SV":"Cal reforçar l'expressió oral.","LE":"Necessita més suport.","JP":"Molt participatiu.","AO":"Pla de reforç actiu.","MF":"Alumna destacada.","PL":"Millora progressiva.","NC":"Bona actitud.","JB":"En millora.","AT":"Molt bona alumna.","RT":"Pot millorar.","IC":"Excel·lent en tot."};
-  alumnes.forEach(function(al){ missatgesAlumnes[al.nom] = missatgesDef[al.ini]||''; });
+  // Nomes es posa el comentari de mostra a la primera assignatura de cada curs,
+  // per deixar clar que es un comentari individual per assignatura i no compartit.
+  mesCursos.forEach(function(mc){
+    var primeraSubj=mc.assigns[0];
+    alumnes.forEach(function(al){ setComentariAlumne(al,primeraSubj,missatgesDef[al.ini]||''); });
+  });
 
   mesCursos.forEach(function(mc){
     trimestres.forEach(function(trim){
@@ -414,6 +417,12 @@ if(!window.__QUADERN_SUPABASE__) seedDemo();
 
 // ═══════════════ HELPERS ═══════════════
 function ava(al,w,fs){ return '<div class="ava" style="width:'+w+'px;height:'+w+'px;font-size:'+fs+'px;background:var(--'+al.color+'-l);color:var(--'+al.color+');">'+al.ini+'</div>'; }
+// El comentari general d'un alumne es individual per assignatura (Catala,
+// Castella, Angles...) — es guarda a al.comentaris[assignatura], no en un
+// unic camp compartit per tot el curs.
+function comentariAlumne(al,subj){ return (al.comentaris&&al.comentaris[subj])||''; }
+function setComentariAlumne(al,subj,text){ if(!al.comentaris) al.comentaris={}; al.comentaris[subj]=text; }
+function subjActual(){ var mc=mesCursos[estat.cursIdx]; return mc?mc.assigns[estat.subjIdx]:null; }
 function getColor(n){ if(n>=7)return 'moss'; if(n>=5)return 'sky'; if(n>=4)return 'honey'; return 'clay'; }
 function notaClass(n){ if(n>=7)return 'na'; if(n>=5)return 'nb'; if(n>=4)return 'nc'; return 'nd'; }
 function colorIdx(i){ return ['clay','moss','honey','sky','plum'][i%5]; }
@@ -509,7 +518,6 @@ function guardarDades(){
   lsSet(DADES_KEY, {
     alumnes: alumnes,
     activitats: activitats,
-    missatgesAlumnes: missatgesAlumnes,
     rubrica: rubrica,
     competenciesByArea: competenciesByArea
   });
@@ -519,7 +527,6 @@ function carregarDades(){
   if(!saved) return false;
   if(saved.alumnes && saved.alumnes.length) alumnes=saved.alumnes;
   if(saved.activitats) activitats=saved.activitats;
-  if(saved.missatgesAlumnes) missatgesAlumnes=saved.missatgesAlumnes;
   // La rubrica i les competencies per defecte nomes es restauren del localStorage en
   // mode sense base de dades. Amb Supabase connectat, els valors per defecte vius al
   // codi son l'unica font de veritat, i les personalitzacions del professor arriben
@@ -542,6 +549,30 @@ function tePerfilConfigurat(){
 
 // ═══════════════ BASE DE DADES (Supabase): cursos, assignatures, alumnes ═══════════════
 function dbUid(){ return authState.user && authState.user.id; }
+// Embolcall obligatori per a qualsevol escriptura a Supabase (insert/update/
+// upsert/delete) que es dispara des d'una acció d'usuari. supabase-js MAI
+// rebutja la promesa per un error de consulta (RLS, columna inexistent...) —
+// sempre la resol amb {error:{...}}. Fer servir nomes .then(exit) o .catch()
+// per tant NO detecta aquests errors: l'usuari es queda creient que s'ha
+// guardat quan no és cert. Aquest helper centralitza la comprovació.
+// Retorna una promesa que resol a `true` si ha anat bé i `false` si hi ha
+// hagut error (ja mostrat amb toast) — el crida qui nomes necessita saber
+// si pot continuar, sense preocupar-se de com detecta l'error supabase-js.
+// Ús: dbEscriu(dbEliminarCurs(id), 'Error eliminant el curs').then(function(ok){ if(ok) ... });
+function dbEscriu(promesa,missatgeError){
+  return promesa.then(function(res){
+    if(res&&res.error){
+      console.warn('[Arrel]',res.error.message);
+      toast(missatgeError+': '+res.error.message);
+      return false;
+    }
+    return true;
+  },function(err){
+    console.warn('[Arrel]',err.message);
+    toast(missatgeError+': '+err.message);
+    return false;
+  });
+}
 function dbCarregarPerfil(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve(null);
   return sb.from('profiles').select('*').eq('id',dbUid()).maybeSingle().then(function(res){
@@ -636,7 +667,7 @@ function dbCarregarAlumnes(cursId){
   return sb.from('alumnes').select('*').eq('curs_id',cursId).order('ordre').then(function(res){
     if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
     return (res.data||[]).map(function(a,i){
-      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentari:a.comentari||'',actiu:a.actiu!==false};
+      return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentaris:a.comentaris||{},actiu:a.actiu!==false};
     });
   });
 }
@@ -646,8 +677,6 @@ function carregarAlumnesDelCursActiu(){
   if(!sb||!mc||!mc.id){ return Promise.resolve(); }
   return dbCarregarAlumnes(mc.id).then(function(llista){
     alumnes=llista;
-    missatgesAlumnes={};
-    alumnes.forEach(function(al){ missatgesAlumnes[al.nom]=al.comentari||''; });
   });
 }
 // Data DB (yyyy-mm-dd) -> format de visualitzacio de l'app (dd/mm/yyyy [· hh:mm])
@@ -703,9 +732,9 @@ function dbAfegirAlumne(cursId,nom,ordre){
   var sb=window.__QUADERN_SUPABASE__;
   return sb.from('alumnes').insert({curs_id:cursId,professor_id:dbUid(),nom:nom,ordre:ordre}).select().single();
 }
-function dbActualitzarComentariAlumne(alumneDbId,text){
+function dbActualitzarComentariAlumne(alumneDbId,comentaris){
   var sb=window.__QUADERN_SUPABASE__;
-  return sb.from('alumnes').update({comentari:text}).eq('id',alumneDbId);
+  return sb.from('alumnes').update({comentaris:comentaris}).eq('id',alumneDbId);
 }
 function dbActualitzarActiuAlumne(alumneDbId,actiu){
   var sb=window.__QUADERN_SUPABASE__;
@@ -853,9 +882,7 @@ function guardarEdicioPerfil(){
   updateNav();
   toast('Perfil actualitzat ✓');
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb) dbGuardarPerfil(prof.nom,prof.centre,prof.any).then(function(res){
-    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error desant el perfil: '+res.error.message); }
-  },function(err){ console.warn('[Arrel]',err.message); toast('Error desant el perfil: '+err.message); });
+  if(sb) dbEscriu(dbGuardarPerfil(prof.nom,prof.centre,prof.any),'Error desant el perfil');
 }
 function tancarSessio(){
   var sb=window.__QUADERN_SUPABASE__;
@@ -867,7 +894,7 @@ function tancarSessio(){
       // altre compte en aquest mateix navegador, no ha de veure cap resta
       // d'aquest (cursos, alumnes, notes...). En mode local sense backend
       // aquesta cache ES l'unica copia de les dades, no es pot esborrar.
-      mesCursos=[]; alumnes=[]; activitats={}; missatgesAlumnes={};
+      mesCursos=[]; alumnes=[]; activitats={};
       estat={cursIdx:0,trimIdx:0,subjIdx:0};
       try{ window.localStorage.removeItem(PERFIL_KEY); window.localStorage.removeItem(DADES_KEY); }catch(err){}
     }
@@ -1003,7 +1030,7 @@ function eliminarCursConfirmat(ci){
     toast('Curs eliminat');
   };
   if(sb&&mc.id){
-    dbEliminarCurs(mc.id).then(acabar).catch(function(err){ toast('Error eliminant el curs: '+err.message); });
+    dbEscriu(dbEliminarCurs(mc.id),'Error eliminant el curs').then(function(ok){ if(ok) acabar(); });
   }else{
     acabar();
   }
@@ -1074,7 +1101,7 @@ function eliminarAssignaturaConfirmat(ci,si){
     toast('Assignatura eliminada');
   };
   if(sb&&mc.id){
-    dbEliminarAssignatura(mc.id,subj).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
+    dbEscriu(dbEliminarAssignatura(mc.id,subj),'Error eliminant').then(function(ok){ if(ok) acabar(); });
   }else{
     acabar();
   }
@@ -1405,7 +1432,7 @@ function renderAlumnes(){
     +'</tr></thead>';
 
   var tbody='<tbody>'+alumnesFiltrats.map(function(al){
-    var missatge=missatgesAlumnes[al.nom]||'';
+    var missatge=comentariAlumne(al,subj);
     var compAvgs=competencies.map(function(comp){
       var acts=getActsFor(mc.curs,trim,subj,comp.id); var t=0,c=0;
       acts.forEach(function(act){ comp.criteris.forEach(function(crit){ var n=act.notes[al.ini]?act.notes[al.ini][crit]:null; if(n!=null){t+=n;c++;} }); });
@@ -1468,7 +1495,7 @@ function obrirAlumne(ini){
   });
 
   var canvasId='spider-alu-'+ini;
-  var missatge=missatgesAlumnes[al.nom]||'';
+  var missatge=comentariAlumne(al,subj);
 
   document.getElementById('alumne-detail-body').innerHTML=
     '<div class="card" style="margin-bottom:12px;">'
@@ -1526,38 +1553,42 @@ function autoResizeTextarea(ta){
 }
 function guardarComentariInline(ta){
   var nom=ta.dataset.nom;
+  var subj=subjActual(); if(!subj) return;
   var text=ta.value.trim();
-  if((missatgesAlumnes[nom]||'')===text) return;
-  missatgesAlumnes[nom]=text;
   var al=alumnes.find(function(a){return a.nom===nom;});
-  if(al) al.comentari=text;
+  if(!al) return;
+  if(comentariAlumne(al,subj)===text) return;
+  setComentariAlumne(al,subj,text);
   guardarDades();
   toast('Comentari guardat ✓');
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb&&al&&al.dbId){
-    trackSave(dbActualitzarComentariAlumne(al.dbId,text)).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+  if(sb&&al.dbId){
+    trackSave(dbEscriu(dbActualitzarComentariAlumne(al.dbId,al.comentaris),'Error guardant comentari'));
   }
 }
 function obrirMissatgeAluBtn(btn){ obrirMissatgeAlu(btn.dataset.nom); }
 function obrirMissatgeAlu(nom){
+  var subj=subjActual();
+  var al=alumnes.find(function(a){return a.nom===nom;});
   document.getElementById('pop-miss-nom').textContent=nom;
-  document.getElementById('pop-miss-text').value=missatgesAlumnes[nom]||'';
+  document.getElementById('pop-miss-text').value=al?comentariAlumne(al,subj):'';
   document.getElementById('pop-miss').style.display='flex';
   document.getElementById('pop-miss').dataset.nom=nom;
   setTimeout(function(){document.getElementById('pop-miss-text').focus();},80);
 }
 function guardarMissatge(){
   var nom=document.getElementById('pop-miss').dataset.nom;
+  var subj=subjActual(); if(!subj) return;
   var text=document.getElementById('pop-miss-text').value.trim();
-  missatgesAlumnes[nom]=text;
-  document.getElementById('pop-miss').style.display='none';
   var al=alumnes.find(function(a){return a.nom===nom;});
-  if(al) al.comentari=text;
+  if(!al) return;
+  setComentariAlumne(al,subj,text);
+  document.getElementById('pop-miss').style.display='none';
   guardarDades();
   renderAlumnes(); toast('Comentari guardat ✓');
   var sb=window.__QUADERN_SUPABASE__;
-  if(sb&&al&&al.dbId){
-    trackSave(dbActualitzarComentariAlumne(al.dbId,text)).catch(function(err){ console.warn('[Arrel] Error guardant comentari:',err.message); });
+  if(sb&&al.dbId){
+    trackSave(dbEscriu(dbActualitzarComentariAlumne(al.dbId,al.comentaris),'Error guardant comentari'));
   }
 }
 
@@ -1938,7 +1969,7 @@ function eliminarProvaConfirmat(){
     if(idx===-1) return Promise.resolve();
     var act=acts[idx];
     acts.splice(idx,1);
-    if(sb&&act.dbId) return dbEliminarActivitat(act.dbId).catch(function(err){ console.warn('[Arrel]',err.message); });
+    if(sb&&act.dbId) return dbEscriu(dbEliminarActivitat(act.dbId),'Error eliminant la prova');
     return Promise.resolve();
   });
   Promise.all(tasks).then(function(){
@@ -1972,16 +2003,12 @@ function saveNota(inp){
 function sincronitzarNotesActivitat(act){
   var sb=window.__QUADERN_SUPABASE__;
   if(!sb||!act.dbId) return;
-  trackSave(dbActualitzarNotesActivitat(act.dbId,act.notes)).then(function(res){
-    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error guardant la nota: '+res.error.message); }
-  },function(err){ console.warn('[Arrel]',err.message); toast('Error guardant la nota: '+err.message); });
+  trackSave(dbEscriu(dbActualitzarNotesActivitat(act.dbId,act.notes),'Error guardant la nota'));
 }
 function sincronitzarComentarisActivitat(act){
   var sb=window.__QUADERN_SUPABASE__;
   if(!sb||!act.dbId) return;
-  trackSave(dbActualitzarComentarisActivitat(act.dbId,act.altres)).then(function(res){
-    if(res&&res.error){ console.warn('[Arrel]',res.error.message); toast('Error guardant el comentari: '+res.error.message); }
-  },function(err){ console.warn('[Arrel]',err.message); toast('Error guardant el comentari: '+err.message); });
+  trackSave(dbEscriu(dbActualitzarComentarisActivitat(act.dbId,act.altres),'Error guardant el comentari'));
 }
 function recalcGlobal(act,comp,ini){
   var t=0,c=0;
@@ -2204,7 +2231,7 @@ function addAlumneManual(){
   var mc=mesCursos[estat.cursIdx];
   var sb=window.__QUADERN_SUPABASE__;
   var acabar=function(dbId){
-    alumnes.push({dbId:dbId,ini:ini,nom:nom,color:colorIdx(alumnes.length),comentari:''});
+    alumnes.push({dbId:dbId,ini:ini,nom:nom,color:colorIdx(alumnes.length),comentaris:{}});
     inp.value=''; inp.focus(); guardarDades(); renderCfgAlumnes(); toast(nom+' afegit ✓');
   };
   if(sb&&mc&&mc.id){
@@ -2236,18 +2263,14 @@ function guardarNomAlumne(idx){
   var al=alumnes[idx]; if(!al) return;
   var nom=(document.getElementById('edit-alu-nom').value||'').trim();
   if(!nom){toast('Escriu el nom');return;}
-  var nomAntic=al.nom;
   al.nom=nom; al.ini=ini2(nom);
-  if(missatgesAlumnes[nomAntic]!=null){ missatgesAlumnes[nom]=missatgesAlumnes[nomAntic]; delete missatgesAlumnes[nomAntic]; }
   guardarDades();
   tancarEditarAlu();
   renderCfgAlumnes();
   toast('Alumne actualitzat ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al.dbId){
-    dbActualitzarNomAlumne(al.dbId,nom).then(function(res){
-      if(res&&res.error) toast('Error guardant: '+res.error.message);
-    },function(err){ toast('Error guardant: '+err.message); });
+    dbEscriu(dbActualitzarNomAlumne(al.dbId,nom),'Error guardant');
   }
 }
 // Baixa logica: mai s'elimina un alumne de la llista (splice) perque desplaçaria
@@ -2263,9 +2286,7 @@ function toggleActiuAlumne(idx){
   toast(al.actiu?'Alumne reactivat ✓':'Alumne marcat com a inactiu ✓');
   var sb=window.__QUADERN_SUPABASE__;
   if(sb&&al.dbId){
-    dbActualitzarActiuAlumne(al.dbId,al.actiu).then(function(res){
-      if(res&&res.error) toast('Error guardant: '+res.error.message);
-    },function(err){ toast('Error guardant: '+err.message); });
+    dbEscriu(dbActualitzarActiuAlumne(al.dbId,al.actiu),'Error guardant');
   }
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
@@ -2545,7 +2566,7 @@ function construirDadesInforme(mc, subj, trim, nomInforme){
       });
       var vals=Object.values(notesPerComp).map(function(c){return c.mitjana;}).filter(function(v){return v!==null;});
       var global=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10:null;
-      return {id:al.id||'',ini:al.ini,nom:al.nom,global:global,competencies:notesPerComp,comentari:missatgesAlumnes[al.nom]||''};
+      return {id:al.id||'',ini:al.ini,nom:al.nom,global:global,competencies:notesPerComp,comentari:comentariAlumne(al,subj)};
     })
   };
 }
@@ -2567,7 +2588,7 @@ function exportarPDF(){
   var mc=mesCursos[estat.cursIdx]; if(!mc) return;
   var subj=mc.assigns[estat.subjIdx]; var trim=trimestres[estat.trimIdx];
   var cont='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:24px;font-size:12px;color:#222;}table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;}th,td{border:1px solid #ddd;padding:6px 8px;}th{background:#f0ece4;font-weight:700;font-size:10px;text-transform:uppercase;}h1{font-size:18px;margin-bottom:4px;}p{color:#888;font-size:11px;margin-bottom:14px;}.v{color:#566B47;font-weight:700;}.m{color:#B98627;font-weight:700;}.d{color:#B5562F;font-weight:700;}@media print{body{padding:10px;}}</style></head><body>';
-  cont+='<h1>Arrel — '+escHtml(subj)+'</h1>';
+  cont+='<h1>SeJus — '+escHtml(subj)+'</h1>';
   cont+='<p>'+escHtml(mc.curs)+' · '+trim+' · '+escHtml(prof.centre)+' · '+escHtml(prof.any)+' · '+escHtml(prof.nom)+'</p>';
   cont+='<table><thead><tr><th>Alumne</th>';
   competencies.forEach(function(comp){ cont+='<th>'+comp.nom+'</th>'; });
@@ -2581,10 +2602,10 @@ function exportarPDF(){
       var cls=avg>=7?'v':avg>=5?'m':'d';
       cont+='<td style="text-align:center;" class="'+(avg?cls:'')+'">'+(avg||'—')+'</td>';
     });
-    cont+='<td style="font-size:10px;color:#666;">'+escHtml(missatgesAlumnes[al.nom]||'')+'</td></tr>';
+    cont+='<td style="font-size:10px;color:#666;">'+escHtml(comentariAlumne(al,subj))+'</td></tr>';
   });
   cont+='</tbody></table>';
-  cont+='<p style="margin-top:20px;color:#aaa;font-size:10px;">Generat amb Arrel · '+new Date().toLocaleDateString('ca-ES')+'</p>';
+  cont+='<p style="margin-top:20px;color:#aaa;font-size:10px;">Generat amb SeJus · '+new Date().toLocaleDateString('ca-ES')+'</p>';
   cont+='</body></html>';
   var blob=new Blob([cont],{type:'text/html'});
   var url=URL.createObjectURL(blob);
@@ -2636,7 +2657,7 @@ function construirDadesInformeDB(mc, subj, trim, nomInforme){
       });
       var vals=Object.values(notesPerComp).map(function(c){return c.mitjana;}).filter(function(v){return v!==null;});
       var global=vals.length?Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length*10)/10:null;
-      return {id:al.dbId||'',ini:al.ini,nom:al.nom,global:global,competencies:notesPerComp,comentari:al.comentari||''};
+      return {id:al.dbId||'',ini:al.ini,nom:al.nom,global:global,competencies:notesPerComp,comentari:comentariAlumne(al,subj)};
     });
     return {versio:'1.0',exportat:new Date().toISOString(),nomInforme:nomInforme||mc.curs,professor:prof.nom,centre:prof.centre,any:prof.any,curs:mc.curs,trimestre:trim,assignatura:subj,alumnes:alumnesOut};
   });
@@ -2943,7 +2964,7 @@ function generarComentarisIAAmbLimit(d, mode){
       return null;
     }
     return generarComentarisIA(d, mode).then(function(comentarisIA){
-      if(comentarisIA) dbRegistrarInformeGenerat().then(actualitzarLimitInformesUI).catch(function(err){ console.warn('[Arrel]',err.message); });
+      if(comentarisIA) dbEscriu(dbRegistrarInformeGenerat(),'Error registrant l\'informe generat').then(actualitzarLimitInformesUI);
       return comentarisIA;
     });
   });
@@ -3226,7 +3247,7 @@ function eliminarActivitatConfirmat(){
     openComp(compId);
   };
   if(sb&&act.dbId){
-    dbEliminarActivitat(act.dbId).then(acabar).catch(function(err){ toast('Error eliminant: '+err.message); });
+    dbEscriu(dbEliminarActivitat(act.dbId),'Error eliminant').then(function(ok){ if(ok) acabar(); });
   }else{
     acabar();
   }

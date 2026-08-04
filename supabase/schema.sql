@@ -67,7 +67,7 @@ create table if not exists alumnes (
   professor_id uuid not null references auth.users(id) on delete cascade,
   nom text not null,
   ordre integer not null,
-  comentari text not null default '',
+  comentaris jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
 
@@ -220,3 +220,11 @@ create policy "El professor nomes veu i crea els seus propis informes"
   on informes_generats for all
   using (professor_id = auth.uid())
   with check (professor_id = auth.uid());
+
+-- ─── Comentari general de l'alumne: individual per assignatura ───
+-- Abans "comentari" era un unic text per alumne, compartit per totes les
+-- assignatures del curs (si l'escrivies a Catala tambe sortia a Angles i
+-- Castella). Ara es un JSONB {assignatura: text}, igual que "notes"/
+-- "comentaris" a activitats — cada assignatura te el seu propi comentari.
+alter table alumnes add column if not exists comentaris jsonb not null default '{}'::jsonb;
+alter table alumnes drop column if exists comentari;

@@ -1,6 +1,6 @@
 BRANDING SPECS:
 
-App name: Arrel (or your chosen name)
+App name: SeJus
 
 COLOR PALETTE:
 - Primary: #B5562F (terracotta)
