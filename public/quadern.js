@@ -440,7 +440,9 @@ function afegirAssignaturaGlobal(nom){
   if(!nom) return;
   var n=nom.trim();
   if(!n) return;
-  var ja=assignaturesList.some(function(s){ return s.toLowerCase()===n.toLowerCase(); });
+  // Comparacio sense accents (normTxt) perque "Catala" i "Català" es
+  // considerin la mateixa assignatura i no es creïn duplicats.
+  var ja=assignaturesList.some(function(s){ return normTxt(s)===normTxt(n); });
   if(!ja) assignaturesList.push(n);
 }
 function renderNota(n,big){
@@ -494,10 +496,22 @@ function carregarPerfil(){
     // Fusiona (no sobreescriu) perque les assignatures noves que s'afegeixin
     // al codi en el futur (com "Competencies transversals") apareguin tambe
     // als comptes que ja tenien una llista desada d'una sessio anterior.
-    var mergedList=saved.assignaturesList.slice();
+    // Abans de fusionar, substituïm qualsevol nom desat sense accent per la
+    // seva forma canonica accentuada (p.ex. "Catala" -> "Català"), perque
+    // llistes antigues desades abans que el fix de dedup existis no arrosseguin
+    // per sempre l'entrada duplicada sense accent.
+    var mergedList=saved.assignaturesList.map(function(s){
+      var canonica=assignaturesList.find(function(c){ return normTxt(c)===normTxt(s); });
+      return canonica||s;
+    });
     assignaturesList.forEach(function(s){
-      var ja=mergedList.some(function(m){ return m.toLowerCase()===s.toLowerCase(); });
+      var ja=mergedList.some(function(m){ return normTxt(m)===normTxt(s); });
       if(!ja) mergedList.push(s);
+    });
+    // Dedup final (per si la llista desada ja tenia accentuada i sense accent alhora)
+    var vist={};
+    mergedList=mergedList.filter(function(m){
+      var k=normTxt(m); if(vist[k]) return false; vist[k]=true; return true;
     });
     assignaturesList=mergedList;
   }
@@ -789,6 +803,8 @@ function registrarCompte(){
   if(!nom){toast('Escriu el nom i cognoms');return;}
   if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
   if(pass.length<6){toast('La contrasenya ha de tenir mínim 6 caràcters');return;}
+  var termsCheck=document.getElementById('reg-terms-check');
+  if(!termsCheck||!termsCheck.checked){toast('Cal acceptar els termes i condicions i la política de privacitat');return;}
   ambBotoCarregant('reg-user-submit-btn','Creant compte…',function(){
     return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom}}}).then(function(res){
       if(res.error){toast(res.error.message);return;}
@@ -1530,6 +1546,7 @@ function obrirAlumne(ini){
         +'</div>'
         +'<div>'
           +'<div class="sec" style="margin-bottom:4px;">Comentari</div>'
+          +'<div class="privacy-note">Aquest comentari s\'inclourà a l\'informe i pot ser tractat per tercers per generar-lo. No hi introdueixis dades personals.</div>'
           +'<textarea id="inline-comment-'+al.ini+'" class="inline-comment" data-nom="'+escHtml(al.nom)+'" placeholder="Escriu un comentari…" rows="1" oninput="autoResizeTextarea(this)" onblur="guardarComentariInline(this)">'+escHtml(missatge)+'</textarea>'
         +'</div>'
       +'</div>'
@@ -2161,6 +2178,7 @@ function obrirComentariAct(ini, actId, compId){
   overlay.innerHTML='<div class="popup" style="width:460px;max-height:86vh;overflow:auto;">'
     +'<div class="popup-title">'+escHtml(act.nom)+'</div>'
     +'<div class="popup-head">Comentari — '+escHtml(al.nom)+'</div>'
+    +'<div class="privacy-note">Aquest comentari s\'inclourà a l\'informe i pot ser tractat per tercers per generar-lo. No hi introdueixis dades personals (telèfons, adreces, dades mèdiques, etc.).</div>'
     +'<textarea class="input" id="comentari-act-text" rows="9" style="min-height:190px;line-height:1.55;" placeholder="Observacions, comportament, aspectes de millora...">'+escHtml(actual)+'</textarea>'
     +'<div style="display:flex;gap:8px;margin-top:10px;">'
       +'<button class="btn btn-clay" style="flex:1;" onclick="guardarComentariActBtn(this)" data-ini="'+ini+'" data-act="'+actId+'" data-comp="'+compId+'">Guardar</button>'

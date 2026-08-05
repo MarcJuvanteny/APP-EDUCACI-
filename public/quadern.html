@@ -24,6 +24,10 @@
     <div class="fg"><label class="flbl">Nom i cognoms</label><input class="input" id="reg-user-nom" placeholder="Ex: Anna Garcia Puig"></div>
     <div class="fg"><label class="flbl">Correu electrònic</label><input class="input" id="reg-user-email" type="email" placeholder="nom@centre.cat"></div>
     <div class="fg"><label class="flbl">Contrasenya</label><input class="input" id="reg-user-pass" type="password" placeholder="Mínim 6 caràcters"></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;">
+      <input type="checkbox" id="reg-terms-check" style="margin-top:3px;flex-shrink:0;width:15px;height:15px;">
+      <label for="reg-terms-check" style="font-size:12px;color:var(--ink2);line-height:1.4;">Accepto els <a href="/termes" target="_blank" rel="noopener" style="color:var(--clay);font-weight:600;">termes i condicions</a> i la <a href="/privacitat" target="_blank" rel="noopener" style="color:var(--clay);font-weight:600;">política de privacitat</a>.</label>
+    </div>
     <button class="btn btn-clay" id="reg-user-submit-btn" style="width:100%;padding:10px;margin-bottom:8px;" onclick="registrarCompte()">Crear compte i continuar →</button>
     <button class="btn" style="width:100%;" onclick="showGatePas('g-login')">Ja tinc compte</button>
   </div>
@@ -357,6 +361,7 @@
   <div class="popup">
     <div class="popup-title" id="pop-miss-nom"></div>
     <div class="popup-head">Comentari de l'alumne</div>
+    <div class="privacy-note">Aquest comentari s'inclourà a l'informe i pot ser tractat per tercers per generar-lo. No hi introdueixis dades personals (telèfons, adreces, dades mèdiques, etc.).</div>
     <textarea class="input" id="pop-miss-text" rows="3" placeholder="Afegeix un comentari general..."></textarea>
     <div style="display:flex;gap:8px;margin-top:10px;">
       <button class="btn btn-clay" style="flex:1;" onclick="guardarMissatge()">Guardar</button>
