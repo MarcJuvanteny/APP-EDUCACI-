@@ -2331,6 +2331,21 @@ function processFile(file){
   else{readXLSX(file);}
 }
 function readXLSX(file){var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});var ws=wb.Sheets[wb.SheetNames[0]];processRows(XLSX.utils.sheet_to_json(ws,{header:1,defval:''}));}catch(err){document.getElementById('excel-feedback').innerHTML='<div style="color:var(--clay);">Error: '+err.message+'</div>';}};r.readAsArrayBuffer(file);}
+// Files que probablement NO son un alumne (nom del centre, curs, capcalera
+// repetida...) — es proposen ja desmarcades a la previsualitzacio, pero mai
+// es descarten soles: el professor sempre les pot tornar a marcar. Cal
+// revisio manual perque cada centre escriu aquestes files de manera
+// diferent i una llista fixa de paraules mai les cobriria totes.
+function semblaMetadadaNoAlumne(nom){
+  if(/:/.test(nom)) return true;
+  if(/\b(19|20)\d{2}\b/.test(nom)) return true; // any (curs 2025-2026...)
+  if(nom.split(/\s+/).length>5) return true;
+  if(/centre|escola|col.legi|colegio|institut|\bies\b|\bcurs\b|\bcurso\b|classe\b|grup\b|generat|llistat|tutor|tutora|mestre|professor/i.test(nom)) return true;
+  return false;
+}
+// Estat temporal de la previsualitzacio d'importacio, pendent que el
+// professor confirmi (o cancel·li) quines files son alumnes de veritat.
+var importPendent=null;
 function processRows(rows){
   var dups=0;
   var candidats=[];
@@ -2347,21 +2362,75 @@ function processRows(rows){
     var jaExisteix=alumnes.find(function(a){return a.nom.toLowerCase()===nomComplet.toLowerCase();})
       ||candidats.find(function(c){return c.nom.toLowerCase()===nomComplet.toLowerCase();});
     if(jaExisteix){dups++;return;}
-    candidats.push({nom:nomComplet});
+    candidats.push({nom:nomComplet,dubtos:semblaMetadadaNoAlumne(nomComplet)});
   });
+  var fb=document.getElementById('excel-feedback');
+  if(!candidats.length){
+    fb.innerHTML='<div style="padding:8px 10px;background:var(--paper);color:var(--ink3);border-radius:var(--r);font-size:12px;">Cap alumne nou'+(dups?' · '+dups+' duplicats':'')+'</div>';
+    return;
+  }
+  fb.innerHTML='';
+  obrirPreviewImportacio(candidats,dups);
+}
+function obrirPreviewImportacio(candidats,dups){
+  tancarPreviewImportacio();
+  importPendent=candidats;
+  var overlay=document.createElement('div'); overlay.className='overlay'; overlay.id='pop-import-preview'; overlay.style.zIndex='700';
+  overlay.innerHTML='<div class="popup" style="width:460px;max-height:86vh;overflow:auto;">'
+    +'<div class="popup-title">Importar alumnes</div>'
+    +'<div class="popup-head">Revisa la llista abans de confirmar</div>'
+    +'<div class="order-note">L\'ordre d\'aquesta llista ha de ser exactament el mateix per a tots els professors del curs. No reordenis res — només desmarca les files que NO siguin un alumne (com el nom del centre o del curs). Les que ja queden desmarcades són un suggeriment, revisa-les igualment.</div>'
+    +'<div id="import-preview-list"></div>'
+    +(dups?'<div style="font-size:11px;color:var(--ink3);margin-top:6px;">'+dups+' duplicat(s) ja existent(s), omesos automàticament.</div>':'')
+    +'<div style="display:flex;gap:8px;margin-top:12px;">'
+      +'<button class="btn btn-clay" style="flex:1;" id="btn-confirmar-import" onclick="confirmarImportacio()">Importar</button>'
+      +'<button class="btn btn-ghost" onclick="tancarPreviewImportacio()">Cancel·lar</button>'
+    +'</div>'
+  +'</div>';
+  overlay.onclick=function(e){if(e.target===overlay)tancarPreviewImportacio();};
+  document.body.appendChild(overlay);
+  renderPreviewImportacioLlista();
+}
+function renderPreviewImportacioLlista(){
+  var cont=document.getElementById('import-preview-list'); if(!cont||!importPendent) return;
+  cont.innerHTML=importPendent.map(function(c,i){
+    return '<label class="import-preview-row">'
+      +'<input type="checkbox" data-idx="'+i+'" '+(c.dubtos?'':'checked')+' onchange="actualitzarComptadorImport()">'
+      +'<span style="flex:1;'+(c.dubtos?'color:var(--clay);':'')+'">'+escHtml(c.nom)+'</span>'
+      +(c.dubtos?'<span class="import-preview-flag">no sembla un alumne</span>':'')
+    +'</label>';
+  }).join('');
+  actualitzarComptadorImport();
+}
+function actualitzarComptadorImport(){
+  var n=document.querySelectorAll('#import-preview-list input[type=checkbox]:checked').length;
+  var btn=document.getElementById('btn-confirmar-import');
+  if(btn) btn.textContent='Importar ('+n+')';
+}
+function tancarPreviewImportacio(){
+  var e=document.getElementById('pop-import-preview'); if(e) e.remove();
+  importPendent=null;
+}
+function confirmarImportacio(){
+  if(!importPendent) return;
+  var checkboxes=document.querySelectorAll('#import-preview-list input[type=checkbox]');
+  var seleccionats=[];
+  checkboxes.forEach(function(cb){ if(cb.checked) seleccionats.push(importPendent[parseInt(cb.dataset.idx,10)]); });
+  tancarPreviewImportacio();
+  var fb=document.getElementById('excel-feedback');
+  if(!seleccionats.length){ fb.innerHTML=''; toast('Cap alumne seleccionat'); return; }
   var mc=mesCursos[estat.cursIdx];
   var sb=window.__QUADERN_SUPABASE__;
   var acabar=function(nousAlumnes){
     nousAlumnes.forEach(function(al){ alumnes.push(al); });
     guardarDades();
     renderCfgAlumnes();
-    document.getElementById('excel-feedback').innerHTML='<div style="padding:8px 10px;background:var(--moss-l);color:var(--moss);border-radius:var(--r);font-size:12px;font-weight:500;">✓ '+nousAlumnes.length+' importats'+(dups?' · '+dups+' duplicats':'')+' </div>';
+    fb.innerHTML='<div style="padding:8px 10px;background:var(--moss-l);color:var(--moss);border-radius:var(--r);font-size:12px;font-weight:500;">✓ '+nousAlumnes.length+' importats</div>';
     toast(nousAlumnes.length+' alumnes importats ✓');
   };
-  if(!candidats.length){ acabar([]); return; }
   if(sb&&mc&&mc.id){
     var base=alumnes.length;
-    var files=candidats.map(function(c,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:c.nom,ordre:base+i+1}; });
+    var files=seleccionats.map(function(c,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:c.nom,ordre:base+i+1}; });
     sb.from('alumnes').insert(files).select().then(function(res){
       if(res.error){ toast('Error important: '+res.error.message); return; }
       var nousAlumnes=res.data.map(function(row,i){
@@ -2370,7 +2439,7 @@ function processRows(rows){
       acabar(nousAlumnes);
     });
   }else{
-    var nousAlumnes=candidats.map(function(c,i){
+    var nousAlumnes=seleccionats.map(function(c,i){
       return {id:'',ini:ini2(c.nom),nom:c.nom,color:colorIdx(alumnes.length+i)};
     });
     acabar(nousAlumnes);
