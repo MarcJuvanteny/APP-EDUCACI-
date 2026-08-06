@@ -2309,10 +2309,20 @@ function toggleActiuAlumne(idx){
 }
 function handleDrop(e){ var f=e.dataTransfer.files[0]; if(f) processFile(f); }
 function handleExcelFile(inp){ var f=inp.files[0]; if(f) processFile(f); inp.value=''; }
+// Separa una linia de CSV en columnes. Excel en catala/castella exporta amb
+// ";" (la "," s'usa pels decimals en aquests idiomes), altres eines fan
+// servir ",". Si no troba cap dels dos, deixa la linia sencera com a unica
+// columna (llistes d'un sol nom per linia, sense "cognom" separat).
+function parseCSVLine(linia){
+  var delim = linia.indexOf(';')!==-1 ? ';' : ',';
+  return linia.split(delim).map(function(camp){
+    return camp.trim().replace(/^"(.*)"$/,'$1').trim();
+  });
+}
 function processFile(file){
   var fb=document.getElementById('excel-feedback'); fb.innerHTML='<div style="font-size:11px;color:var(--ink3);">Llegint...</div>';
   var ext=file.name.split('.').pop().toLowerCase();
-  if(ext==='csv'){var r=new FileReader();r.onload=function(e){processRows(e.target.result.split(String.fromCharCode(10)).map(function(l){return [l.trim()];}));};r.readAsText(file,'UTF-8');return;}
+  if(ext==='csv'){var r=new FileReader();r.onload=function(e){processRows(e.target.result.split(/\r?\n/).map(parseCSVLine));};r.readAsText(file,'UTF-8');return;}
 
   if(typeof XLSX==='undefined'){var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=function(){readXLSX(file);};s.onerror=function(){fb.innerHTML='<div style="color:var(--clay);">Error. Prova amb CSV.</div>';};document.head.appendChild(s);}
   else{readXLSX(file);}
