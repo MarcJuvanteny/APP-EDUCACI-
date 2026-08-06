@@ -2324,7 +2324,10 @@ function processFile(file){
   var ext=file.name.split('.').pop().toLowerCase();
   if(ext==='csv'){var r=new FileReader();r.onload=function(e){processRows(e.target.result.split(/\r?\n/).map(parseCSVLine));};r.readAsText(file,'UTF-8');return;}
 
-  if(typeof XLSX==='undefined'){var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=function(){readXLSX(file);};s.onerror=function(){fb.innerHTML='<div style="color:var(--clay);">Error. Prova amb CSV.</div>';};document.head.appendChild(s);}
+  // Es serveix des del propi domini (public/xlsx.full.min.js), no d'un CDN
+  // extern — perque un tallafocs/xarxa que bloquegi dominis de tercers
+  // (comu en centres educatius) no trenqui la importacio d'Excel.
+  if(typeof XLSX==='undefined'){var s=document.createElement('script');s.src='/xlsx.full.min.js?v='+(window.__QUADERN_ASSET_VERSION__||'');s.onload=function(){readXLSX(file);};s.onerror=function(){fb.innerHTML='<div style="color:var(--clay);">Error carregant la llibreria d\'Excel. Prova amb CSV.</div>';};document.head.appendChild(s);}
   else{readXLSX(file);}
 }
 function readXLSX(file){var r=new FileReader();r.onload=function(e){try{var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});var ws=wb.Sheets[wb.SheetNames[0]];processRows(XLSX.utils.sheet_to_json(ws,{header:1,defval:''}));}catch(err){document.getElementById('excel-feedback').innerHTML='<div style="color:var(--clay);">Error: '+err.message+'</div>';}};r.readAsArrayBuffer(file);}

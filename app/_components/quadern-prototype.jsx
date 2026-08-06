@@ -16,7 +16,7 @@ const ROUTE_MAP = {
 // aquests fitxers sencers a cada pantalla, important amb molts usuaris a la
 // vegada) i només demana la versió nova quan aquest número canvia — en lloc
 // de desactivar la caché sempre amb "cache: no-store".
-const QUADERN_ASSET_VERSION = "2026-08-05.1";
+const QUADERN_ASSET_VERSION = "2026-08-06.1";
 
 export default function QuadernPrototype({ initialScreen }) {
   const containerRef = useRef(null);
@@ -44,6 +44,7 @@ export default function QuadernPrototype({ initialScreen }) {
       window.__QUADERN_INITIAL_SCREEN__ = initialScreen;
       window.__QUADERN_ROUTE_MODE__ = true;
       window.__QUADERN_ROUTE_MAP__ = ROUTE_MAP;
+      window.__QUADERN_ASSET_VERSION__ = QUADERN_ASSET_VERSION;
       window.__QUADERN_SUPABASE__ = createSupabaseClient();
       // Nomes true en "npm run dev" / build de desenvolupament — mai en el
       // desplegament de producció — perquè el límit d'informes IA no molesti
@@ -82,6 +83,7 @@ export default function QuadernPrototype({ initialScreen }) {
       delete window.__QUADERN_INITIAL_SCREEN__;
       delete window.__QUADERN_ROUTE_MODE__;
       delete window.__QUADERN_ROUTE_MAP__;
+      delete window.__QUADERN_ASSET_VERSION__;
       delete window.__QUADERN_SUPABASE__;
       delete window.__QUADERN_DEV_MODE__;
       if (injectedScript && injectedScript.parentNode) {
