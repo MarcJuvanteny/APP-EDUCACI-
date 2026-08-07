@@ -1885,7 +1885,7 @@ function openProvaGraella(groupId){
         return '<td style="text-align:center;padding:5px 6px;">'
           +'<input type="number" id="'+id+'" class="nota-input '+(v!==null?notaClass(v):'')+'" value="'+(v!==null?v:'')+'" placeholder="—" min="0" max="10" step="0.1"'
           +' data-ini="'+al.ini+'" data-compid="'+x.comp.id+'" data-groupid="'+groupId+'"'
-          +' onfocus="this.select()" onblur="saveNotaProva(this)">'
+          +' onfocus="this.select()" onblur="saveNotaProva(this)" onkeydown="navNotaProva(event,this)">'
           +'</td>';
       }).join('')
     +'</tr>';
@@ -2033,15 +2033,44 @@ function recalcGlobal(act,comp,ini){
   var g=c?Math.round(t/c*10)/10:null;
   var el=document.getElementById('global-'+ini); if(el) el.innerHTML=renderNota(g,true);
 }
+// Navegacio per teclat compartida entre les graelles de notes (criteris i
+// proves): les files sempre son alumnes; "columnes" es la llista ordenada
+// de claus de columna tal com s'han fet servir a l'id de cada input (indexs
+// numerics 0..N-1 a la graella de criteris, ids de competencia a la de
+// proves) — aixi la mateixa funcio serveix per a totes dues sense dependre
+// de com es construeix cada id.
+// Fletxes: mouen una cel·la i es queden quietes a la vora (com un full de
+// calcul). Enter/Tab: com abans, sempre continuen (Tab salta de fila en
+// arribar al final, Enter sempre baixa).
+function navegarGraellaNotes(event,inp,prefix,columnes,colActual,saveFn){
+  var TECLES=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Tab'];
+  if(TECLES.indexOf(event.key)===-1) return;
+  event.preventDefault(); saveFn(inp);
+  var ini=inp.dataset.ini;
+  var ai=alumnes.findIndex(function(a){return a.ini===ini;});
+  var ci=columnes.indexOf(colActual);
+  var nAi=ai,nCi=ci;
+  if(event.key==='ArrowUp') nAi=ai-1;
+  else if(event.key==='ArrowDown') nAi=ai+1;
+  else if(event.key==='ArrowLeft') nCi=ci-1;
+  else if(event.key==='ArrowRight') nCi=ci+1;
+  else if(event.key==='Tab'){ if(ci+1<columnes.length){nCi=ci+1;} else {nAi=(ai+1)%alumnes.length; nCi=0;} }
+  else if(event.key==='Enter'){ nAi=(ai+1)%alumnes.length; }
+  if(nAi<0||nAi>=alumnes.length||nCi<0||nCi>=columnes.length) return;
+  var next=document.getElementById(prefix+alumnes[nAi].ini+'_'+columnes[nCi]);
+  if(next){next.focus();next.select();}
+}
 function navNota(event,inp){
-  if(event.key!=='Enter'&&event.key!=='Tab') return;
-  event.preventDefault(); saveNota(inp);
-  var ci=parseInt(inp.dataset.ci); var ini=inp.dataset.ini; var compId=inp.dataset.compid;
-  var comp=competencies.find(function(c){return c.id===compId;}); var ai=alumnes.findIndex(function(a){return a.ini===ini;});
-  var nIni,nCi;
-  if(event.key==='Tab'){if(ci+1<comp.criteris.length){nIni=ini;nCi=ci+1;}else{nIni=alumnes[(ai+1)%alumnes.length].ini;nCi=0;}}
-  else{nIni=alumnes[(ai+1)%alumnes.length].ini;nCi=ci;}
-  var next=document.getElementById('ni_'+nIni+'_'+nCi); if(next){next.focus();next.select();}
+  var ci=parseInt(inp.dataset.ci); var compId=inp.dataset.compid;
+  var comp=competencies.find(function(c){return c.id===compId;}); if(!comp) return;
+  var columnes=comp.criteris.map(function(_,i){return i;});
+  navegarGraellaNotes(event,inp,'ni_',columnes,ci,saveNota);
+}
+function navNotaProva(event,inp){
+  var groupId=inp.dataset.groupid; var compId=inp.dataset.compid;
+  var g=getProves().find(function(x){return x.groupId===groupId;}); if(!g) return;
+  var columnes=g.comps.map(function(x){return x.comp.id;});
+  navegarGraellaNotes(event,inp,'pi_',columnes,compId,saveNotaProva);
 }
 function showRubricaPopBtn(el){showRubricaPop(el.dataset.cid,parseInt(el.dataset.ci));}
 function showRubricaPop(compId,ci){
