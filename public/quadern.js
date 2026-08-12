@@ -40,6 +40,18 @@ function trackSave(promise){
   return promise;
 }
 window.addEventListener('beforeunload', function(e){
+  // Les notes nomes es guarden en perdre el focus ("onblur") — si el
+  // professor escriu una nota i tanca la pestanya sense fer clic a cap
+  // altre lloc abans, el camp encara enfocat mai arriba a disparar el
+  // guardat i es perdia en silenci (ni local ni a Supabase). Forcem aqui
+  // el guardat del camp actiu abans de decidir si cal avisar — aixi, a
+  // mes de guardar-lo, si la sincronitzacio amb Supabase encara esta en
+  // marxa, "pendingSaves" ja el recull i apareix l'avis nadiu del
+  // navegador donant l'oportunitat de quedar-se fins que acabi.
+  var actiu=document.activeElement;
+  if(actiu&&actiu.classList&&actiu.classList.contains('nota-input')){
+    if(actiu.dataset.groupid) saveNotaProva(actiu); else saveNota(actiu);
+  }
   if(pendingSaves.length){ e.preventDefault(); e.returnValue=''; }
 });
 
@@ -475,12 +487,27 @@ function carregarAuth(){
     }
   }).catch(function(){});
 }
+// Marcat a true nomes mentre tancarSessio() esta fent el seu propi signOut()
+// explicit, perque el gestor de SIGNED_OUT de sota no dupliqui l'avis (ell ja
+// ensenya "Sessió tancada" i torna al login tot sol).
+var tancantSessioManualment=false;
 function escoltarCanvisAuthSupabase(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return;
   sb.auth.onAuthStateChange(function(event){
     if(event==='PASSWORD_RECOVERY'){
       document.getElementById('gate').classList.remove('hide');
       showGatePas('g-nova-contrasenya');
+    }
+    // Detecta una sessio que ha mort sense que el professor hagi premut
+    // "Tancar sessió" (token de refresc caducat o revocat, sessió tancada
+    // des d'un altre dispositiu...). Abans d'aixo la interficie es quedava
+    // com si tot anes be — semblava que l'app "havia perdut" els cursos i
+    // alumnes, quan en realitat nomes calia tornar a iniciar sessió.
+    if(event==='SIGNED_OUT'&&!tancantSessioManualment&&authState.isLogged){
+      authState={isLogged:false,user:null};
+      document.getElementById('gate').classList.remove('hide');
+      showGatePas('g-login');
+      toast('La teva sessió ha caducat. Torna a iniciar sessió.');
     }
   });
 }
@@ -563,6 +590,26 @@ function tePerfilConfigurat(){
 
 // ═══════════════ BASE DE DADES (Supabase): cursos, assignatures, alumnes ═══════════════
 function dbUid(){ return authState.user && authState.user.id; }
+// Tradueix a catala clar els missatges d'error mes habituals de Supabase/
+// Postgres (que arriben en angles i son molt tecnics: "duplicate key value
+// violates unique constraint...", "JWT expired"...). Nomes es tradueixen els
+// casos reconeguts — la resta es mostren tal qual, en lloc d'amagar-los
+// darrere una traduccio generica que podria ser enganyosa per a un error
+// realment inesperat.
+function traduirErrorSupabase(missatge){
+  if(!missatge) return 'Error desconegut';
+  var m=missatge.toLowerCase();
+  if(m.indexOf('invalid login credentials')!==-1) return 'Correu o contrasenya incorrectes';
+  if(m.indexOf('email not confirmed')!==-1) return 'Has de confirmar el teu correu abans d\'iniciar sessió (revisa la safata d\'entrada)';
+  if(m.indexOf('user already registered')!==-1||m.indexOf('already registered')!==-1) return 'Ja hi ha un compte amb aquest correu';
+  if(m.indexOf('jwt')!==-1||m.indexOf('session')!==-1&&m.indexOf('expired')!==-1) return 'La teva sessió ha caducat — torna a iniciar sessió';
+  if(m.indexOf('failed to fetch')!==-1||m.indexOf('networkerror')!==-1||m.indexOf('network request failed')!==-1||m.indexOf('load failed')!==-1) return 'No s\'ha pogut connectar — comprova la connexió a internet i torna-ho a provar';
+  if(m.indexOf('duplicate key')!==-1) return 'Ja existeix un registre igual';
+  if(m.indexOf('row-level security')!==-1||m.indexOf('permission denied')!==-1) return 'No tens permís per fer aquesta acció';
+  if(m.indexOf('rate limit')!==-1||m.indexOf('too many requests')!==-1) return 'Massa peticions seguides — espera un moment i torna-ho a provar';
+  if(m.indexOf('timeout')!==-1) return 'El servidor ha trigat massa a respondre — torna-ho a provar';
+  return missatge;
+}
 // Embolcall obligatori per a qualsevol escriptura a Supabase (insert/update/
 // upsert/delete) que es dispara des d'una acció d'usuari. supabase-js MAI
 // rebutja la promesa per un error de consulta (RLS, columna inexistent...) —
@@ -577,20 +624,31 @@ function dbEscriu(promesa,missatgeError){
   return promesa.then(function(res){
     if(res&&res.error){
       console.warn('[Arrel]',res.error.message);
-      toast(missatgeError+': '+res.error.message);
+      toast(missatgeError+': '+traduirErrorSupabase(res.error.message));
       return false;
     }
     return true;
   },function(err){
     console.warn('[Arrel]',err.message);
-    toast(missatgeError+': '+err.message);
+    toast(missatgeError+': '+traduirErrorSupabase(err.message));
     return false;
   });
+}
+// Equivalent a dbEscriu pero per a LECTURES: abans, si carregar el perfil,
+// els cursos, els alumnes o la rúbrica fallava (p. ex. la sessió ha caducat),
+// nomes quedava un avís a la consola del navegador (que cap professor mira)
+// i l'app continuava com si simplement no hi hagués dades — semblava que
+// "s'havien perdut" els cursos/alumnes en lloc de ser un problema de sessió
+// o de xarxa. Ara es mostra sempre amb un toast, igual que ja fan les
+// escriptures amb dbEscriu.
+function avisarErrorLectura(missatge,err){
+  console.warn('[Arrel]',err&&err.message);
+  toast(missatge+(err&&err.message?': '+traduirErrorSupabase(err.message):''));
 }
 function dbCarregarPerfil(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve(null);
   return sb.from('profiles').select('*').eq('id',dbUid()).maybeSingle().then(function(res){
-    if(res.error){ console.warn('[Arrel]',res.error.message); return null; }
+    if(res.error){ avisarErrorLectura('Error carregant el perfil',res.error); return null; }
     return res.data;
   });
 }
@@ -622,7 +680,7 @@ function trobarCompetencia(compId){
 function dbCarregarRubricaCustom(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve();
   return sb.from('rubrica_custom').select('*').eq('professor_id',dbUid()).then(function(res){
-    if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+    if(res.error){ avisarErrorLectura('Error carregant la rúbrica',res.error); return; }
     (res.data||[]).forEach(function(row){
       var comp=trobarCompetencia(row.competencia_id);
       if(!comp||!row.criteris||!row.criteris.length) return;
@@ -636,14 +694,12 @@ function dbGuardarRubricaCustom(compId){
   var comp=trobarCompetencia(compId); if(!comp) return;
   var rubComp=rubrica[compId]||[];
   var criteris=comp.criteris.map(function(nom,i){ return {nom:nom, rubrica:rubComp[i]||{'1-4':'','5-6':'','7-8':'','9-10':''}}; });
-  sb.from('rubrica_custom').upsert({professor_id:dbUid(),competencia_id:compId,criteris:criteris,updated_at:new Date().toISOString()},{onConflict:'professor_id,competencia_id'}).then(function(res){
-    if(res.error) console.warn('[Arrel]',res.error.message);
-  });
+  dbEscriu(sb.from('rubrica_custom').upsert({professor_id:dbUid(),competencia_id:compId,criteris:criteris,updated_at:new Date().toISOString()},{onConflict:'professor_id,competencia_id'}),'Error guardant la rúbrica');
 }
 function dbCarregarCursosComplet(){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve([]);
   return sb.from('cursos').select('id,nom,promocio,assignatures(id,nom)').eq('professor_id',dbUid()).order('created_at').then(function(res){
-    if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
+    if(res.error){ avisarErrorLectura('Error carregant els cursos',res.error); return []; }
     return (res.data||[]).map(function(c){
       var assigs=c.assignatures||[];
       return {id:c.id, curs:c.nom, promocio:c.promocio||null, assigns:assigs.map(function(a){return a.nom;}), assignsIds:assigs.map(function(a){return a.id;})};
@@ -679,7 +735,7 @@ function dbEliminarAssignatura(cursId,nom){
 function dbCarregarAlumnes(cursId){
   var sb=window.__QUADERN_SUPABASE__; if(!sb) return Promise.resolve([]);
   return sb.from('alumnes').select('*').eq('curs_id',cursId).order('ordre').then(function(res){
-    if(res.error){ console.warn('[Arrel]',res.error.message); return []; }
+    if(res.error){ avisarErrorLectura('Error carregant els alumnes',res.error); return []; }
     return (res.data||[]).map(function(a,i){
       return {dbId:a.id,id:'',ini:ini2(a.nom),nom:a.nom,color:colorIdx(i),comentaris:a.comentaris||{},actiu:a.actiu!==false};
     });
@@ -706,7 +762,7 @@ function carregarActivitatsDelContext(){
   var assignaturaId=mc.assignsIds&&mc.assignsIds[estat.subjIdx];
   if(!subj||!assignaturaId) return Promise.resolve();
   return sb.from('activitats').select('*').eq('curs_id',mc.id).eq('assignatura_id',assignaturaId).then(function(res){
-    if(res.error){ console.warn('[Arrel]',res.error.message); return; }
+    if(res.error){ avisarErrorLectura('Error carregant les activitats',res.error); return; }
     // Neteja nomes les claus d'aquest curs+assignatura, per no perdre el que ja hi hagi carregat d'altres
     Object.keys(activitats).forEach(function(k){
       if(k.indexOf(mc.curs+'_')===0 && k.indexOf('_'+subj+'_')!==-1) delete activitats[k];
@@ -791,7 +847,7 @@ function anarAPasPostAuth(){
     // silenci fins que generi un informe i el trobi buit.
     if(!prof.centre||!prof.any) obrirEditarPerfil();
   }).catch(function(err){
-    toast('Error carregant les dades: '+err.message);
+    toast('Error carregant les dades: '+traduirErrorSupabase(err.message));
   });
 }
 function validarEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
@@ -807,7 +863,7 @@ function registrarCompte(){
   if(!termsCheck||!termsCheck.checked){toast('Cal acceptar els termes i condicions i la política de privacitat');return;}
   ambBotoCarregant('reg-user-submit-btn','Creant compte…',function(){
     return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom}}}).then(function(res){
-      if(res.error){toast(res.error.message);return;}
+      if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
       // Per no filtrar quins correus estan registrats, Supabase respon "sense error"
       // fins i tot si el correu ja te un compte — es distingeix perque "identities"
       // ve buit en aquest cas (un compte nou de veritat sempre en te com a minim 1).
@@ -835,7 +891,7 @@ function iniciarSessio(){
   var pass=(document.getElementById('login-pass').value||'').trim();
   if(!email||!pass){toast('Escriu el correu i la contrasenya');return;}
   sb.auth.signInWithPassword({email:email,password:pass}).then(function(res){
-    if(res.error){toast(res.error.message);return;}
+    if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
     authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:(res.data.user.user_metadata&&res.data.user.user_metadata.nom)||''}};
     toast('Sessió iniciada ✓');
     anarAPasPostAuth();
@@ -846,7 +902,7 @@ function demanarRecuperacio(){
   var email=(document.getElementById('rec-email').value||'').trim().toLowerCase();
   if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
   sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/recuperar-contrasenya'}).then(function(res){
-    if(res.error){toast(res.error.message);return;}
+    if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
     toast('T\'hem enviat un correu amb l\'enllaç ✓');
     showGatePas('g-login');
   });
@@ -856,7 +912,7 @@ function guardarNovaContrasenya(){
   var pass=(document.getElementById('nova-pass').value||'').trim();
   if(pass.length<6){toast('La contrasenya ha de tenir mínim 6 caràcters');return;}
   sb.auth.updateUser({password:pass}).then(function(res){
-    if(res.error){toast(res.error.message);return;}
+    if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
     toast('Contrasenya actualitzada ✓');
     authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:(res.data.user.user_metadata&&res.data.user.user_metadata.nom)||''}};
     anarAPasPostAuth();
@@ -917,8 +973,12 @@ function tancarSessio(){
     document.getElementById('gate').classList.remove('hide');
     showGatePas('g-login');
     toast('Sessió tancada');
+    tancantSessioManualment=false;
   };
-  var sortir=function(){ if(sb) sb.auth.signOut().then(acabar); else acabar(); };
+  var sortir=function(){
+    tancantSessioManualment=true;
+    if(sb) sb.auth.signOut().then(acabar); else acabar();
+  };
   if(pendingSaves.length) Promise.all(pendingSaves).catch(function(){}).then(sortir); else sortir();
 }
 
@@ -1180,7 +1240,7 @@ function guardarNovaAssignatura(ci){
   };
   if(sb&&mc.id){
     dbAfegirAssignatura(mc.id,nom).then(function(res){
-      if(res.error){ toast('Error afegint: '+res.error.message); return; }
+      if(res.error){ toast('Error afegint: '+traduirErrorSupabase(res.error.message)); return; }
       acabar(res.data.id);
     });
   }else{
@@ -1271,7 +1331,7 @@ function crearNouCurs(){
     renderGateCursos();
   };
   if(sb){
-    dbCrearCurs(nom,assigns,promocio).then(acabar).catch(function(err){ toast('Error creant el curs: '+err.message); });
+    dbCrearCurs(nom,assigns,promocio).then(acabar).catch(function(err){ toast('Error creant el curs: '+traduirErrorSupabase(err.message)); });
   }else{
     acabar({curs:nom,assigns:assigns,promocio:promocio});
   }
@@ -1839,7 +1899,7 @@ function crearActivitatsProva(groupId,compIds,nom,dia,hora,data){
   var tasks=compIds.map(function(compId){
     if(sb&&mc2&&mc2.id&&assignaturaId){
       return dbCrearActivitat(mc2.id,assignaturaId,compId,trim,nom,dia,hora,groupId).then(function(res){
-        if(res.error){ toast('Error creant la prova: '+res.error.message); return; }
+        if(res.error){ toast('Error creant la prova: '+traduirErrorSupabase(res.error.message)); return; }
         afegirLocal(compId,res.data.id,res.data.id);
       });
     }
@@ -1951,7 +2011,7 @@ function afegirCompAProva(){
   };
   if(sb&&mc2&&mc2.id&&assignaturaId){
     dbCrearActivitat(mc2.id,assignaturaId,compId,trim,g.nom,g.dataISO,g.hora,groupId).then(function(res){
-      if(res.error){ toast('Error afegint: '+res.error.message); return; }
+      if(res.error){ toast('Error afegint: '+traduirErrorSupabase(res.error.message)); return; }
       afegirLocal(res.data.id,res.data.id);
     });
   }else{
@@ -2145,7 +2205,7 @@ function crearActivitat(){
   var assignaturaId=mc2&&mc2.assignsIds&&mc2.assignsIds[estat.subjIdx];
   if(sb&&mc2&&mc2.id&&assignaturaId){
     dbCrearActivitat(mc2.id,assignaturaId,_novaActCompId,trim,nom,dia,hora).then(function(res){
-      if(res.error){ toast('Error creant activitat: '+res.error.message); return; }
+      if(res.error){ toast('Error creant activitat: '+traduirErrorSupabase(res.error.message)); return; }
       acabar(res.data.id,res.data.id);
     });
   }else{
@@ -2283,7 +2343,7 @@ function addAlumneManual(){
   };
   if(sb&&mc&&mc.id){
     dbAfegirAlumne(mc.id,nom,alumnes.length+1).then(function(res){
-      if(res.error){ toast('Error afegint: '+res.error.message); return; }
+      if(res.error){ toast('Error afegint: '+traduirErrorSupabase(res.error.message)); return; }
       acabar(res.data.id);
     });
   }else{
@@ -2461,7 +2521,7 @@ function confirmarImportacio(){
     var base=alumnes.length;
     var files=seleccionats.map(function(c,i){ return {curs_id:mc.id,professor_id:dbUid(),nom:c.nom,ordre:base+i+1}; });
     sb.from('alumnes').insert(files).select().then(function(res){
-      if(res.error){ toast('Error important: '+res.error.message); return; }
+      if(res.error){ toast('Error important: '+traduirErrorSupabase(res.error.message)); return; }
       var nousAlumnes=res.data.map(function(row,i){
         return {dbId:row.id,id:'',ini:ini2(row.nom),nom:row.nom,color:colorIdx(base+i),comentari:''};
       });
@@ -2754,18 +2814,35 @@ var infPeticioActual=0;
 // nomes reflecteixen el curs i l'assignatura que hi ha oberts en aquell moment a l'app.
 // Cal per generar l'informe conjunt: es poden triar cursos/assignatures diferents als que
 // s'estan veient a la pantalla principal.
-function construirDadesInformeDB(mc, subj, trim, nomInforme){
+// "alumnesPrecarregats"/"activitatsPrecarregades" son opcionals: son els
+// mateixos per a totes les assignatures/trimestres d'un curs, aixi que qui
+// genera l'informe conjunt (moltes assignatures x trimestres alhora) els pot
+// carregar UN sol cop (alumnes: 1 consulta; activitats: 1 consulta per a tot
+// el curs, filtrada aqui mateix per assignatura+trimestre) i reutilitzar-los,
+// en lloc de tornar a demanar el mateix a cada combinacio — evitava fins a
+// ~36 consultes (N assignatures x M trimestres x 2) en un sol clic.
+function construirDadesInformeDB(mc, subj, trim, nomInforme, alumnesPrecarregats, activitatsPrecarregades){
   var sb=window.__QUADERN_SUPABASE__;
   if(!sb||!mc.id) return Promise.resolve(construirDadesInforme(mc,subj,trim,nomInforme));
   var assignaturaId=mc.assignsIds&&mc.assignsIds[mc.assigns.indexOf(subj)];
   if(!assignaturaId) return Promise.resolve(construirDadesInforme(mc,subj,trim,nomInforme));
   var comps=getCompetenciesForSubject(subj);
+  var alumnesPromise=alumnesPrecarregats?Promise.resolve(alumnesPrecarregats):dbCarregarAlumnes(mc.id);
+  // Si la consulta falla NO es tracta com "cap activitat" (res.error?[]...):
+  // aixo produiria un informe amb notes buides com si l'alumne no tingues
+  // res avaluat, en lloc d'avisar que no s'ha pogut carregar — un informe
+  // incomplet enviat a les families per un error de xarxa es pitjor que no
+  // generar-lo. Es llança l'error perque qui crida (infSeleccionarCurs) ho
+  // capti i avisi, igual que ja fa amb qualsevol altre error de carrega.
+  var actsPromise=activitatsPrecarregades
+    ?Promise.resolve(activitatsPrecarregades.filter(function(row){return row.assignatura_id===assignaturaId&&row.trimestre===trim;}))
+    :sb.from('activitats').select('*').eq('curs_id',mc.id).eq('assignatura_id',assignaturaId).eq('trimestre',trim).then(function(res){ if(res.error) throw res.error; return res.data||[]; });
   return Promise.all([
-    dbCarregarAlumnes(mc.id),
-    sb.from('activitats').select('*').eq('curs_id',mc.id).eq('assignatura_id',assignaturaId).eq('trimestre',trim)
+    alumnesPromise,
+    actsPromise
   ]).then(function(res){
     var alumnesDB=res[0]||[];
-    var actsRows=(res[1]&&res[1].data)||[];
+    var actsRows=res[1]||[];
     var actsPerComp={};
     actsRows.forEach(function(row){
       if(!actsPerComp[row.competencia_id]) actsPerComp[row.competencia_id]=[];
@@ -2825,23 +2902,40 @@ function infSeleccionarCurs(){
   ['inf-gen-curt-btn','inf-gen-llarg-btn'].forEach(function(id){ var b=document.getElementById(id); if(b) b.disabled=true; });
 
   var peticio=++infPeticioActual; // evita que una crida antiga sobreescrigui una de mes nova (canvi rapid de curs/etapa)
-  var tasks=[];
-  mc.assigns.forEach(function(subj){
-    trimsAGenerar.forEach(function(trim){
-      tasks.push(construirDadesInformeDB(mc,subj,trim,mc.curs).then(function(dades){
-        var key=mc.curs+'_'+trim+'_'+subj;
-        infJSONs=infJSONs.filter(function(j){ return j.key!==key; });
-        infJSONs.push({key:key,nom:'Les meves dades ('+subj+')',dades:dades,propi:true});
-      }));
+  var sb=window.__QUADERN_SUPABASE__;
+  // Un sol alumnes(curs_id=...) i un sol activitats(curs_id=...) per a TOT
+  // el curs, reutilitzats per cada combinacio d'assignatura x trimestre —
+  // abans es tornava a demanar el mateix llistat d'alumnes i una consulta
+  // d'activitats per cada combinacio (fins a ~36 consultes amb 6
+  // assignatures x 3 trimestres per un sol clic). Ara nomes 2.
+  var alumnesPromise=(sb&&mc.id)?dbCarregarAlumnes(mc.id):Promise.resolve(null);
+  // Si falla, es llança l'error (el ".catch" de mes avall ja ho avisa) en
+  // lloc de continuar com si el curs no tingues cap activitat — generar
+  // l'informe amb dades a mitges (per un error de xarxa, no perque
+  // realment no hi hagi notes) es pitjor que avisar i no generar-lo.
+  var activitatsPromise=(sb&&mc.id)
+    ?sb.from('activitats').select('*').eq('curs_id',mc.id).then(function(res){ if(res.error) throw res.error; return res.data||[]; })
+    :Promise.resolve(null);
+  Promise.all([alumnesPromise,activitatsPromise]).then(function(pre){
+    var alumnesDB=pre[0],activitatsDB=pre[1];
+    var tasks=[];
+    mc.assigns.forEach(function(subj){
+      trimsAGenerar.forEach(function(trim){
+        tasks.push(construirDadesInformeDB(mc,subj,trim,mc.curs,alumnesDB,activitatsDB).then(function(dades){
+          var key=mc.curs+'_'+trim+'_'+subj;
+          infJSONs=infJSONs.filter(function(j){ return j.key!==key; });
+          infJSONs.push({key:key,nom:'Les meves dades ('+subj+')',dades:dades,propi:true});
+        }));
+      });
     });
-  });
-  Promise.all(tasks).then(function(){
+    return Promise.all(tasks);
+  }).then(function(){
     if(peticio!==infPeticioActual) return; // s'ha triat un altre curs/etapa mentre carregava
     document.getElementById('inf-propi-info').innerHTML='✓ Ja s\'han afegit les teves assignatures de <b>'+escHtml(mc.curs)+'</b> ('+escHtml(trimSel||'tot el curs')+'): '+escHtml(mc.assigns.join(', '))+'.';
     infRenderFitxers();
   }).catch(function(err){
     if(peticio!==infPeticioActual) return;
-    toast('Error carregant les dades: '+err.message);
+    toast('Error carregant les dades: '+traduirErrorSupabase(err.message));
     infRenderFitxers();
   });
 }
@@ -3082,7 +3176,18 @@ function generarComentarisIA(d, mode){
 // la IA (l'informe es genera igualment, sense comentaris). Si la crida té èxit,
 // es registra a informes_generats perquè compti pel límit.
 var LIMIT_INFORMES_IA=4;
+// Ha de coincidir amb el maxim real de l'esquema del servidor
+// (app/api/generar-comentaris/schema.js, alumnes: z.array(...).max(80)).
+// Sense aquesta comprovacio, un curs amb mes alumnes dels que admet l'API
+// (p. ex. per haver importat per error tota una promocio en lloc d'una sola
+// classe) rebia sempre un error 400 disfressat de "torna-ho a provar en
+// uns minuts" — un missatge enganyós, perque reintentar mai ho arreglava.
+var MAX_ALUMNES_INFORME_IA=80;
 function generarComentarisIAAmbLimit(d, mode){
+  if(d.ordres.length>MAX_ALUMNES_INFORME_IA){
+    toast('Aquest curs té '+d.ordres.length+' alumnes — el generador de comentaris amb IA només admet fins a '+MAX_ALUMNES_INFORME_IA+' per informe (revisa que no hagis combinat més d\'una classe). L\'informe es generarà sense comentaris IA.');
+    return Promise.resolve(null);
+  }
   // En mode desenvolupament (npm run dev, mai en producció) el límit no
   // s'aplica ni es registra — les proves del desenvolupador no han de
   // gastar el límit real dels professors.

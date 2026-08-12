@@ -17,6 +17,36 @@ export const maxDuration = 60;
 
 const MODEL = "claude-haiku-4-5";
 
+// Quantes crides a Claude per alumne s'envien alhora dins d'UNA petició. Sense
+// aquest límit es disparaven totes les de la classe a la vegada (fins a 80,
+// el màxim de schema.js) — amb moltes classes grans generant informes a la
+// vegada (p. ex. 50 professors la mateixa setmana de notes), la suma de
+// crides simultànies contra el compte d'Anthropic es dispara molt més del
+// que cal. Acotar-ho aquí redueix el pic total sense canviar el resultat
+// (segueix sent tot o res per petició, només més esglaonat).
+const CONCURRENCIA_ALUMNES = 8;
+
+// Com Promise.allSettled pero processant nomes "limit" elements alhora en
+// lloc de tots de cop.
+async function allSettledAmbConcurrencia(items, limit, fn) {
+  const results = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      try {
+        results[i] = { status: "fulfilled", value: await fn(items[i], i) };
+      } catch (reason) {
+        results[i] = { status: "rejected", reason };
+      }
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, worker)
+  );
+  return results;
+}
+
 // L'SDK d'Anthropic ja reintenta automàticament (amb backoff, respectant
 // Retry-After) els 429 i errors transitoris — per defecte 2 cops. Ho pugem a
 // 3 perquè aquest endpoint dispara moltes crides en paral·lel per petició
@@ -407,18 +437,6 @@ export async function POST(req) {
 
   const ip = clientIp(req);
 
-  const rl = checkRateLimit("generar-comentaris:" + ip, RATE_LIMIT);
-  if (!rl.allowed) {
-    console.warn("[security] Rate limit excedit a /api/generar-comentaris — IP:", ip);
-    return Response.json(
-      { error: "Massa peticions. Torna-ho a provar més tard." },
-      {
-        status: 429,
-        headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) },
-      }
-    );
-  }
-
   // Nomes exigeix sessio si Supabase esta configurat al servidor — en mode
   // local/demo sense backend (undefined) no hi ha cap sistema d'auth contra
   // el qual validar, igual que la resta de l'app en aquest mode.
@@ -426,6 +444,26 @@ export async function POST(req) {
   if (user === null) {
     console.warn("[security] Petició sense sessió vàlida a /api/generar-comentaris — IP:", ip);
     return Response.json({ error: "Cal iniciar sessió" }, { status: 401 });
+  }
+
+  // Rate limit per usuari autenticat, no per IP: molts centres educatius
+  // surten a internet amb una unica IP compartida (NAT del centre), aixi
+  // que limitar per IP penalitzava tot el professorat d'un mateix centre
+  // com si fos una sola persona (10 peticions/15min per a TOTS els
+  // professors del centre junts). En mode local/demo (user===undefined,
+  // sense Supabase configurat al servidor) no hi ha identitat d'usuari
+  // real, aixi que cau a IP com abans.
+  const rlKey = user && user.id ? "user:" + user.id : "ip:" + ip;
+  const rl = checkRateLimit("generar-comentaris:" + rlKey, RATE_LIMIT);
+  if (!rl.allowed) {
+    console.warn("[security] Rate limit excedit a /api/generar-comentaris —", rlKey, "— IP:", ip);
+    return Response.json(
+      { error: "Massa peticions. Torna-ho a provar més tard." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(Math.ceil((rl.resetAt - Date.now()) / 1000)) },
+      }
+    );
   }
 
   let rawBody;
@@ -466,11 +504,9 @@ export async function POST(req) {
           (err) => ({ status: "rejected", reason: err })
         )
       : Promise.resolve({ status: "fulfilled", value: "" }),
-    Promise.allSettled(
-      alumnes.map((alumne) =>
-        generarComentariAlumne(anthropic, { etapa, curs, alumne, mode }).then(
-          (text) => ({ numero: alumne.numero, text })
-        )
+    allSettledAmbConcurrencia(alumnes, CONCURRENCIA_ALUMNES, (alumne) =>
+      generarComentariAlumne(anthropic, { etapa, curs, alumne, mode }).then(
+        (text) => ({ numero: alumne.numero, text })
       )
     ),
   ]);

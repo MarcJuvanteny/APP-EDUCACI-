@@ -16,13 +16,17 @@ describe("dbEscriu", () => {
   });
 
   it("resol a false i mostra un toast quan supabase-js resol amb {error} (no rebutja)", async () => {
+    // Missatge triat expressament perque NO coincideixi amb cap traducció
+    // coneguda de traduirErrorSupabase() — aquest test verifica que dbEscriu
+    // detecta {error} i el mostra, no com es tradueix el text (això té el
+    // seu propi test a error-translation.test.js).
     const ok = await window.dbEscriu(
-      Promise.resolve({ error: { message: "permission denied" } }),
+      Promise.resolve({ error: { message: "column foo does not exist" } }),
       "Error guardant el perfil"
     );
     expect(ok).toBe(false);
     const toasts = Array.from(document.querySelectorAll(".toast")).map((t) => t.textContent);
-    expect(toasts.some((t) => t.includes("Error guardant el perfil") && t.includes("permission denied"))).toBe(true);
+    expect(toasts.some((t) => t.includes("Error guardant el perfil") && t.includes("column foo does not exist"))).toBe(true);
   });
 
   it("resol a false i mostra un toast quan la promesa es rebutja (error de xarxa)", async () => {

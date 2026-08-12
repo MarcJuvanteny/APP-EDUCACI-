@@ -228,3 +228,26 @@ create policy "El professor nomes veu i crea els seus propis informes"
 -- "comentaris" a activitats — cada assignatura te el seu propi comentari.
 alter table alumnes add column if not exists comentaris jsonb not null default '{}'::jsonb;
 alter table alumnes drop column if exists comentari;
+
+-- ─── ÍNDEXS DE RENDIMENT ───
+-- Cap columna "professor_id"/"curs_id"/"assignatura_id" (les que fa servir
+-- cada consulta de l'app per filtrar, i tambe cada politica RLS "using
+-- (professor_id = auth.uid())") tenia index. Una "references ..." (foreign
+-- key) NOMES indexa el costat referenciat (la taula pare), mai la columna
+-- que apunta cap a fora — aixi que sense aquests indexs, cada lectura
+-- (i cada comprovacio RLS) escanejava la taula sencera de TOTS els
+-- professors per trobar nomes les files del que ha fet la peticio. Amb
+-- pocs usuaris de prova no es nota; amb centenars de professors i anys
+-- de dades acumulades, cada lectura d'un sol professor escalava amb la
+-- mida de tota la plataforma. "if not exists" perque aquest fitxer es pot
+-- re-executar sencer sense trencar res.
+create index if not exists idx_cursos_professor_id on cursos(professor_id);
+create index if not exists idx_assignatures_curs_id on assignatures(curs_id);
+create index if not exists idx_alumnes_curs_id on alumnes(curs_id);
+-- Cobreix curs_id sol, curs_id+assignatura_id, i curs_id+assignatura_id+trimestre
+-- (els tres patrons de filtre que fa servir l'app), per prefix esquerre.
+create index if not exists idx_activitats_curs_assig_trim on activitats(curs_id, assignatura_id, trimestre);
+-- Cobreix professor_id sol (calendari setmanal) i professor_id+dia_setmana+franja_hora
+-- (comprovacio de xoc d'horaris en desar una nota), per prefix esquerre.
+create index if not exists idx_cal_events_professor_franja on cal_events(professor_id, dia_setmana, franja_hora);
+create index if not exists idx_informes_generats_professor_any on informes_generats(professor_id, any_escolar);
