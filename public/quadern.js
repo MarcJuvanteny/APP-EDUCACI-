@@ -938,32 +938,48 @@ function registrarCompte(){
   var nom=(document.getElementById('reg-user-nom').value||'').trim();
   var email=(document.getElementById('reg-user-email').value||'').trim().toLowerCase();
   var pass=(document.getElementById('reg-user-pass').value||'').trim();
+  var codiCentre=(document.getElementById('reg-codi-centre').value||'').trim();
   if(!nom){toast('Escriu el nom i cognoms');return;}
   if(!validarEmail(email)){toast('Correu electrònic no vàlid');return;}
   if(pass.length<6){toast('La contrasenya ha de tenir mínim 6 caràcters');return;}
+  if(!codiCentre){toast('Escriu el codi del centre');return;}
   var termsCheck=document.getElementById('reg-terms-check');
   if(!termsCheck||!termsCheck.checked){toast('Cal acceptar els termes i condicions i la política de privacitat');return;}
   ambBotoCarregant('reg-user-submit-btn','Creant compte…',function(){
-    return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom}}}).then(function(res){
-      if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
-      // Per no filtrar quins correus estan registrats, Supabase respon "sense error"
-      // fins i tot si el correu ja te un compte — es distingeix perque "identities"
-      // ve buit en aquest cas (un compte nou de veritat sempre en te com a minim 1).
-      var jaExisteix=res.data.user&&res.data.user.identities&&res.data.user.identities.length===0;
-      if(jaExisteix){
-        toast('Ja hi ha un compte amb aquest correu. Inicia sessió o recupera la contrasenya.');
-        showGatePas('g-login');
-        return;
-      }
-      if(!res.data.session){
-        toast('Compte creat ✓ Revisa el teu correu per confirmar-lo');
-        showGatePas('g-login');
-        return;
-      }
-      authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:nom}};
-      prof.nom=nom;
-      toast('Compte creat ✓');
-      anarAPasPostAuth();
+    // El codi es valida (i es "gasta" una plaça) ABANS de crear el compte, mai
+    // despres — aixi es garanteix que no es pot arribar a tenir un compte
+    // funcional sense un codi valid. Com a efecte secundari, si despres el
+    // signUp falla per un altre motiu (p. ex. correu ja registrat), la plaça
+    // ja s'ha gastat igualment — es un cas rar i es soluciona pujant el
+    // limit_professors d'aquell centre a la taula, no cal complicar el flux
+    // per evitar-ho.
+    return sb.rpc('consumir_codi_centre',{p_codi:codiCentre}).then(function(rpcRes){
+      if(rpcRes.error){toast('Error validant el codi: '+traduirErrorSupabase(rpcRes.error.message));return;}
+      var fila=rpcRes.data&&rpcRes.data[0];
+      if(!fila){toast('Codi de centre no vàlid o sense places disponibles');return;}
+      var nomCentre=fila.nom_centre;
+      return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom,centre:nomCentre,codi_centre:codiCentre}}}).then(function(res){
+        if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
+        // Per no filtrar quins correus estan registrats, Supabase respon "sense error"
+        // fins i tot si el correu ja te un compte — es distingeix perque "identities"
+        // ve buit en aquest cas (un compte nou de veritat sempre en te com a minim 1).
+        var jaExisteix=res.data.user&&res.data.user.identities&&res.data.user.identities.length===0;
+        if(jaExisteix){
+          toast('Ja hi ha un compte amb aquest correu. Inicia sessió o recupera la contrasenya.');
+          showGatePas('g-login');
+          return;
+        }
+        if(!res.data.session){
+          toast('Compte creat ✓ Revisa el teu correu per confirmar-lo');
+          showGatePas('g-login');
+          return;
+        }
+        authState={isLogged:true,user:{id:res.data.user.id,email:res.data.user.email,nom:nom}};
+        prof.nom=nom;
+        prof.centre=nomCentre;
+        toast('Compte creat ✓');
+        anarAPasPostAuth();
+      });
     });
   });
 }
