@@ -16,7 +16,7 @@ const ROUTE_MAP = {
 // aquests fitxers sencers a cada pantalla, important amb molts usuaris a la
 // vegada) i només demana la versió nova quan aquest número canvia — en lloc
 // de desactivar la caché sempre amb "cache: no-store".
-const QUADERN_ASSET_VERSION = "2026-08-06.8";
+const QUADERN_ASSET_VERSION = "2026-08-18.1";
 
 export default function QuadernPrototype({ initialScreen }) {
   const containerRef = useRef(null);
