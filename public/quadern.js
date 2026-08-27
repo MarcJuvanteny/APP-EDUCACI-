@@ -3274,6 +3274,10 @@ function generarComentarisIA(d, mode){
 // la IA (l'informe es genera igualment, sense comentaris). Si la crida té èxit,
 // es registra a informes_generats perquè compti pel límit.
 var LIMIT_INFORMES_IA=4;
+// Interruptor per desactivar el límit temporalment sense tocar la resta de
+// la lògica (2026-08-27, decisió del centre — es tornarà a activar aviat).
+// Per reactivar el límit, només cal tornar aquesta constant a "true".
+var LIMIT_INFORMES_IA_ACTIU=false;
 // Ha de coincidir amb el maxim real de l'esquema del servidor
 // (app/api/generar-comentaris/schema.js, alumnes: z.array(...).max(80)).
 // Sense aquesta comprovacio, un curs amb mes alumnes dels que admet l'API
@@ -3291,9 +3295,13 @@ function generarComentarisIAAmbLimit(d, mode){
   // gastar el límit real dels professors.
   if(window.__QUADERN_DEV_MODE__) return generarComentarisIA(d, mode);
   return dbComptarInformesGenerats().then(function(count){
-    if(count>=LIMIT_INFORMES_IA){
+    if(LIMIT_INFORMES_IA_ACTIU&&count>=LIMIT_INFORMES_IA){
       toast('Has arribat al límit de '+LIMIT_INFORMES_IA+' informes amb IA per aquest any escolar — l\'informe es generarà sense comentaris IA');
-      return null;
+      // Objecte marcat, no "null" — aixi generarInformeHTML pot distingir
+      // "no hi ha IA perque s'ha arribat al limit" d'altres motius (fallada
+      // de xarxa, mode desenvolupament...) i mostrar un avis mes clar que
+      // el placeholder generic "Escriu aqui el comentari...".
+      return {limitAssolit:true};
     }
     return generarComentarisIA(d, mode).then(function(comentarisIA){
       if(comentarisIA) dbEscriu(dbRegistrarInformeGenerat(),'Error registrant l\'informe generat').then(actualitzarLimitInformesUI);
@@ -3306,6 +3314,7 @@ function generarComentarisIAAmbLimit(d, mode){
 function actualitzarLimitInformesUI(){
   var el=document.getElementById('inf-limit-info'); if(!el) return;
   if(window.__QUADERN_DEV_MODE__){ el.textContent='Mode desenvolupament: límit d\'informes IA desactivat.'; return; }
+  if(!LIMIT_INFORMES_IA_ACTIU){ el.textContent='Límit d\'informes IA desactivat temporalment.'; return; }
   dbComptarInformesGenerats().then(function(count){
     var restants=LIMIT_INFORMES_IA-count;
     el.textContent=restants>0
@@ -3323,8 +3332,10 @@ function generarInformeHTML(d, renderChart, comentarisIA){
   // contenteditable="true": el professor pot clicar i corregir el text abans
   // d'imprimir/exportar — els canvis queden al PDF/HTML final. La vora discontínua
   // (només visible en pantalla, no en imprimir) marca que és una zona editable.
+  var limitAssolit=!!(comentarisIA&&comentarisIA.limitAssolit);
   function comentIA(text){
     if(text) return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #B5562F;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#444;white-space:pre-line;">'+escHtml(text)+'</div>';
+    if(limitAssolit) return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #B98627;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#B98627;font-style:italic;">⚠ Has arribat al límit d\'informes amb IA d\'aquest any escolar — escriu aquí el comentari a mà.</div>';
     return '<div class="ia-comment" contenteditable="true" style="border:1.5px dashed #C9BFA9;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:10.5px;color:#999;font-style:italic;">Escriu aquí el comentari…</div>';
   }
   var COMENT_IA_HTML=comentIA(comentarisIA&&comentarisIA.comentariClasse);
