@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Termes i condicions — SeJus",
+  title: "Términos y condiciones — SeJus",
 };
 
 const COLORS = {
@@ -40,76 +40,156 @@ export default function TermesPage() {
         }}
       >
         <div style={eyebrowStyle}>SeJus</div>
-        <h1 style={titleStyle}>Termes i condicions d&apos;ús</h1>
-        <p style={metaStyle}>Última actualització: 5 d&apos;agost de 2026</p>
+        <h1 style={titleStyle}>Términos y condiciones de uso</h1>
+        <p style={metaStyle}>Versión 1.0 — Agosto 2026</p>
 
+        <h2 style={h2Style}>1. Qué es SeJus y a quién va dirigido</h2>
         <p style={pStyle}>
-          Aquests termes regulen l&apos;ús de SeJus, una aplicació pensada
-          perquè el professorat pugui registrar avaluacions, competències i
-          comentaris de l&apos;alumnat i generar-ne informes trimestrals o de
-          final de curs. En crear un compte i utilitzar l&apos;aplicació,
-          n&apos;acceptes les condicions descrites aquí.
+          SeJus es una aplicación web de gestión educativa diseñada exclusivamente para profesorado de educación
+          primaria. Su uso está restringido a profesionales de la educación mayores de edad.
+        </p>
+        <p style={pStyle}>
+          Al crear una cuenta, aceptas estos términos y confirmas que eres un profesional de la educación mayor de
+          edad.
         </p>
 
-        <h2 style={h2Style}>1. Qui pot fer servir SeJus</h2>
+        <h2 style={h2Style}>2. Tu cuenta</h2>
         <p style={pStyle}>
-          L&apos;aplicació està destinada a professionals de l&apos;educació
-          que introdueixen dades de l&apos;alumnat en l&apos;exercici de la
-          seva tasca docent. Ets responsable de garantir que tens legitimació
-          per tractar les dades dels alumnes que introdueixis (per exemple,
-          perquè el teu centre educatiu n&apos;és el responsable del
-          tractament) i de mantenir la confidencialitat de les credencials
-          del teu compte.
-        </p>
-
-        <h2 style={h2Style}>2. Contingut introduït pel professorat</h2>
-        <p style={pStyle}>
-          Ets responsable del contingut que introdueixis a l&apos;aplicació
-          (notes, competències, comentaris i observacions). Als camps de
-          comentari lliure, evita incloure-hi dades personals que no siguin
-          estrictament necessàries per a l&apos;avaluació (per exemple,
-          dades de salut, adreces o telèfons), ja que aquest text es fa
-          servir per generar l&apos;informe final i pot ser processat per
-          tercers proveïdors, tal com s&apos;explica a la{" "}
-          <a href="/privacitat" style={linkStyle}>
-            Política de privacitat
+          Eres responsable de mantener la confidencialidad de tus credenciales de acceso. Si detectas un uso no
+          autorizado de tu cuenta, debes comunicárnoslo inmediatamente en{" "}
+          <a href="mailto:suport@sejusedu.com" style={linkStyle}>
+            suport@sejusedu.com
           </a>
           .
         </p>
+        <p style={pStyle}>Cada cuenta es personal e intransferible. No puedes ceder tu cuenta a terceros.</p>
 
-        <h2 style={h2Style}>3. Generació d&apos;informes amb IA</h2>
+        <h2 style={h2Style}>3. Uso correcto de la aplicación</h2>
+        <p style={pStyle}>Puedes usar SeJus para:</p>
+        <ul style={ulStyle}>
+          <li>Gestionar los datos académicos de tu alumnado en el ejercicio de tus funciones docentes</li>
+          <li>Generar informes de evaluación</li>
+          <li>Usar la función de IA para obtener borradores de comentarios pedagógicos</li>
+        </ul>
+        <p style={pStyle}>No puedes usar SeJus para:</p>
+        <ul style={ulStyle}>
+          <li>Introducir datos de personas que no sean tu alumnado actual</li>
+          <li>Usar la aplicación con fines distintos a la gestión educativa</li>
+          <li>Intentar acceder a datos de otros usuarios</li>
+          <li>Realizar un uso abusivo de la función de IA</li>
+        </ul>
+
+        <h2 style={h2Style}>4. Datos del alumnado y responsabilidad</h2>
         <p style={pStyle}>
-          SeJus pot fer servir un model d&apos;intel·ligència artificial per
-          redactar una proposta de text per als informes, a partir de les
-          notes i comentaris introduïts. Aquest text és sempre una proposta:
-          és responsabilitat del professorat revisar-lo i validar-lo abans
-          de lliurar-lo a les famílies.
+          Como profesorado, eres responsable de asegurarte de que tu centro educativo te autoriza a usar SeJus para
+          tratar los datos de tu alumnado y de que dicho uso es conforme a la normativa de protección de datos
+          aplicable.
+        </p>
+        <p style={pStyle}>
+          SeJus trata los datos del alumnado siguiendo tus instrucciones, como encargado del tratamiento del centro
+          educativo.
         </p>
 
-        <h2 style={h2Style}>4. Disponibilitat del servei</h2>
+        <h2 style={h2Style}>5. La función de inteligencia artificial</h2>
         <p style={pStyle}>
-          Fem el possible perquè l&apos;aplicació estigui disponible i
-          funcioni correctament, però no podem garantir un servei
-          ininterromput ni lliure d&apos;errors. Recomanem exportar o
-          desar còpies dels informes generats un cop finalitzats.
+          SeJus ofrece una función opcional para generar borradores de comentarios pedagógicos mediante
+          inteligencia artificial. Estos borradores son una sugerencia, no una evaluación definitiva. El
+          profesorado es siempre el responsable del contenido final de los informes.
+        </p>
+        <p style={pStyle}>
+          Para proteger la privacidad del alumnado, la IA nunca recibe el nombre del alumno o alumna, solo un
+          identificador numérico.
+        </p>
+        <p style={pStyle}>
+          El uso de esta función está limitado a 4 informes con IA por año escolar para garantizar un uso
+          responsable.
         </p>
 
-        <h2 style={h2Style}>5. Modificacions</h2>
+        <h2 style={h2Style}>5 bis. Responsabilidad sobre los comentarios de texto libre procesados por IA</h2>
+
+        <h3 style={h3Style}>5 bis.1 Qué ocurre con los comentarios que introduces</h3>
         <p style={pStyle}>
-          Aquests termes es poden actualitzar per reflectir canvis a
-          l&apos;aplicació o requisits legals. Si hi ha canvis rellevants,
-          s&apos;indicarà la data d&apos;actualització en aquesta mateixa
-          pàgina.
+          SeJus permite al profesorado introducir comentarios de texto libre sobre el alumnado (por asignatura, por
+          actividad o como observación general). Cuando se usa la función de generación de comentarios con IA,
+          estos textos se envían a la API de Anthropic para generar un borrador del informe pedagógico.
+        </p>
+        <p style={pStyle}>
+          SeJus no aplica ningún filtrado automático sobre el contenido de los comentarios que el profesorado
+          introduce antes de enviarlos a la IA. El texto se transmite tal como el profesorado lo escribe.
         </p>
 
-        <h2 style={h2Style}>6. Contacte</h2>
+        <h3 style={h3Style}>5 bis.2 Qué es tu responsabilidad</h3>
         <p style={pStyle}>
-          Per a qualsevol dubte sobre aquests termes, pots contactar amb el
-          responsable de l&apos;aplicació a través del centre educatiu.
+          El profesorado es el único responsable del contenido de los comentarios que introduce en la aplicación.
+          En particular, el profesorado se compromete a:
+        </p>
+        <ul style={ulStyle}>
+          <li>
+            No introducir comentarios que contengan datos personales del alumnado innecesarios o excesivos para la
+            finalidad educativa (por ejemplo, información médica, familiar o de cualquier otra índole que no sea
+            relevante para la evaluación académica)
+          </li>
+          <li>No introducir comentarios vejatorios, discriminatorios, ofensivos o que vulneren la dignidad del alumnado</li>
+          <li>No incluir en los comentarios datos de terceros ajenos al proceso educativo</li>
+          <li>Asegurarse de que el contenido de los comentarios es adecuado, veraz y proporcionado a la finalidad de evaluación académica</li>
+        </ul>
+
+        <h3 style={h3Style}>5 bis.3 Qué ocurre con el borrador generado por la IA</h3>
+        <p style={pStyle}>
+          El texto generado por la IA es un borrador orientativo. El profesorado debe revisarlo, editarlo si es
+          necesario y asumir la responsabilidad plena del contenido final antes de incluirlo en cualquier informe
+          que se entregue a las familias o al centro educativo.
+        </p>
+        <p style={pStyle}>
+          SeJus no se hace responsable del contenido del borrador generado por la IA ni de las consecuencias
+          derivadas de su uso sin revisión previa por parte del profesorado.
+        </p>
+
+        <h3 style={h3Style}>5 bis.4 Limitación de responsabilidad de SeJus</h3>
+        <p style={pStyle}>
+          SeJus actúa como intermediario técnico entre el profesorado y el proveedor de IA (Anthropic). SeJus no
+          revisa, modera ni valida el contenido de los comentarios introducidos por el profesorado ni los
+          borradores generados por la IA.
+        </p>
+        <p style={pStyle}>En consecuencia, SeJus no será responsable de:</p>
+        <ul style={ulStyle}>
+          <li>Los daños o perjuicios derivados de comentarios introducidos por el profesorado que vulneren derechos de terceros</li>
+          <li>El contenido del borrador generado por la IA que el profesorado decida incluir en un informe sin revisión previa</li>
+          <li>El uso de los informes generados fuera del contexto educativo para el que están diseñados</li>
+        </ul>
+
+        <h2 style={h2Style}>6. Disponibilidad del servicio</h2>
+        <p style={pStyle}>
+          SeJus se ofrece &quot;tal como está&quot; en fase beta. Nos esforzamos por mantener el servicio
+          disponible, pero no garantizamos una disponibilidad del 100%.
+        </p>
+
+        <h2 style={h2Style}>7. Precios</h2>
+        <p style={pStyle}>Gratuito.</p>
+
+        <h2 style={h2Style}>8. Cancelación de la cuenta</h2>
+        <p style={pStyle}>
+          Puedes cancelar tu cuenta en cualquier momento escribiendo a{" "}
+          <a href="mailto:suport@sejusedu.com" style={linkStyle}>
+            suport@sejusedu.com
+          </a>
+          . Tras la cancelación, tus datos se conservarán durante 3 años por razones legales y luego se eliminarán.
+        </p>
+
+        <h2 style={h2Style}>9. Modificaciones</h2>
+        <p style={pStyle}>
+          Podemos modificar estos términos notificándotelo por email con al menos 15 días de antelación. Si no
+          estás de acuerdo con los nuevos términos, puedes cancelar tu cuenta antes de que entren en vigor.
+        </p>
+
+        <h2 style={h2Style}>10. Legislación aplicable</h2>
+        <p style={pStyle}>
+          Estos términos se rigen por la legislación española. Para cualquier controversia, las partes se someten a
+          los juzgados y tribunales de Olot.
         </p>
 
         <a href="/" style={backStyle}>
-          ← Tornar a l&apos;inici
+          ← Volver al inicio
         </a>
       </div>
     </div>
@@ -148,11 +228,26 @@ const h2Style = {
   color: COLORS.ink,
 };
 
+const h3Style = {
+  fontSize: 13.5,
+  fontWeight: 700,
+  margin: "16px 0 6px",
+  color: COLORS.ink,
+};
+
 const pStyle = {
   fontSize: 13.5,
   color: COLORS.ink2,
   lineHeight: 1.65,
-  margin: 0,
+  margin: "0 0 10px",
+};
+
+const ulStyle = {
+  fontSize: 13.5,
+  color: COLORS.ink2,
+  lineHeight: 1.65,
+  margin: "0 0 10px",
+  paddingLeft: 20,
 };
 
 const linkStyle = {
