@@ -3414,6 +3414,17 @@ function generarInformeHTML(d, renderChart, comentarisIA){
         +'<div style="flex:1;min-width:200px;">'+taulaNotes+'</div>'
       +'</div>'
       +comentIA(comentarisIA&&comentarisIA.comentaris&&comentarisIA.comentaris[uid])
+      // Espai en blanc perque la família escrigui a mà un cop imprès — mai
+      // contenteditable (aixo son els comentaris IA, editables en pantalla
+      // pel professor abans d'imprimir): aquest es paper en blanc de veritat.
+      +'<div style="margin-top:10px;">'
+        +'<div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Comentari de la família (opcional)</div>'
+        +'<div style="border:1px solid #ddd;border-radius:6px;min-height:70px;"></div>'
+      +'</div>'
+      +'<div style="margin-top:10px;display:flex;gap:24px;font-size:10px;color:#555;">'
+        +'<div style="flex:1;"><div style="border-bottom:1px solid #999;height:22px;"></div><div style="margin-top:2px;">Data</div></div>'
+        +'<div style="flex:2;"><div style="border-bottom:1px solid #999;height:22px;"></div><div style="margin-top:2px;">Signatura del pare/mare/tutor legal — conforme rebudes les notes</div></div>'
+      +'</div>'
     +'</div>';
   });
 
