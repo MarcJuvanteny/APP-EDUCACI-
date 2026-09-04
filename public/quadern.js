@@ -3,6 +3,12 @@ var prof = {nom:'Anna Garcia', centre:'Escola Montserrat', any:'2025-2026'};
 var cursosList = ['1r A','1r B','2n A','2n B','3r A','3r B','4t A','4t B','5e A','5e B','6e A','6e B'];
 var assignaturesList = ['Català','Castellà','Anglès','Matemàtiques','Medi','Música','Ed. Física','Arts','Valors','Competències transversals'];
 var trimestres = ['1r Trimestre','2n Trimestre','3r Trimestre'];
+// Nivell educatiu d'aquesta app concreta — es fa servir en registrar-se
+// (per validar el codi del centre del nivell correcte) i queda desat al
+// perfil del professor. Les altres apps que comparteixen la mateixa base
+// de dades (ESO, infantil) tenen aquesta mateixa constant amb el seu propi
+// valor al seu propi codi.
+var NIVELL_APP = 'primaria';
 
 var mesCursos = [
   {curs:'3r A', assigns:['Català','Castellà','Anglès']},
@@ -953,12 +959,12 @@ function registrarCompte(){
     // ja s'ha gastat igualment — es un cas rar i es soluciona pujant el
     // limit_professors d'aquell centre a la taula, no cal complicar el flux
     // per evitar-ho.
-    return sb.rpc('consumir_codi_centre',{p_codi:codiCentre}).then(function(rpcRes){
+    return sb.rpc('consumir_codi_centre',{p_codi:codiCentre,p_nivell:NIVELL_APP}).then(function(rpcRes){
       if(rpcRes.error){toast('Error validant el codi: '+traduirErrorSupabase(rpcRes.error.message));return;}
       var fila=rpcRes.data&&rpcRes.data[0];
       if(!fila){toast('Codi de centre no vàlid o sense places disponibles');return;}
       var nomCentre=fila.nom_centre;
-      return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom,centre:nomCentre,codi_centre:codiCentre}}}).then(function(res){
+      return sb.auth.signUp({email:email,password:pass,options:{data:{nom:nom,centre:nomCentre,codi_centre:codiCentre,nivell:NIVELL_APP}}}).then(function(res){
         if(res.error){toast(traduirErrorSupabase(res.error.message));return;}
         // Per no filtrar quins correus estan registrats, Supabase respon "sense error"
         // fins i tot si el correu ja te un compte — es distingeix perque "identities"
